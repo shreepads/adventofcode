@@ -25,10 +25,34 @@ pub fn calculate_position(start_posn: Position, file_path: &String) -> Position 
 }
 
 fn translate_position(posn: Position, command: &str) -> Position {
-    
-    println!("Executing command:{}", command);
 
-    posn
+    let mut new_posn = posn.clone();
+
+    let mut iter = command.split_whitespace();
+
+    let instruction = iter.next();
+
+    let magnitude: i64 = match iter.next() {
+        Some(x) => x.parse::<i64>().unwrap(),
+        None    => {
+            println!("Missing magnitude in command: {}", command);
+            0
+        }
+    };
+
+    match instruction {
+        Some("forward") => new_posn.horizontal += magnitude,
+        Some("down")    => new_posn.depth += magnitude,
+        Some("up")      => new_posn.depth -= magnitude,
+        _               => println!("Invalid instruction: {:?}", instruction), 
+    };
+
+    // Submarines can't fly
+    if new_posn.depth < 0 {
+        new_posn.depth = 0
+    };
+
+    new_posn
 }
 
 
