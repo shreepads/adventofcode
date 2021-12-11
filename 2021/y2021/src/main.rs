@@ -1,6 +1,7 @@
 use day1_1;
 use day1_2;
 use day2_1;
+use day3_1;
 
 fn main() {
     println!("Hello, world!");
@@ -37,5 +38,11 @@ fn main() {
         &String::from("resources/day2-1-input.txt")
     );
     println!("Day 2, #2:{}", end_posn_2.horizontal * end_posn_2.depth);
+
+    // Day 3, #1
+    let (gamma, epsilon) = day3_1::calculate_gamma_epsilon(
+        &String::from("resources/day3-1-input.txt")
+    );
+    println!("Day 3, #1:{}", gamma * epsilon);
 
 }
