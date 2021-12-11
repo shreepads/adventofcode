@@ -7,3 +7,4 @@ edition = "2021"
 
 [dependencies]
 day1_1 = { path = "../day1_1" }
+day1_2 = { path = "../day1_2" }
