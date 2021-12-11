@@ -26,5 +26,16 @@ fn main() {
     );
     println!("Day 2, #1:{}", end_posn.horizontal * end_posn.depth);
 
+    // Day 2, #2
+    let start_posn_2 = day2_2::Position {
+        horizontal: 0,
+        depth: 0,
+        aim: 0,
+    };
+    let end_posn_2: day2_2::Position = day2_2::calculate_position(
+        start_posn_2,
+        &String::from("resources/day2-1-input.txt")
+    );
+    println!("Day 2, #2:{}", end_posn_2.horizontal * end_posn_2.depth);
 
 }
