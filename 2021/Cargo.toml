@@ -1,0 +1,7 @@
+[workspace]
+
+members = [
+    "y2021",
+    "day1_1",
+]
+
