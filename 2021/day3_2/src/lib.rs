@@ -15,14 +15,6 @@ pub fn calculate_oxygen_co2(file_path: &String) -> (u32, u32) {
     // Need a copy to run both checks
     let mut report_data_2 = report_data.clone();
 
-    println!("Data row count: {}", report_data.len());
-    println!("Data 2 row count: {}", report_data_2.len());
-
-    println!("First 3 data records:");
-    println!("Record 0: {:?}", report_data.get(&0u32).unwrap());
-    println!("Record 1: {:?}", report_data.get(&1u32).unwrap());
-    println!("Record 2: {:?}", report_data.get(&2u32).unwrap());
-
     let oxygen = calculate_metric(&mut report_data, true);
 
     let co2 = calculate_metric(&mut report_data_2, false);
@@ -57,12 +49,6 @@ fn init_report_data(report_data: &mut HashMap<u32, Vec<u32>>, contents: String )
 fn calculate_metric(report_data: &mut HashMap<u32, Vec<u32>>, most_common: bool) -> u32 {
 
     let length = report_data.get(&0u32).unwrap().len();
-
-    println!("Calculating metric, length={}, count={}, most-common={}",
-        length,
-        report_data.len(),
-        most_common
-    );
 
     for column in 0..length {
 
@@ -104,12 +90,6 @@ fn calculate_metric(report_data: &mut HashMap<u32, Vec<u32>>, most_common: bool)
 
 fn calculate_bit_criteria(column_total: u32, count: usize, most_common:bool) -> u32 {
 
-    println!("Calculating bit criteria: column_total={}, count={}, most_common={}",
-        column_total,
-        count,
-        most_common
-    );
-
     let bit_criteria: u32;
 
     if most_common {
@@ -129,16 +109,19 @@ fn calculate_bit_criteria(column_total: u32, count: usize, most_common:bool) -> 
         }
     }
 
-    println!("Bit criteria: {}", bit_criteria);
-
     bit_criteria
 }
 
 fn convert_metric (record: &Vec<u32>) -> u32{
 
-    println!("Last record: {:?}", record);
+    let mut metric = 0;
 
-    3u32
+    for i in 0..record.len() {
+        let power: u32 = (record.len() - 1 - i).try_into().unwrap();
+        metric += 2u32.pow(power) * record[i];
+    }
+
+    metric
 }
 
 
