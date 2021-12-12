@@ -57,17 +57,18 @@ fn init_report_data(report_data: &mut HashMap<u32, Vec<u32>>, contents: String )
 fn calculate_metric(report_data: &mut HashMap<u32, Vec<u32>>, most_common: bool) -> u32 {
 
     let length = report_data.get(&0u32).unwrap().len();
-    let count = report_data.len();
 
     println!("Calculating metric, length={}, count={}, most-common={}",
         length,
-        count,
+        report_data.len(),
         most_common
     );
 
     for column in 0..length {
 
-        if report_data.len() == 1 {
+        let count = report_data.len();
+
+        if count == 1 {
             break;
         }
 
@@ -81,7 +82,7 @@ fn calculate_metric(report_data: &mut HashMap<u32, Vec<u32>>, most_common: bool)
         let mut removal_keys: Vec<u32> = Vec::new();
 
         for (key, row) in report_data.iter() {
-            if row[column] == bit_criteria {
+            if row[column] != bit_criteria {
                 removal_keys.push(*key);
             }
         }
@@ -103,13 +104,34 @@ fn calculate_metric(report_data: &mut HashMap<u32, Vec<u32>>, most_common: bool)
 
 fn calculate_bit_criteria(column_total: u32, count: usize, most_common:bool) -> u32 {
 
-    println!("Calcluating bit criteria: column_total={}, count={}, most_common={}",
+    println!("Calculating bit criteria: column_total={}, count={}, most_common={}",
         column_total,
         count,
         most_common
     );
 
-    1u32
+    let bit_criteria: u32;
+
+    if most_common {
+        if column_total * 2 >= count.try_into().unwrap()  {
+            bit_criteria = 1
+        }
+        else {
+            bit_criteria = 0
+        }
+    }
+    else { // least common
+        if column_total * 2 < count.try_into().unwrap()  {
+            bit_criteria = 1
+        }
+        else {
+            bit_criteria = 0
+        }
+    }
+
+    println!("Bit criteria: {}", bit_criteria);
+
+    bit_criteria
 }
 
 fn convert_metric (record: &Vec<u32>) -> u32{
