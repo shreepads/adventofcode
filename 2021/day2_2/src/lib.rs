@@ -1,3 +1,6 @@
+// Copyright (c) 2021 Shreepad Shukla
+// SPDX-License-Identifier: MIT
+
 use std::fs;
 
 #[derive(Debug, Clone)]

@@ -1,3 +1,6 @@
+// Copyright (c) 2021 Shreepad Shukla
+// SPDX-License-Identifier: MIT
+
 use std::fs;
 
 pub fn count_depth_inc(file_path: &String) -> i64 {

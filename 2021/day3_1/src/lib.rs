@@ -1,3 +1,6 @@
+// Copyright (c) 2021 Shreepad Shukla
+// SPDX-License-Identifier: MIT
+
 use std::fs;
 
 pub fn calculate_gamma_epsilon(file_path: &String) -> (i64, i64) {

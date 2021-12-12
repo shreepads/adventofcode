@@ -1,11 +1,14 @@
+// Copyright (c) 2021 Shreepad Shukla
+// SPDX-License-Identifier: MIT
+
 use day1_1;
 use day1_2;
 use day2_1;
 use day3_1;
 use day3_2;
+use day4_1;
 
 fn main() {
-    println!("Hello, world!");
 
     // Day 1, #1
     println!("Day 1, #1:{}",
