@@ -2,6 +2,7 @@ use day1_1;
 use day1_2;
 use day2_1;
 use day3_1;
+use day3_2;
 
 fn main() {
     println!("Hello, world!");
@@ -44,5 +45,11 @@ fn main() {
         &String::from("resources/day3-1-input.txt")
     );
     println!("Day 3, #1:{}", gamma * epsilon);
+
+    // Day 3, #2
+    let (oxygen, co2) = day3_2::calculate_oxygen_co2(
+        &String::from("resources/day3-1-input.txt")
+    );
+    println!("Day 3, #2:{}", oxygen * co2);
 
 }
