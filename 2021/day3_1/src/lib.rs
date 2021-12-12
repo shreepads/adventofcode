@@ -34,8 +34,6 @@ pub fn calculate_gamma_epsilon(file_path: &String) -> (i64, i64) {
         add_line(&mut counts, line, length);
     }
 
-    println!("Counts:{:?}", counts);
-
     gamma_epsilon(counts, length)
 
 }
