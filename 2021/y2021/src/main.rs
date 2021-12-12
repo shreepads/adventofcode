@@ -55,4 +55,9 @@ fn main() {
     );
     println!("Day 3, #2:{}", oxygen * co2);
 
+    // Day 4, #1
+    println!("Day 4, #1:{}",
+        day4_1::calculate_winning_board_score(&String::from("resources/day4-1-input.txt"))
+    );
+
 }
