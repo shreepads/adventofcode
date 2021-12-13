@@ -8,6 +8,7 @@ use day3_1;
 use day3_2;
 use day4_1;
 use day4_2;
+use day5_1;
 
 fn main() {
 
@@ -64,5 +65,10 @@ fn main() {
     // Day 4, #2
     println!("Day 4, #2: {}",
         day4_2::calculate_last_winning_board_score(&String::from("resources/day4-1-input.txt"))
+    );
+
+    // Day 5, #1
+    println!("Day 5, #1: {}",
+        day5_1::calculate_overlap_points(&String::from("resources/day5-1-input.txt"))
     );
 }
