@@ -1,7 +1,7 @@
 // Copyright (c) 2021 Shreepad Shukla
 // SPDX-License-Identifier: MIT
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct Cell {
     number: u32,
     marked: bool,
@@ -14,12 +14,19 @@ pub struct Board {
 
 impl Board {
 
-    pub fn new(board_lines: &Vec<String>) -> Board {
+    pub fn new(board_lines: [&str; 5]) -> Board {
 
-        let data: [[Cell; 5]; 5];
+        //println!("Constructing board with: {:?}", board_lines);
 
-        for (i, line) in board_lines.iter().enumerate() {
+        let mut data: [[Cell; 5]; 5] = [[Cell {number:0,marked:false}; 5]; 5];
 
+        for (row_no, line) in board_lines.iter().enumerate() {
+            for (column_no, num) in line.split_whitespace().enumerate() {
+                data[row_no][column_no] = Cell {
+                    number: num.parse::<u32>().unwrap(),
+                    marked: false,
+                }
+            }
         }
 
         Board {
@@ -81,4 +88,15 @@ impl Board {
 
     }
 
+    pub fn score(&self) -> u32 {
+        let mut score = 0u32;
+
+        for row in self.board_data.iter() {
+            score += row.iter()
+                .filter(|x| !x.marked)
+                .fold(0, |acc, x| acc + x.number);
+        }
+
+        score
+    }
 }
