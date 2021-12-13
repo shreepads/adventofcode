@@ -7,6 +7,7 @@ use day2_1;
 use day3_1;
 use day3_2;
 use day4_1;
+use day4_2;
 
 fn main() {
 
@@ -60,4 +61,8 @@ fn main() {
         day4_1::calculate_winning_board_score(&String::from("resources/day4-1-input.txt"))
     );
 
+    // Day 4, #2
+    println!("Day 4, #2:{}",
+        day4_2::calculate_last_winning_board_score(&String::from("resources/day4-1-input.txt"))
+    );
 }

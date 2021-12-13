@@ -1,12 +1,10 @@
 // Copyright (c) 2021 Shreepad Shukla
 // SPDX-License-Identifier: MIT
 
-pub mod board;
-
 use std::fs;
-use board::Board;
+use day4_1::board::Board;
 
-pub fn calculate_winning_board_score(file_path: &String) -> u32 {
+pub fn calculate_last_winning_board_score(file_path: &String) -> u32 {
 
     println!("Loading data from file:{}", file_path);
 
@@ -22,7 +20,7 @@ pub fn calculate_winning_board_score(file_path: &String) -> u32 {
     for number_called in numbers_called {
         for board in boards.iter_mut() {
             if board.mark_called_number(number_called) {
-                //println!("Winning board: {:?}", board);
+                println!("Winning board: {:?}", board);
                 return number_called * board.score();
             }
         }
@@ -67,6 +65,7 @@ fn load_data(numbers_called: &mut Vec<u32>, boards: &mut Vec<Board>, contents: S
     }
 
 }
+
 
 #[cfg(test)]
 mod tests {
