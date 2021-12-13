@@ -12,12 +12,12 @@ use day4_2;
 fn main() {
 
     // Day 1, #1
-    println!("Day 1, #1:{}",
+    println!("Day 1, #1: {}",
         day1_1::count_depth_inc(&String::from("resources/day1-1-input.txt"))
     );
 
     // Day 1, #2
-    println!("Day 1, #2:{}",
+    println!("Day 1, #2: {}",
         day1_2::count_depth_inc_slider(&String::from("resources/day1-1-input.txt"))
     );
 
@@ -30,7 +30,7 @@ fn main() {
         start_posn,
         &String::from("resources/day2-1-input.txt")
     );
-    println!("Day 2, #1:{}", end_posn.horizontal * end_posn.depth);
+    println!("Day 2, #1: {}", end_posn.horizontal * end_posn.depth);
 
     // Day 2, #2
     let start_posn_2 = day2_2::Position {
@@ -42,27 +42,27 @@ fn main() {
         start_posn_2,
         &String::from("resources/day2-1-input.txt")
     );
-    println!("Day 2, #2:{}", end_posn_2.horizontal * end_posn_2.depth);
+    println!("Day 2, #2: {}", end_posn_2.horizontal * end_posn_2.depth);
 
     // Day 3, #1
     let (gamma, epsilon) = day3_1::calculate_gamma_epsilon(
         &String::from("resources/day3-1-input.txt")
     );
-    println!("Day 3, #1:{}", gamma * epsilon);
+    println!("Day 3, #1: {}", gamma * epsilon);
 
     // Day 3, #2
     let (oxygen, co2) = day3_2::calculate_oxygen_co2(
         &String::from("resources/day3-1-input.txt")
     );
-    println!("Day 3, #2:{}", oxygen * co2);
+    println!("Day 3, #2: {}", oxygen * co2);
 
     // Day 4, #1
-    println!("Day 4, #1:{}",
+    println!("Day 4, #1: {}",
         day4_1::calculate_winning_board_score(&String::from("resources/day4-1-input.txt"))
     );
 
     // Day 4, #2
-    println!("Day 4, #2:{}",
+    println!("Day 4, #2: {}",
         day4_2::calculate_last_winning_board_score(&String::from("resources/day4-1-input.txt"))
     );
 }

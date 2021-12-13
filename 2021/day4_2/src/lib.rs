@@ -17,16 +17,20 @@ pub fn calculate_last_winning_board_score(file_path: &String) -> u32 {
 
     load_data(&mut numbers_called, &mut boards, contents);
 
+    let mut last_winning_board = Board::new_empty();
+
+    let mut last_winning_number = 0u32;
+
     for number_called in numbers_called {
         for board in boards.iter_mut() {
             if board.mark_called_number(number_called) {
-                println!("Winning board: {:?}", board);
-                return number_called * board.score();
+                last_winning_board = *board;
+                last_winning_number = number_called;
             }
         }
     }
 
-    0u32
+    last_winning_number * last_winning_board.score()
 }
 
 fn load_data(numbers_called: &mut Vec<u32>, boards: &mut Vec<Board>, contents: String) {

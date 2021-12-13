@@ -7,12 +7,20 @@ pub struct Cell {
     marked: bool,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct Board {
     board_data: [[Cell; 5]; 5],
+    board_won: bool,
 }
 
 impl Board {
+
+    pub fn new_empty() -> Board {
+        Board {
+            board_data: [[Cell {number:0,marked:false}; 5]; 5],
+            board_won: false,
+        }
+    }
 
     pub fn new(board_lines: [&str; 5]) -> Board {
 
@@ -31,10 +39,16 @@ impl Board {
 
         Board {
             board_data : data,
+            board_won: false,
         }
     }
 
     pub fn mark_called_number(&mut self, called_number: u32) -> bool {
+
+        if self.board_won {
+            // If board won stop marking further cells and declaring board won
+            return false;
+        }
 
         let mut found = false;
         let mut found_row_no = 0usize;
@@ -53,7 +67,13 @@ impl Board {
         }
 
         if found {
-            return self.check_win(found_row_no, found_column_no);
+            if self.check_win(found_row_no, found_column_no) {
+                self.board_won = true;
+                return true;
+            }
+            else {
+                return false;
+            }
         }
         else {
             return false;
