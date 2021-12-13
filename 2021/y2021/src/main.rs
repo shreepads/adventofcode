@@ -71,4 +71,10 @@ fn main() {
     println!("Day 5, #1: {}",
         day5_1::calculate_overlap_points(&String::from("resources/day5-1-input.txt"))
     );
+
+    // Day 5, #2
+    println!("Day 5, #2: {}",
+        day5_2::calculate_overlap_points(&String::from("resources/day5-1-input.txt"))
+    );
+
 }

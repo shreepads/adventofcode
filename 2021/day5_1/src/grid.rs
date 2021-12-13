@@ -49,6 +49,11 @@ impl Grid {
             }
             return;
         }
+
+        if x1 != x2  &&  y1 != y2 && add_diagonals {
+            println!("Need to add a diagonal!");
+            return;
+        }
     }
 
     pub fn overlap_points(self) -> u32 {
