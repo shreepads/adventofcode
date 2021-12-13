@@ -51,7 +51,29 @@ impl Grid {
         }
 
         if x1 != x2  &&  y1 != y2 && add_diagonals {
-            println!("Need to add a diagonal!");
+
+            let mut startx = x1;
+            let mut starty = y1;
+            let mut endx = x2;
+            let mut endy = y2;
+
+            if x1 > x2 {
+                startx = x2;
+                starty = y2;
+                endx = x1;
+                endy = y1;
+            }
+
+            for x in startx..=endx {
+                self.grid_data[starty][x] += 1;
+                if starty < endy {
+                    starty += 1;
+                }
+                else {
+                    starty -= 1;
+                }
+            }
+
             return;
         }
     }
