@@ -4,7 +4,7 @@
 mod board;
 
 use std::fs;
-use self::board::Board;
+use board::Board;
 
 pub fn calculate_winning_board_score(file_path: &String) -> u32 {
 
