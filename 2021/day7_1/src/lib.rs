@@ -16,9 +16,23 @@ pub fn calculate_least_fuel(file_path: &String) -> u32 {
         crab_posns.push(crab_posn.parse::<u32>().unwrap());
     }
 
-    println!("Loaded crab posns: {:?}", crab_posns);
+    let median = calculate_median(&mut crab_posns);
 
-    0u32
+    //println!("Median {} in sorted crab posns: {:?}", median, crab_posns);
+
+    crab_posns.iter().fold(0, |acc, x| acc + (*x as i32 - median as i32).abs() as u32)
+
+}
+
+fn calculate_median(numbers: &mut Vec<u32>) -> u32 {
+
+    numbers.sort_unstable();
+
+    if numbers.len() % 2 == 1 {
+        return numbers[numbers.len()/2 + 1];
+    }
+
+    return (numbers[numbers.len()/2] + numbers[numbers.len()/2 + 1])/2;
 }
 
 #[cfg(test)]
