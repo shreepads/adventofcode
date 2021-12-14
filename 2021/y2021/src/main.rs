@@ -11,7 +11,7 @@ use day4_2;
 use day5_1;
 use day5_2;
 use day6_1;
-
+use day6_2;
 
 fn main() {
 
