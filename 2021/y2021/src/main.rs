@@ -9,6 +9,9 @@ use day3_2;
 use day4_1;
 use day4_2;
 use day5_1;
+use day5_2;
+use day6_1;
+
 
 fn main() {
 
@@ -76,5 +79,14 @@ fn main() {
     println!("Day 5, #2: {}",
         day5_2::calculate_overlap_points(&String::from("resources/day5-1-input.txt"))
     );
+
+    // Day 6, #1
+    println!("Day 6, #1: {}",
+        day6_1::calculate_fish_population(
+            &String::from("resources/day6-1-input.txt"),
+            80
+        )
+    );
+
 
 }
