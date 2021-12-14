@@ -3,7 +3,7 @@
 
 use std::fs;
 
-pub fn calculate_fish_population(file_path: &String, number_days: u32) -> u64 {
+pub fn calculate_fish_population(file_path: &String, _number_days: u32) -> u64 {
     
     println!("Loading data from file:{}", file_path);
 
