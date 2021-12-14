@@ -3,11 +3,28 @@
 
 use std::fs;
 
-pub fn calculate_fish_population(file_path: &String, number_days: u32) -> u32 {
+pub fn calculate_fish_population(file_path: &String, number_days: u32) -> usize {
     
     println!("Loading data from file:{}", file_path);
 
-    0
+    let contents = fs::read_to_string(file_path)
+        .expect("Something went wrong reading the file");
+
+    let mut fishy_states: Vec<u8> = Vec::new();
+
+    for fishy_state in contents.split(",") {
+        fishy_states.push(fishy_state.parse::<u8>().unwrap());
+    }
+
+    for _ in 1..=number_days {
+        update_fishy_states(&mut fishy_states);
+    }
+
+    fishy_states.len()
+}
+
+fn update_fishy_states(fishy_states: &mut Vec<u8>) {
+
 }
 
 
