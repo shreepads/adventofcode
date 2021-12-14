@@ -13,6 +13,7 @@ use day5_2;
 use day6_1;
 use day6_2;
 use day7_1;
+use day7_2;
 
 fn main() {
 
@@ -90,7 +91,7 @@ fn main() {
     );
 
     // Day 6, #2
-    println!("Day 6, #2: {}",
+    println!("Day 6, #2: {}  NOT SOLVED",
         day6_2::calculate_fish_population(
             &String::from("resources/day6-1-input.txt"),
             256
@@ -102,5 +103,9 @@ fn main() {
         day7_1::calculate_least_fuel(&String::from("resources/day7-1-input.txt"))
     );
 
+    // Day 7, #2
+    println!("Day 7, #2: {}",
+        day7_2::calculate_least_fuel(&String::from("resources/day7-1-input.txt"))
+    );
 
 }
