@@ -12,7 +12,7 @@ pub fn calculate_fish_population(file_path: &String, number_days: u32) -> usize 
 
     let mut fishy_states: Vec<u8> = Vec::new();
 
-    for fishy_state in contents.split(",") {
+    for fishy_state in contents.trim_end().split(",") {
         fishy_states.push(fishy_state.parse::<u8>().unwrap());
     }
 
@@ -25,6 +25,19 @@ pub fn calculate_fish_population(file_path: &String, number_days: u32) -> usize 
 
 fn update_fishy_states(fishy_states: &mut Vec<u8>) {
 
+    let mut new_fishes = 0;
+
+    for fishy_state in fishy_states.iter_mut() {
+        if *fishy_state == 0 {
+            *fishy_state = 6;
+            new_fishes += 1;
+            continue;
+        }
+
+        *fishy_state -= 1;
+    }
+
+    fishy_states.append(&mut vec![8; new_fishes]);
 }
 
 
