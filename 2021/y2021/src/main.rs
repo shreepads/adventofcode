@@ -15,6 +15,7 @@ use day6_2;
 use day7_1;
 use day7_2;
 use day8_1;
+use day8_2;
 
 fn main() {
 
@@ -112,6 +113,11 @@ fn main() {
     // Day 8, #1
     println!("Day 8, #1: {}",
         day8_1::count_output_digits(&String::from("resources/day8-1-input.txt"))
+    );
+
+    // Day 8, #2
+        println!("Day 8, #2: {}",
+        day8_2::calculate_outputs_total(&String::from("resources/day8-1-input.txt"))
     );
 
 }
