@@ -14,6 +14,7 @@ use day6_1;
 use day6_2;
 use day7_1;
 use day7_2;
+use day8_1;
 
 fn main() {
 
@@ -106,6 +107,11 @@ fn main() {
     // Day 7, #2
     println!("Day 7, #2: {}",
         day7_2::calculate_least_fuel(&String::from("resources/day7-1-input.txt"))
+    );
+
+    // Day 8, #1
+    println!("Day 8, #1: {}",
+        day8_1::count_output_digits(&String::from("resources/day8-1-input.txt"))
     );
 
 }
