@@ -54,4 +54,23 @@ impl Graph {
         }
 
     }
+
+    pub fn connected_size(&mut self, node_id: usize) -> u32 {
+
+        let node: &mut Node = self.nodes.get_mut(&node_id).unwrap();
+
+        if node.visited {
+            return 0;
+        }
+
+        let mut size = 1u32; // this node
+        node.visited = true;
+
+        for linked_node_id in node.linked_nodes.clone().iter() {
+            size += self.connected_size(*linked_node_id);
+        }
+
+        size
+
+    }
 }

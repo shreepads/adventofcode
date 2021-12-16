@@ -15,36 +15,21 @@ pub fn top3_basins_product(file_path: &String) -> u32 {
 
     load_grid(&mut grid, contents);
 
-    //println!("Grid: \n {:?}", grid);
-
     // Convert grid in graph by edges
 
     let mut graph = Graph::new();
 
     load_graph(&mut graph, &grid);
 
-    /*
-    println!("Graph nodes:");
-    println!("Graph node 1: {:?}", graph.nodes.get(&1).unwrap());
-    println!("Graph node 2: {:?}", graph.nodes.get(&2).unwrap());
-    println!("Graph node 99: {:?}", graph.nodes.get(&99).unwrap());
-    println!("Graph node 100: {:?}", graph.nodes.get(&100).unwrap());
-    //println!("Graph node 101: {:?}", graph.nodes.get(&101).unwrap());
-    println!("Graph node 102: {:?}", graph.nodes.get(&102).unwrap());
-    println!("Graph node 105: {:?}", graph.nodes.get(&105).unwrap());
-    println!("Graph node 199: {:?}", graph.nodes.get(&199).unwrap());
-    //println!("Graph node 200: {:?}", graph.nodes.get(&200).unwrap());
-    //println!("Graph node 9801: {:?}", graph.nodes.get(&9801).unwrap());
-    println!("Graph node 9802: {:?}", graph.nodes.get(&9802).unwrap());
-    //println!("Graph node 9899: {:?}", graph.nodes.get(&9899).unwrap());
-    println!("Graph node 9900: {:?}", graph.nodes.get(&9900).unwrap());
-    println!("Graph node 9901: {:?}", graph.nodes.get(&9901).unwrap());
-    println!("Graph node 9902: {:?}", graph.nodes.get(&9902).unwrap());
-    //println!("Graph node 9999: {:?}", graph.nodes.get(&9999).unwrap());
-    //println!("Graph node 10000: {:?}", graph.nodes.get(&10000).unwrap());
-    */
+    // Find basin sizes
 
-    0u32
+    let mut basin_sizes : Vec<u32> = Vec::new();
+
+    find_basin_sizes(&mut graph, &mut basin_sizes);
+
+    basin_sizes.sort_unstable();
+
+    basin_sizes.iter().skip(basin_sizes.len() - 3).product()
 
 }
 
@@ -129,7 +114,16 @@ fn add_edges(graph: &mut Graph, grid: &Vec<Vec<u8>>, row_no: usize, col_no: usiz
 
 }
 
+fn find_basin_sizes(graph: &mut Graph, basin_sizes: &mut Vec<u32>) {
 
+    for (node_id, _) in graph.nodes.clone().iter() {
+        let basin_size = graph.connected_size(*node_id);
+        if basin_size != 0 {
+            basin_sizes.push(basin_size);
+        }
+    }
+
+}
 
 #[cfg(test)]
 mod tests {
