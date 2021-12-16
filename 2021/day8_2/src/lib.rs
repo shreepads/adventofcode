@@ -21,13 +21,10 @@ pub fn calculate_outputs_total(file_path: &String) -> u32 {
         signal_patterns.len(), output_patterns.len()
     );
 
-    println!("First signal: {:?}", signal_patterns[0]);
-    println!("First output: {:?}", output_patterns[0]);
-
     let mut outputs_total = 0u32;
 
     for i in 0..signal_patterns.len() {
-        outputs_total = find_output(&mut signal_patterns[i], &output_patterns[i]);
+        outputs_total += find_output(&mut signal_patterns[i], &output_patterns[i]);
     }
 
     outputs_total
@@ -66,11 +63,9 @@ fn load_data(signal_patterns: &mut Vec<HashMap<usize, HashSet<char>>>,
 fn find_output(signal_pattern: &mut HashMap<usize, HashSet<char>>,
     output_pattern: &Vec<HashSet<char>>) -> u32 {
 
-    println!("Finding ouput with signal pattern {:?} and output pattern {:?}", signal_pattern, output_pattern);
-
     // Deterministic logic to find the digit pattern match
 
-    let mut digit_pattern_map : HashMap<u8, &HashSet<char>> = HashMap::new();
+    let mut digit_pattern_map : HashMap<u32, &HashSet<char>> = HashMap::new();
     let mut removal_keys : Vec<usize> = Vec::new();
 
     // Find 1, 4, 7, 8 by length
@@ -170,16 +165,31 @@ fn find_output(signal_pattern: &mut HashMap<usize, HashSet<char>>,
 
     }
 
-    for key in removal_keys.iter() {   // drain doesn't work
-        signal_pattern.remove(key);
+    output(output_pattern, &digit_pattern_map)
+}
+
+
+fn output(output_pattern: &Vec<HashSet<char>>,
+    digit_pattern_map: &HashMap<u32, &HashSet<char>>) -> u32 {
+    
+    let mut output_val = 0u32;
+
+    for (i, output) in output_pattern.iter().enumerate() {
+        let digit = match output.len() {
+            2 => 1,
+            3 => 7,
+            4 => 4,
+            7 => 8,
+            _ => {
+                let (d, _) = digit_pattern_map.iter().find(|(_, v)| **v == output).unwrap();
+                *d
+            }
+        };
+
+        output_val += digit * 10u32.pow((3 - i).try_into().unwrap());
     }
 
-
-    println!("Found patterns: {:?}", digit_pattern_map);
-    println!("Remaining patterns: {:?}", signal_pattern);
-
-
-    0u32
+    output_val
 }
 
 
