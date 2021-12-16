@@ -1,7 +1,10 @@
 // Copyright (c) 2021 Shreepad Shukla
 // SPDX-License-Identifier: MIT
 
+pub mod graph;
+
 use std::fs;
+use graph::Graph;
 
 pub fn top3_basins_product(file_path: &String) -> u32 {
     println!("Loading data from file:{}", file_path);
@@ -32,7 +35,9 @@ pub fn top3_basins_product(file_path: &String) -> u32 {
 
     grid.push(vec![9; grid[0].len()]);
 
-    println!("Grid: \n {:?}", grid);
+    //println!("Grid: \n {:?}", grid);
+
+    let mut graph = Graph::new();
 
     0u32
 
