@@ -3,15 +3,13 @@
 
 pub mod grid;
 
-use std::fs;
 use grid::Grid;
+use std::fs;
 
 pub fn calculate_overlap_points(file_path: &String) -> u32 {
-
     println!("Loading data from file:{}", file_path);
 
-    let contents = fs::read_to_string(file_path)
-        .expect("Something went wrong reading the file");
+    let contents = fs::read_to_string(file_path).expect("Something went wrong reading the file");
 
     let mut grid = Grid::new();
 
@@ -21,11 +19,9 @@ pub fn calculate_overlap_points(file_path: &String) -> u32 {
 }
 
 fn load_lines(grid: &mut Grid, contents: String) {
-
     for line in contents.lines() {
-
         // println!("Adding line: {}", line);
-        
+
         let mut x1 = 0usize;
         let mut y1 = 0usize;
         let mut x2 = 0usize;
@@ -36,8 +32,7 @@ fn load_lines(grid: &mut Grid, contents: String) {
                 let mut coord = coords.split(",");
                 x1 = coord.next().unwrap().parse::<usize>().unwrap();
                 y1 = coord.next().unwrap().parse::<usize>().unwrap();
-            }
-            else {
+            } else {
                 let mut coord = coords.split(",");
                 x2 = coord.next().unwrap().parse::<usize>().unwrap();
                 y2 = coord.next().unwrap().parse::<usize>().unwrap();
@@ -46,7 +41,6 @@ fn load_lines(grid: &mut Grid, contents: String) {
 
         grid.add_line(x1, y1, x2, y2, false);
     }
-
 }
 
 #[cfg(test)]

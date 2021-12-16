@@ -3,15 +3,13 @@
 
 pub mod board;
 
-use std::fs;
 use board::Board;
+use std::fs;
 
 pub fn calculate_winning_board_score(file_path: &String) -> u32 {
-
     println!("Loading data from file:{}", file_path);
 
-    let contents = fs::read_to_string(file_path)
-        .expect("Something went wrong reading the file");
+    let contents = fs::read_to_string(file_path).expect("Something went wrong reading the file");
 
     let mut numbers_called: Vec<u32> = Vec::new();
 
@@ -32,11 +30,9 @@ pub fn calculate_winning_board_score(file_path: &String) -> u32 {
 }
 
 fn load_data(numbers_called: &mut Vec<u32>, boards: &mut Vec<Board>, contents: String) {
-
     let mut board_lines: [&str; 5] = [""; 5];
-    
-    for (i, line) in contents.lines().enumerate() {
 
+    for (i, line) in contents.lines().enumerate() {
         if i == 0 {
             // load called numbers
             for called_no in line.split(",") {
@@ -63,9 +59,7 @@ fn load_data(numbers_called: &mut Vec<u32>, boards: &mut Vec<Board>, contents: S
             //println!("Loaded board: {:?}", board);
             boards.push(board);
         }
-
     }
-
 }
 
 #[cfg(test)]

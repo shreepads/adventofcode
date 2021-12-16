@@ -4,14 +4,11 @@
 use std::fs;
 
 pub fn calculate_fish_population(file_path: &String, _number_days: u32) -> u64 {
-    
     println!("Loading data from file:{}", file_path);
 
-    let contents = fs::read_to_string(file_path)
-        .expect("Something went wrong reading the file");
+    let contents = fs::read_to_string(file_path).expect("Something went wrong reading the file");
 
     let mut fishy_states: Vec<u8> = Vec::new();
-
 
     for fishy_state in contents.trim_end().split(",") {
         fishy_states.push(fishy_state.parse::<u8>().unwrap());
@@ -23,7 +20,6 @@ pub fn calculate_fish_population(file_path: &String, _number_days: u32) -> u64 {
     let fish_count: u64 = fishy_states.len().try_into().unwrap();
 
     fish_count
-
 }
 
 #[cfg(test)]

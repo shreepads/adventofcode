@@ -1,14 +1,12 @@
 // Copyright (c) 2021 Shreepad Shukla
 // SPDX-License-Identifier: MIT
 
-
 #[derive(Debug, Copy, Clone)]
 pub struct Grid {
-    grid_data: [[u8; 1000]; 1000],  // u32 causes a stack overflow
+    grid_data: [[u8; 1000]; 1000], // u32 causes a stack overflow
 }
 
 impl Grid {
-
     pub fn new() -> Grid {
         Grid {
             grid_data: [[0u8; 1000]; 1000],
@@ -16,10 +14,9 @@ impl Grid {
     }
 
     pub fn add_line(&mut self, x1: usize, y1: usize, x2: usize, y2: usize, add_diagonals: bool) {
-
         // Exclude diagonals if flagged
-        if x1 != x2  &&  y1 != y2 && !add_diagonals {
-            return
+        if x1 != x2 && y1 != y2 && !add_diagonals {
+            return;
         }
 
         // Add vertical line
@@ -50,8 +47,7 @@ impl Grid {
             return;
         }
 
-        if x1 != x2  &&  y1 != y2 && add_diagonals {
-
+        if x1 != x2 && y1 != y2 && add_diagonals {
             let mut startx = x1;
             let mut starty = y1;
             let mut endx = x2;
@@ -68,8 +64,7 @@ impl Grid {
                 self.grid_data[starty][x] += 1;
                 if starty < endy {
                     starty += 1;
-                }
-                else {
+                } else {
                     starty -= 1;
                 }
             }
@@ -79,16 +74,13 @@ impl Grid {
     }
 
     pub fn overlap_points(self) -> u32 {
-        
         let mut overlap_points = 0u32;
 
         for row in self.grid_data.iter() {
-            overlap_points += row.iter()
-                .filter(|x| **x > 1)
-                .fold(0, |acc, _| acc + 1);   // using count() causes type mismatch
+            overlap_points += row.iter().filter(|x| **x > 1).fold(0, |acc, _| acc + 1);
+            // using count() causes type mismatch
         }
 
         overlap_points
     }
-
 }

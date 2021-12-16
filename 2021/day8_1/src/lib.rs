@@ -4,11 +4,9 @@
 use std::fs;
 
 pub fn count_output_digits(file_path: &String) -> u32 {
-    
     println!("Loading data from file:{}", file_path);
 
-    let contents = fs::read_to_string(file_path)
-        .expect("Something went wrong reading the file");
+    let contents = fs::read_to_string(file_path).expect("Something went wrong reading the file");
 
     let mut output_digits = 0u32;
 
@@ -21,12 +19,12 @@ pub fn count_output_digits(file_path: &String) -> u32 {
             for output in line_part.split(" ") {
                 match output.len() {
                     2 | 4 | 3 | 7 => output_digits += 1,
-                    _             => {},
+                    _ => {}
                 }
             }
         }
     }
-    
+
     output_digits
 }
 

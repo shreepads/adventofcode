@@ -4,11 +4,9 @@
 use std::fs;
 
 pub fn calculate_least_fuel(file_path: &String) -> u32 {
-    
     println!("Loading data from file:{}", file_path);
 
-    let contents = fs::read_to_string(file_path)
-        .expect("Something went wrong reading the file");
+    let contents = fs::read_to_string(file_path).expect("Something went wrong reading the file");
 
     let mut crab_posns: Vec<u32> = Vec::new();
 
@@ -20,19 +18,19 @@ pub fn calculate_least_fuel(file_path: &String) -> u32 {
 
     //println!("Median {} in sorted crab posns: {:?}", median, crab_posns);
 
-    crab_posns.iter().fold(0, |acc, x| acc + (*x as i32 - median as i32).abs() as u32)
-
+    crab_posns
+        .iter()
+        .fold(0, |acc, x| acc + (*x as i32 - median as i32).abs() as u32)
 }
 
 fn calculate_median(numbers: &mut Vec<u32>) -> u32 {
-
     numbers.sort_unstable();
 
     if numbers.len() % 2 == 1 {
-        return numbers[numbers.len()/2 + 1];
+        return numbers[numbers.len() / 2 + 1];
     }
 
-    return (numbers[numbers.len()/2] + numbers[numbers.len()/2 + 1])/2;
+    return (numbers[numbers.len() / 2] + numbers[numbers.len() / 2 + 1]) / 2;
 }
 
 #[cfg(test)]

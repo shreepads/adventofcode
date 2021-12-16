@@ -4,11 +4,9 @@
 use std::fs;
 
 pub fn calculate_least_fuel(file_path: &String) -> u32 {
-    
     println!("Loading data from file:{}", file_path);
 
-    let contents = fs::read_to_string(file_path)
-        .expect("Something went wrong reading the file");
+    let contents = fs::read_to_string(file_path).expect("Something went wrong reading the file");
 
     let mut crab_posns: Vec<u32> = Vec::new();
 
@@ -18,7 +16,7 @@ pub fn calculate_least_fuel(file_path: &String) -> u32 {
 
     let mut min_fuel = u32::MAX;
 
-    let min_posn = *crab_posns.iter().min().unwrap();  // Need to deref the unwrap
+    let min_posn = *crab_posns.iter().min().unwrap(); // Need to deref the unwrap
     let max_posn = *crab_posns.iter().max().unwrap();
 
     for posn in min_posn..=max_posn {
@@ -32,22 +30,18 @@ pub fn calculate_least_fuel(file_path: &String) -> u32 {
 }
 
 fn calculate_fuel(crab_posns: &Vec<u32>, input_posn: u32) -> u32 {
-
     let mut fuel = 0u32;
 
     for posn in crab_posns.iter() {
         if posn < &input_posn {
-            fuel += ((input_posn - posn) * (input_posn - posn + 1))/2
-        }
-        else {
-            fuel += ((posn - input_posn) * (posn - input_posn + 1))/2
+            fuel += ((input_posn - posn) * (input_posn - posn + 1)) / 2
+        } else {
+            fuel += ((posn - input_posn) * (posn - input_posn + 1)) / 2
         }
     }
 
     fuel
-
 }
-
 
 #[cfg(test)]
 mod tests {

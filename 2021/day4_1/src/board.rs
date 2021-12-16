@@ -14,19 +14,23 @@ pub struct Board {
 }
 
 impl Board {
-
     pub fn new_empty() -> Board {
         Board {
-            board_data: [[Cell {number:0,marked:false}; 5]; 5],
+            board_data: [[Cell {
+                number: 0,
+                marked: false,
+            }; 5]; 5],
             board_won: false,
         }
     }
 
     pub fn new(board_lines: [&str; 5]) -> Board {
-
         //println!("Constructing board with: {:?}", board_lines);
 
-        let mut data: [[Cell; 5]; 5] = [[Cell {number:0,marked:false}; 5]; 5];
+        let mut data: [[Cell; 5]; 5] = [[Cell {
+            number: 0,
+            marked: false,
+        }; 5]; 5];
 
         for (row_no, line) in board_lines.iter().enumerate() {
             for (column_no, num) in line.split_whitespace().enumerate() {
@@ -38,13 +42,12 @@ impl Board {
         }
 
         Board {
-            board_data : data,
+            board_data: data,
             board_won: false,
         }
     }
 
     pub fn mark_called_number(&mut self, called_number: u32) -> bool {
-
         if self.board_won {
             // If board won stop marking further cells and declaring board won
             return false;
@@ -53,7 +56,7 @@ impl Board {
         let mut found = false;
         let mut found_row_no = 0usize;
         let mut found_column_no = 0usize;
-        
+
         'outer: for (row_no, row) in self.board_data.iter_mut().enumerate() {
             for (column_no, cell) in row.iter_mut().enumerate() {
                 if cell.number == called_number {
@@ -70,18 +73,15 @@ impl Board {
             if self.check_win(found_row_no, found_column_no) {
                 self.board_won = true;
                 return true;
-            }
-            else {
+            } else {
                 return false;
             }
-        }
-        else {
+        } else {
             return false;
         }
     }
 
     fn check_win(&self, row_no: usize, column_no: usize) -> bool {
-        
         let mut won = true;
 
         for cell in self.board_data[row_no].iter() {
@@ -90,7 +90,7 @@ impl Board {
                 break;
             }
         }
-        
+
         if won {
             return true;
         }
@@ -105,14 +105,14 @@ impl Board {
         }
 
         won
-
     }
 
     pub fn score(&self) -> u32 {
         let mut score = 0u32;
 
         for row in self.board_data.iter() {
-            score += row.iter()
+            score += row
+                .iter()
                 .filter(|x| !x.marked)
                 .fold(0, |acc, x| acc + x.number);
         }

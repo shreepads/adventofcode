@@ -6,8 +6,7 @@ use std::fs;
 pub fn count_depth_inc_slider(file_path: &String) -> i64 {
     println!("Loading data from file:{}", file_path);
 
-    let contents = fs::read_to_string(file_path)
-        .expect("Something went wrong reading the file");
+    let contents = fs::read_to_string(file_path).expect("Something went wrong reading the file");
 
     let lines = contents.lines();
 

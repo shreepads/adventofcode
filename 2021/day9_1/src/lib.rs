@@ -4,11 +4,9 @@
 use std::fs;
 
 pub fn calculate_risk_lowpoints(file_path: &String) -> u32 {
-    
     println!("Loading data from file:{}", file_path);
 
-    let contents = fs::read_to_string(file_path)
-        .expect("Something went wrong reading the file");
+    let contents = fs::read_to_string(file_path).expect("Something went wrong reading the file");
 
     0u32
 }

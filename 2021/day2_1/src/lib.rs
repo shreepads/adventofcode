@@ -6,14 +6,13 @@ use std::fs;
 #[derive(Debug, Clone)]
 pub struct Position {
     pub horizontal: i64,
-    pub depth:      i64,
+    pub depth: i64,
 }
 
 pub fn calculate_position(start_posn: Position, file_path: &String) -> Position {
     println!("Loading data from file:{}", file_path);
 
-    let contents = fs::read_to_string(file_path)
-        .expect("Something went wrong reading the file");
+    let contents = fs::read_to_string(file_path).expect("Something went wrong reading the file");
 
     let commands = contents.lines();
 
@@ -24,11 +23,9 @@ pub fn calculate_position(start_posn: Position, file_path: &String) -> Position 
     }
 
     final_posn
-
 }
 
 fn translate_position(posn: Position, command: &str) -> Position {
-
     let mut new_posn = posn.clone();
 
     let mut iter = command.split_whitespace();
@@ -37,7 +34,7 @@ fn translate_position(posn: Position, command: &str) -> Position {
 
     let magnitude: i64 = match iter.next() {
         Some(x) => x.parse::<i64>().unwrap(),
-        None    => {
+        None => {
             println!("Missing magnitude in command: {}", command);
             0
         }
@@ -45,9 +42,9 @@ fn translate_position(posn: Position, command: &str) -> Position {
 
     match instruction {
         Some("forward") => new_posn.horizontal += magnitude,
-        Some("down")    => new_posn.depth += magnitude,
-        Some("up")      => new_posn.depth -= magnitude,
-        _               => println!("Invalid instruction: {:?}", instruction), 
+        Some("down") => new_posn.depth += magnitude,
+        Some("up") => new_posn.depth -= magnitude,
+        _ => println!("Invalid instruction: {:?}", instruction),
     };
 
     // Submarines can't fly
@@ -57,7 +54,6 @@ fn translate_position(posn: Position, command: &str) -> Position {
 
     new_posn
 }
-
 
 #[cfg(test)]
 mod tests {
