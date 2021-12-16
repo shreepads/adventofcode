@@ -9,7 +9,17 @@ pub fn calculate_total_syntaxerror_score(file_path: &String) -> u32 {
     let contents = fs::read_to_string(file_path)
         .expect("Something went wrong reading the file");
     
-    0
+    let mut total_syntaxerror_score = 0u32;
+
+    for line in contents.lines() {
+        total_syntaxerror_score += syntaxerror_score(line);
+    }
+
+    total_syntaxerror_score
+}
+
+fn syntaxerror_score(line: &str) -> u32 {
+    1
 }
 
 #[cfg(test)]

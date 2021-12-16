@@ -15,12 +15,6 @@ pub fn calculate_outputs_total(file_path: &String) -> u32 {
 
     load_data(&mut signal_patterns, &mut output_patterns, contents);
 
-    println!(
-        "Loaded {} signal patterns and {} output patterns",
-        signal_patterns.len(),
-        output_patterns.len()
-    );
-
     let mut outputs_total = 0u32;
 
     for i in 0..signal_patterns.len() {
