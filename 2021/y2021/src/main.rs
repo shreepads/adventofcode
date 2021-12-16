@@ -16,6 +16,8 @@ use day7_1;
 use day7_2;
 use day8_1;
 use day8_2;
+use day9_1;
+
 
 fn main() {
 
@@ -118,6 +120,11 @@ fn main() {
     // Day 8, #2
         println!("Day 8, #2: {}",
         day8_2::calculate_outputs_total(&String::from("resources/day8-1-input.txt"))
+    );
+
+    // Day 9, #1
+    println!("Day 9, #1: {}",
+        day9_1::calculate_risk_lowpoints(&String::from("resources/day9-1-input.txt"))
     );
 
 }
