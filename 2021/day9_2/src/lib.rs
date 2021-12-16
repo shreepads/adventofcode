@@ -13,6 +13,44 @@ pub fn top3_basins_product(file_path: &String) -> u32 {
 
     let mut grid : Vec<Vec<u8>> = Vec::new();
 
+    load_grid(&mut grid, contents);
+
+    //println!("Grid: \n {:?}", grid);
+
+    // Convert grid in graph by edges
+
+    let mut graph = Graph::new();
+
+    load_graph(&mut graph, &grid);
+
+    /*
+    println!("Graph nodes:");
+    println!("Graph node 1: {:?}", graph.nodes.get(&1).unwrap());
+    println!("Graph node 2: {:?}", graph.nodes.get(&2).unwrap());
+    println!("Graph node 99: {:?}", graph.nodes.get(&99).unwrap());
+    println!("Graph node 100: {:?}", graph.nodes.get(&100).unwrap());
+    //println!("Graph node 101: {:?}", graph.nodes.get(&101).unwrap());
+    println!("Graph node 102: {:?}", graph.nodes.get(&102).unwrap());
+    println!("Graph node 105: {:?}", graph.nodes.get(&105).unwrap());
+    println!("Graph node 199: {:?}", graph.nodes.get(&199).unwrap());
+    //println!("Graph node 200: {:?}", graph.nodes.get(&200).unwrap());
+    //println!("Graph node 9801: {:?}", graph.nodes.get(&9801).unwrap());
+    println!("Graph node 9802: {:?}", graph.nodes.get(&9802).unwrap());
+    //println!("Graph node 9899: {:?}", graph.nodes.get(&9899).unwrap());
+    println!("Graph node 9900: {:?}", graph.nodes.get(&9900).unwrap());
+    println!("Graph node 9901: {:?}", graph.nodes.get(&9901).unwrap());
+    println!("Graph node 9902: {:?}", graph.nodes.get(&9902).unwrap());
+    //println!("Graph node 9999: {:?}", graph.nodes.get(&9999).unwrap());
+    //println!("Graph node 10000: {:?}", graph.nodes.get(&10000).unwrap());
+    */
+
+    0u32
+
+}
+
+
+fn load_grid(grid: &mut Vec<Vec<u8>>, contents: String) {
+
     for (line_no, line_str) in contents.lines().enumerate() {
 
         if line_no == 0 {
@@ -35,11 +73,9 @@ pub fn top3_basins_product(file_path: &String) -> u32 {
 
     grid.push(vec![9; grid[0].len()]);
 
-    //println!("Grid: \n {:?}", grid);
+}
 
-    // Convert grid in graph by edges
-
-    let mut graph = Graph::new();
+fn load_graph(graph: &mut Graph, grid: &Vec<Vec<u8>>) {
 
     for (row_no, row) in grid.iter().enumerate() {
 
@@ -59,30 +95,9 @@ pub fn top3_basins_product(file_path: &String) -> u32 {
 
             // Assume a single disconnected point cannot be one of the 
             // 3 biggest basins
-            add_edges(&mut graph, &grid, row_no, col_no);
+            add_edges(graph, grid, row_no, col_no);
         }
     }
-
-    println!("Graph nodes:");
-    println!("Graph node 1: {:?}", graph.nodes.get(&1).unwrap());
-    println!("Graph node 2: {:?}", graph.nodes.get(&2).unwrap());
-    println!("Graph node 99: {:?}", graph.nodes.get(&99).unwrap());
-    println!("Graph node 100: {:?}", graph.nodes.get(&100).unwrap());
-    //println!("Graph node 101: {:?}", graph.nodes.get(&101).unwrap());
-    println!("Graph node 102: {:?}", graph.nodes.get(&102).unwrap());
-    println!("Graph node 105: {:?}", graph.nodes.get(&105).unwrap());
-    println!("Graph node 199: {:?}", graph.nodes.get(&199).unwrap());
-    //println!("Graph node 200: {:?}", graph.nodes.get(&200).unwrap());
-    //println!("Graph node 9801: {:?}", graph.nodes.get(&9801).unwrap());
-    println!("Graph node 9802: {:?}", graph.nodes.get(&9802).unwrap());
-    //println!("Graph node 9899: {:?}", graph.nodes.get(&9899).unwrap());
-    println!("Graph node 9900: {:?}", graph.nodes.get(&9900).unwrap());
-    println!("Graph node 9901: {:?}", graph.nodes.get(&9901).unwrap());
-    println!("Graph node 9902: {:?}", graph.nodes.get(&9902).unwrap());
-    //println!("Graph node 9999: {:?}", graph.nodes.get(&9999).unwrap());
-    //println!("Graph node 10000: {:?}", graph.nodes.get(&10000).unwrap());
-
-    0u32
 
 }
 
