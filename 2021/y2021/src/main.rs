@@ -17,6 +17,7 @@ use day7_2;
 use day8_1;
 use day8_2;
 use day9_1;
+use day9_2;
 
 fn main() {
     // Day 1, #1
@@ -124,4 +125,11 @@ fn main() {
         "Day 9, #1: {}",
         day9_1::calculate_risk_lowpoints(&String::from("resources/day9-1-input.txt"))
     );
+
+    // Day 9, #2
+    println!(
+        "Day 9, #2: {}",
+        day9_2::top3_basins_product(&String::from("resources/day9-1-input.txt"))
+    );
+    
 }
