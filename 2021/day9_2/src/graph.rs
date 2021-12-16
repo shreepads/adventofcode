@@ -2,17 +2,18 @@
 // SPDX-License-Identifier: MIT
 
 use std::collections::HashMap;
+use std::collections::HashSet;
 
 #[derive(Debug, Clone)]
 pub struct Node {
-    linked_nodes: Vec<u32>,
+    linked_nodes: HashSet<usize>,
     visited: bool,
 }
 
 impl Node {
     pub fn new() -> Node {
         Node {
-            linked_nodes: Vec::new(),
+            linked_nodes: HashSet::new(),
             visited: false,
         }
     }
@@ -20,7 +21,7 @@ impl Node {
 
 #[derive(Debug, Clone)]
 pub struct Graph {
-    nodes: HashMap<u32, Node>,
+    pub nodes: HashMap<usize, Node>,
 }
 
 impl Graph {
@@ -28,5 +29,29 @@ impl Graph {
         Graph {
             nodes: HashMap::new(),
         }
+    }
+
+    pub fn add_edge(&mut self, from_node_id: usize, to_node_id: usize, directed: bool) {
+
+        if !self.nodes.contains_key(&from_node_id) {
+            self.nodes.insert(from_node_id, Node::new());
+        }
+
+        if !self.nodes.contains_key(&to_node_id) {
+            self.nodes.insert(to_node_id, Node::new());
+        }
+
+        let from_node: &mut Node = self.nodes.get_mut(&from_node_id).unwrap();
+
+        from_node.linked_nodes.insert(to_node_id);
+
+        if !directed {
+
+            let to_node: &mut Node = self.nodes.get_mut(&to_node_id).unwrap();
+
+            to_node.linked_nodes.insert(from_node_id);
+    
+        }
+
     }
 }
