@@ -18,6 +18,7 @@ use day8_1;
 use day8_2;
 use day9_1;
 use day9_2;
+use day10_1;
 
 fn main() {
     // Day 1, #1
@@ -132,4 +133,9 @@ fn main() {
         day9_2::top3_basins_product(&String::from("resources/day9-1-input.txt"))
     );
     
+    // Day 10, #1
+    println!(
+        "Day 10, #1: {}",
+        day10_1::calculate_total_syntaxerror_score(&String::from("resources/day10-1-input.txt"))
+    );
 }
