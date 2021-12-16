@@ -68,6 +68,117 @@ fn find_output(signal_pattern: &mut HashMap<usize, HashSet<char>>,
 
     println!("Finding ouput with signal pattern {:?} and output pattern {:?}", signal_pattern, output_pattern);
 
+    // Deterministic logic to find the digit pattern match
+
+    let mut digit_pattern_map : HashMap<u8, &HashSet<char>> = HashMap::new();
+    let mut removal_keys : Vec<usize> = Vec::new();
+
+    // Find 1, 4, 7, 8 by length
+
+    let signal_pattern_clone1 = signal_pattern.clone(); // mut immut borrower check
+
+    for (key, signal) in signal_pattern_clone1.iter() {
+        match signal.len() {
+
+            2 => {
+                digit_pattern_map.insert(1, signal);
+                removal_keys.push(*key);
+            },
+            4 => {
+                digit_pattern_map.insert(4, signal);
+                removal_keys.push(*key);
+            },
+            3 => {
+                digit_pattern_map.insert(7, signal);
+                removal_keys.push(*key);
+            },
+            7 => {
+                digit_pattern_map.insert(8, signal);
+                removal_keys.push(*key);
+            },
+            _ => {},
+        }
+
+    }
+
+    for key in removal_keys.iter() {   // drain doesn't work
+        signal_pattern.remove(key);
+    }
+
+    // Find 3, 9, 6 by comparing with 1, 4, 7 respectively
+
+    let signal_pattern_clone2 = signal_pattern.clone(); // mut immut borrower check
+
+    for (key, signal) in signal_pattern_clone2.iter() {
+        match signal.len() {
+
+            5 => { // 3 superset of 1              
+                if signal.is_superset(digit_pattern_map.get(&1).unwrap()) {
+                    digit_pattern_map.insert(3, signal);
+                    removal_keys.push(*key);    
+                }
+            },
+            6 => { // 9, 6 compared to 4, 7 respectively
+
+                // 9 superset of 4
+                if signal.is_superset(digit_pattern_map.get(&4).unwrap()) {
+                    digit_pattern_map.insert(9, signal);
+                    removal_keys.push(*key);    
+                }         
+                // 6 not superset of 7
+                if !signal.is_superset(digit_pattern_map.get(&7).unwrap()) {
+                    digit_pattern_map.insert(6, signal);
+                    removal_keys.push(*key);    
+                }                 
+            },
+            _ => {},
+        }
+
+    }
+
+    for key in removal_keys.iter() {   // drain doesn't work
+        signal_pattern.remove(key);
+    }
+
+
+    // Find 0 by length, 2, 5 by comparing with 6 respectively
+
+    let signal_pattern_clone3 = signal_pattern.clone(); // mut immut borrower check
+
+    for (key, signal) in signal_pattern_clone3.iter() {
+        match signal.len() {
+
+            6 => {      
+                digit_pattern_map.insert(0, signal);
+                removal_keys.push(*key);    
+            },
+            5 => { // 2, 5 compared with 6
+
+                // 5 subset of 6
+                if signal.is_subset(digit_pattern_map.get(&6).unwrap()) {
+                    digit_pattern_map.insert(5, signal);
+                    removal_keys.push(*key);    
+                }         
+                // 2 not subset of 6
+                if !signal.is_subset(digit_pattern_map.get(&6).unwrap()) {
+                    digit_pattern_map.insert(2, signal);
+                    removal_keys.push(*key);    
+                }                 
+            },
+            _ => {},
+        }
+
+    }
+
+    for key in removal_keys.iter() {   // drain doesn't work
+        signal_pattern.remove(key);
+    }
+
+
+    println!("Found patterns: {:?}", digit_pattern_map);
+    println!("Remaining patterns: {:?}", signal_pattern);
+
+
     0u32
 }
 
