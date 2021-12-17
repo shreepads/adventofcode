@@ -19,8 +19,71 @@ pub fn calculate_total_syntaxerror_score(file_path: &String) -> u32 {
 }
 
 fn syntaxerror_score(line: &str) -> u32 {
-    1
+    
+    let mut stack: Vec<char> = Vec::new();
+
+    for chr in line.chars() {
+        match chr {
+            '(' | '[' | '{' | '<' => stack.push(chr),
+            ')' | ']' | '}' | '>' => {
+                let pop = match stack.pop() {
+                    Some(x) => x,
+                    None    => '$',   // incomplete line ignore
+                };
+
+                if pop == '$' {
+                    println!("Incomplete line (missing open): {}", line);
+                    return 0;
+                }
+
+                if !valid_close(pop, chr) {
+                    return invalid_close_score(chr);
+                }
+            },
+            _ => println!("Invalid chr: {}", chr),
+        }
+    }
+
+    if stack.len() == 0 {
+        println!("COMPLETE line: {}", line);
+    }
+
+    0
 }
+
+fn valid_close(open: char, close: char) -> bool {
+    if open == '(' &&  close == ')' {
+        return true;
+    }
+
+    if open == '[' &&  close == ']' {
+        return true;
+    }
+
+    if open == '{' &&  close == '}' {
+        return true;
+    }
+
+    if open == '<' &&  close == '>' {
+        return true;
+    }
+
+    false
+}
+
+fn invalid_close_score(close: char) -> u32 {
+    match close {
+        ')' => 3,
+        ']' => 57,
+        '}' => 1197,
+        '>' => 25137,
+        _   => {
+            println!("Invalid close: {}", close);
+            u32::MAX
+        }
+    }
+}
+
 
 #[cfg(test)]
 mod tests {
