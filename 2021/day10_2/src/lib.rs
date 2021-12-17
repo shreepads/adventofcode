@@ -3,29 +3,33 @@
 
 use std::fs;
 
-pub fn median_completion_score(file_path: &String) -> u32 {
+pub fn median_completion_score(file_path: &String) -> u64 {
     println!("Loading data from file:{}", file_path);
 
-    let contents = fs::read_to_string(file_path).expect("Something went wrong reading the file");
+    let contents = fs::read_to_string(file_path)
+        .expect(&format!("Something went wrong reading the file {}", file_path));
 
-    let mut completion_scores: Vec<u32> = Vec::new();
+    let mut completion_scores: Vec<u64> = Vec::new();
 
-    for line in contents.lines() {
-        match completion_score(line) {
+    for (i, line) in contents.lines().enumerate() {
+        match completion_score(i, line) {
             Some(score) => completion_scores.push(score),
-            None        => {}  // ignore complete or corrupt lines,
+            None        => {},  
         }
     }
 
-    println!("Completion scores: {:?}", completion_scores);
     calculate_median(&mut completion_scores)
 }
 
-fn completion_score(line: &str) -> Option<u32> {
+fn completion_score(i: usize, line: &str) -> Option<u64> {
 
     let mut stack: Vec<char> = Vec::new();
 
     for chr in line.chars() {
+        if i == 28 {
+            //println!("Stack: {:?}", stack);
+        }
+
         match chr {
             '(' | '[' | '{' | '<' => stack.push(chr),
             ')' | ']' | '}' | '>' => {
@@ -39,7 +43,7 @@ fn completion_score(line: &str) -> Option<u32> {
                     return None;
                 }
 
-                if !valid_close(pop, chr) {
+                if !valid_close(pop, chr) { // corrupt line ignore
                     return None;
                 }
             }
@@ -57,11 +61,11 @@ fn completion_score(line: &str) -> Option<u32> {
 
     stack.reverse();
     
-    Some(stack.iter().fold(0u32, |acc, x| acc*5 + completion_points(*x)))
+    Some(stack.iter().fold(0u64, |acc, x| acc*5 + completion_points(*x)))
 
 }
 
-fn completion_points(open: char) -> u32 {
+fn completion_points(open: char) -> u64 {
     // Completion points for closing open chars popped from the stack
     match open {
         '(' => 1,
@@ -70,7 +74,7 @@ fn completion_points(open: char) -> u32 {
         '<' => 4,
         _ => {
             println!("Invalid open: {}", open);
-            u32::MAX
+            u64::MAX
         }
     }
 }
@@ -96,22 +100,25 @@ fn valid_close(open: char, close: char) -> bool {
 }
 
 
-// From Day 7 #1
-fn calculate_median(numbers: &mut Vec<u32>) -> u32 {
+// FIXED - from Day 7 #1
+fn calculate_median(numbers: &mut Vec<u64>) -> u64 {
     numbers.sort_unstable();
 
     if numbers.len() % 2 == 1 {
-        return numbers[numbers.len() / 2 + 1];
+        return numbers[((numbers.len() + 1) / 2) - 1];
     }
 
-    return (numbers[numbers.len() / 2] + numbers[numbers.len() / 2 + 1]) / 2;
+    return (numbers[(numbers.len() / 2) - 1] + numbers[((numbers.len() + 1) / 2) - 1]) / 2;
 }
 
 #[cfg(test)]
 mod tests {
+
+    use super::*;
+
     #[test]
-    fn it_works() {
-        let result = 2 + 2;
-        assert_eq!(result, 4);
+    fn day10_2_works() {
+        let result = median_completion_score(&String::from("../resources/tests/day10-2-testdata.txt"));
+        assert_eq!(result, 288957);
     }
 }
