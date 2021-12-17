@@ -17,12 +17,84 @@ pub fn median_completion_score(file_path: &String) -> u32 {
         }
     }
 
+    println!("Completion scores: {:?}", completion_scores);
     calculate_median(&mut completion_scores)
 }
 
 fn completion_score(line: &str) -> Option<u32> {
-    Some(3)
+
+    let mut stack: Vec<char> = Vec::new();
+
+    for chr in line.chars() {
+        match chr {
+            '(' | '[' | '{' | '<' => stack.push(chr),
+            ')' | ']' | '}' | '>' => {
+                let pop = match stack.pop() {
+                    Some(x) => x,
+                    None => '$', // incomplete line ignore
+                };
+
+                if pop == '$' {
+                    println!("Incomplete line (missing open): {}", line);
+                    return None;
+                }
+
+                if !valid_close(pop, chr) {
+                    return None;
+                }
+            }
+            _ => {
+                println!("Invalid chr: {}", chr);
+                return None;
+            }
+        }
+    }
+
+    if stack.len() == 0 {
+        println!("COMPLETE line: {}", line);
+        return None;
+    }
+
+    stack.reverse();
+    
+    Some(stack.iter().fold(0u32, |acc, x| acc*5 + completion_points(*x)))
+
 }
+
+fn completion_points(open: char) -> u32 {
+    // Completion points for closing open chars popped from the stack
+    match open {
+        '(' => 1,
+        '[' => 2,
+        '{' => 3,
+        '<' => 4,
+        _ => {
+            println!("Invalid open: {}", open);
+            u32::MAX
+        }
+    }
+}
+
+fn valid_close(open: char, close: char) -> bool {
+    if open == '(' && close == ')' {
+        return true;
+    }
+
+    if open == '[' && close == ']' {
+        return true;
+    }
+
+    if open == '{' && close == '}' {
+        return true;
+    }
+
+    if open == '<' && close == '>' {
+        return true;
+    }
+
+    false
+}
+
 
 // From Day 7 #1
 fn calculate_median(numbers: &mut Vec<u32>) -> u32 {
