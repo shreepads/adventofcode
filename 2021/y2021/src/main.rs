@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 use day10_1;
+use day10_2;
 use day1_1;
 use day1_2;
 use day2_1;
@@ -137,5 +138,11 @@ fn main() {
     println!(
         "Day 10, #1: {}",
         day10_1::calculate_total_syntaxerror_score(&String::from("resources/day10-1-input.txt"))
+    );
+
+    // Day 10, #2
+    println!(
+        "Day 10, #2: {}",
+        day10_2::median_completion_score(&String::from("resources/day10-1-input.txt"))
     );
 }
