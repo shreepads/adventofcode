@@ -1,6 +1,7 @@
 // Copyright (c) 2021 Shreepad Shukla
 // SPDX-License-Identifier: MIT
 
+use day10_1;
 use day1_1;
 use day1_2;
 use day2_1;
@@ -18,7 +19,6 @@ use day8_1;
 use day8_2;
 use day9_1;
 use day9_2;
-use day10_1;
 
 fn main() {
     // Day 1, #1
@@ -132,7 +132,7 @@ fn main() {
         "Day 9, #2: {}",
         day9_2::top3_basins_product(&String::from("resources/day9-1-input.txt"))
     );
-    
+
     // Day 10, #1
     println!(
         "Day 10, #1: {}",

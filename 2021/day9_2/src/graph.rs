@@ -32,7 +32,6 @@ impl Graph {
     }
 
     pub fn add_edge(&mut self, from_node_id: usize, to_node_id: usize, directed: bool) {
-
         if !self.nodes.contains_key(&from_node_id) {
             self.nodes.insert(from_node_id, Node::new());
         }
@@ -46,17 +45,13 @@ impl Graph {
         from_node.linked_nodes.insert(to_node_id);
 
         if !directed {
-
             let to_node: &mut Node = self.nodes.get_mut(&to_node_id).unwrap();
 
             to_node.linked_nodes.insert(from_node_id);
-    
         }
-
     }
 
     pub fn connected_size(&mut self, node_id: usize) -> u32 {
-
         let node: &mut Node = self.nodes.get_mut(&node_id).unwrap();
 
         if node.visited {
@@ -71,6 +66,5 @@ impl Graph {
         }
 
         size
-
     }
 }

@@ -6,9 +6,8 @@ use std::fs;
 pub fn calculate_total_syntaxerror_score(file_path: &String) -> u32 {
     println!("Loading data from file:{}", file_path);
 
-    let contents = fs::read_to_string(file_path)
-        .expect("Something went wrong reading the file");
-    
+    let contents = fs::read_to_string(file_path).expect("Something went wrong reading the file");
+
     let mut total_syntaxerror_score = 0u32;
 
     for line in contents.lines() {
@@ -19,7 +18,6 @@ pub fn calculate_total_syntaxerror_score(file_path: &String) -> u32 {
 }
 
 fn syntaxerror_score(line: &str) -> u32 {
-    
     let mut stack: Vec<char> = Vec::new();
 
     for chr in line.chars() {
@@ -28,7 +26,7 @@ fn syntaxerror_score(line: &str) -> u32 {
             ')' | ']' | '}' | '>' => {
                 let pop = match stack.pop() {
                     Some(x) => x,
-                    None    => '$',   // incomplete line ignore
+                    None => '$', // incomplete line ignore
                 };
 
                 if pop == '$' {
@@ -39,7 +37,7 @@ fn syntaxerror_score(line: &str) -> u32 {
                 if !valid_close(pop, chr) {
                     return invalid_close_score(chr);
                 }
-            },
+            }
             _ => println!("Invalid chr: {}", chr),
         }
     }
@@ -52,19 +50,19 @@ fn syntaxerror_score(line: &str) -> u32 {
 }
 
 fn valid_close(open: char, close: char) -> bool {
-    if open == '(' &&  close == ')' {
+    if open == '(' && close == ')' {
         return true;
     }
 
-    if open == '[' &&  close == ']' {
+    if open == '[' && close == ']' {
         return true;
     }
 
-    if open == '{' &&  close == '}' {
+    if open == '{' && close == '}' {
         return true;
     }
 
-    if open == '<' &&  close == '>' {
+    if open == '<' && close == '>' {
         return true;
     }
 
@@ -77,13 +75,12 @@ fn invalid_close_score(close: char) -> u32 {
         ']' => 57,
         '}' => 1197,
         '>' => 25137,
-        _   => {
+        _ => {
             println!("Invalid close: {}", close);
             u32::MAX
         }
     }
 }
-
 
 #[cfg(test)]
 mod tests {
