@@ -3,6 +3,7 @@
 
 use day10_1;
 use day10_2;
+use day11_1;
 use day1_1;
 use day1_2;
 use day2_1;
@@ -145,4 +146,11 @@ fn main() {
         "Day 10, #2: {}",
         day10_2::median_completion_score(&String::from("resources/day10-1-input.txt"))
     );
+
+    // Day 11, #1
+    println!(
+        "Day 11, #1: {}",
+        day11_1::calculate_total_flashes(&String::from("resources/day11-1-input.txt"), 10)
+    );
+
 }
