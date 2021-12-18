@@ -150,7 +150,7 @@ fn main() {
     // Day 11, #1
     println!(
         "Day 11, #1: {}",
-        day11_1::calculate_total_flashes(&String::from("resources/day11-1-input.txt"), 10)
+        day11_1::calculate_total_flashes(&String::from("resources/day11-1-input.txt"), 100)
     );
 
 }
