@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT
 
 use std::fs;
-use std::collections::HashMap;
 use std::collections::HashSet;
 
 #[derive(Debug, Clone, PartialEq, Copy)]
@@ -25,9 +24,6 @@ pub fn calculate_visible_dots(file_path: &String, folds: usize) -> usize {
 
     load_dots_instructions(&mut dot_posns, &mut instructions, contents);
 
-    println!("{} dots: {:?}", dot_posns.len(), dot_posns);
-    println!("{} instructions: {:?}", instructions.len(), instructions);
-
     for instruction in instructions.iter().take(folds) {
         fold(&mut dot_posns, *instruction);
     }
@@ -36,6 +32,37 @@ pub fn calculate_visible_dots(file_path: &String, folds: usize) -> usize {
 }
 
 fn fold(dot_posns: &mut HashSet<(u16, u16)>, instruction: (FoldDirection, u16)) {
+
+    let mut fold_dot_posns: Vec<(u16, u16)> = Vec::new();
+
+    let (fold_dir, fold_posn) = instruction;
+
+    for (x, y) in dot_posns.iter() {
+        if fold_dir == FoldDirection::Up {
+            if *y >= fold_posn {
+                fold_dot_posns.push((*x, *y));
+            }
+        }
+
+        if fold_dir == FoldDirection::Left {
+            if *x >= fold_posn {
+                fold_dot_posns.push((*x, *y));
+            }
+        }
+    }
+
+    for (x, y) in fold_dot_posns.iter() {
+        
+        dot_posns.remove( &(*x, *y) );
+
+        if fold_dir == FoldDirection::Up {
+            dot_posns.insert( (*x, fold_posn - (*y - fold_posn)) );
+        }
+
+        if fold_dir == FoldDirection::Left {
+            dot_posns.insert( (fold_posn - (*x - fold_posn) , *y) );
+        }
+    }
 
 }
 
@@ -78,9 +105,16 @@ fn load_dots_instructions(dot_posns: &mut HashSet<(u16, u16)>,
 
 #[cfg(test)]
 mod tests {
+
+    use super::*;
+
     #[test]
-    fn it_works() {
-        let result = 2 + 2;
-        assert_eq!(result, 4);
+    fn day13_1_works() {
+
+        let result =
+            calculate_visible_dots(&String::from("../resources/tests/day13-1-testdata.txt"), 1);
+
+        assert_eq!(result, 17);
+
     }
 }
