@@ -137,14 +137,13 @@ fn main() {
         "Day 11, #2: {}",
         day11_2::first_all_flash(&String::from("resources/day11-1-input.txt"), 1000)
     );
-    
+
     // Day 12, #1
     println!(
         "Day 12, #1: {}",
         day12_1::calculate_total_paths(&String::from("resources/day12-1-input.txt"))
     );
 
-        
     // Day 12, #2
     println!(
         "Day 12, #2: {}",
