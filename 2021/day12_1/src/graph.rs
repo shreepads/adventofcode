@@ -57,11 +57,11 @@ impl Graph {
     }
 
     pub fn add_edge(&mut self, from_node_name: &str, to_node_name: &str, directed: bool) {
-        if !self.nodes.contains_key(&from_node_name.to_string()) {
+        if !self.nodes.contains_key(from_node_name) {
             self.nodes.insert(from_node_name.to_string(), Node::new(from_node_name.to_string()));
         }
 
-        if !self.nodes.contains_key(&to_node_name.to_string()) {
+        if !self.nodes.contains_key(to_node_name) {
             self.nodes.insert(to_node_name.to_string(), Node::new(to_node_name.to_string()));
         }
 
@@ -74,5 +74,37 @@ impl Graph {
 
             to_node.linked_nodes.insert(from_node_name.to_string());
         }
+    }
+
+    pub fn all_paths(self, from_node_name: &str, to_node_name: &str) -> Option<Vec<Vec<String>>> {
+
+        if !self.nodes.contains_key(from_node_name) {
+            return None   // No paths between unknown nodes
+        }
+
+        if !self.nodes.contains_key(to_node_name) {
+            return None   // No paths between unknown nodes
+        }
+
+        // Count of visited nodes
+        let mut visited_counts : HashMap<String, u8> = HashMap::new();
+        for node_name in self.nodes.keys() {
+            visited_counts.insert(node_name.to_string(), 0);
+        }
+
+        let mut paths: Vec<Vec<String>> = Vec::new();
+        let mut current_path: Vec<String> = Vec::new();
+
+        self.find_all_paths(from_node_name, to_node_name, &mut visited_counts, &mut current_path, &mut paths);
+
+        Some(paths)
+
+    }
+
+    fn find_all_paths(self, from_node_name: &str, to_node_name: &str, 
+        visited_counts: &mut HashMap<String, u8>,
+        current_path: &mut Vec<String>, 
+        paths: &mut Vec<Vec<String>>) {
+
     }
 }

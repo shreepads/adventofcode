@@ -16,11 +16,14 @@ pub fn calculate_total_paths(file_path: &String) -> u32 {
 
     load_graph(&mut graph, contents);
 
-    0
+    println!("Graph: {:?}", graph);
+
+    graph.all_paths("start", "end").unwrap().len() as u32
+
 }
 
 fn load_graph(graph: &mut Graph, contents: String) {
-    for (row_no, row) in contents.lines().enumerate() {
+    for (_, row) in contents.lines().enumerate() {
 
         let mut edges = row.split("-");
 
