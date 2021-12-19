@@ -1,7 +1,7 @@
 // Copyright (c) 2021 Shreepad Shukla
 // SPDX-License-Identifier: MIT
 
-mod graph;
+pub mod graph;
 
 use std::fs;
 use graph::Graph;

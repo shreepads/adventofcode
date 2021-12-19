@@ -177,5 +177,11 @@ fn main() {
         day15_1::calculate_least_risk_path(&String::from("resources/day15-1-input.txt"))
     );
 
+    // Day 15, #2
+    println!(
+        "Day 15, #2: {}",
+        day15_2::calculate_least_risk_path(&String::from("resources/day15-1-input.txt"))
+    );
+
 
 }
