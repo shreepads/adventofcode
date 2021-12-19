@@ -19,13 +19,9 @@ pub fn calculate_least_risk_path(file_path: &String) -> u32 {
 
     load_grid(&mut grid, contents);
 
-    //print_grid(&grid);
-
     let mut graph = Graph::new();
 
     load_graph(&mut graph, &grid);
-
-    //graph.print();
 
     graph.shortest_path_weight(1, 10000).unwrap()
 
@@ -75,7 +71,7 @@ fn load_grid(grid: &mut[ [u32; 102] ; 102], contents: String) {
     }
 }
 
-fn print_grid(grid: &[ [u32; 102] ; 102]) {
+fn _print_grid(grid: &[ [u32; 102] ; 102]) {
     for row in grid.iter() {
         for digit in row.iter() {
             if *digit == u32::MAX {
