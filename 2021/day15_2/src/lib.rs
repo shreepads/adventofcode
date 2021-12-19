@@ -4,9 +4,7 @@
 use day15_1::graph::Graph;
 use std::fs;
 
-
 pub fn calculate_least_risk_path(file_path: &String) -> u32 {
-
     println!("Loading data from file:{}", file_path);
 
     let contents = fs::read_to_string(file_path).expect(&format!(
@@ -14,7 +12,7 @@ pub fn calculate_least_risk_path(file_path: &String) -> u32 {
         file_path
     ));
 
-    let mut grid: [ [u32; 502] ; 502] = [ [u32::MAX; 502] ; 502];
+    let mut grid: [[u32; 502]; 502] = [[u32::MAX; 502]; 502];
 
     load_grid(&mut grid, contents);
 
@@ -23,11 +21,9 @@ pub fn calculate_least_risk_path(file_path: &String) -> u32 {
     load_graph(&mut graph, &grid);
 
     graph.shortest_path_weight(1, 250000).unwrap()
-
 }
 
-fn load_graph(graph: &mut Graph, grid: &[ [u32; 502] ; 502]) {
-
+fn load_graph(graph: &mut Graph, grid: &[[u32; 502]; 502]) {
     for row_no in 1..=500 {
         for col_no in 1..=500 {
             let multiplier = 500;
@@ -36,7 +32,11 @@ fn load_graph(graph: &mut Graph, grid: &[ [u32; 502] ; 502]) {
             // check above
             let above_weight: u32 = grid[row_no - 1][col_no];
             if above_weight != u32::MAX {
-                graph.add_edge(from_node_id, col_no + (row_no - 2) * multiplier, above_weight);
+                graph.add_edge(
+                    from_node_id,
+                    col_no + (row_no - 2) * multiplier,
+                    above_weight,
+                );
             }
 
             // check below
@@ -48,20 +48,27 @@ fn load_graph(graph: &mut Graph, grid: &[ [u32; 502] ; 502]) {
             // check right
             let right_weight: u32 = grid[row_no][col_no + 1];
             if right_weight != u32::MAX {
-                graph.add_edge(from_node_id, col_no + 1 + (row_no - 1) * multiplier, right_weight);
+                graph.add_edge(
+                    from_node_id,
+                    col_no + 1 + (row_no - 1) * multiplier,
+                    right_weight,
+                );
             }
 
             // check left
             let left_weight: u32 = grid[row_no][col_no - 1];
             if left_weight != u32::MAX {
-                graph.add_edge(from_node_id, col_no - 1 + (row_no - 1) * multiplier, left_weight);
+                graph.add_edge(
+                    from_node_id,
+                    col_no - 1 + (row_no - 1) * multiplier,
+                    left_weight,
+                );
             }
-
         }
     }
 }
 
-fn load_grid(grid: &mut[ [u32; 502] ; 502], contents: String) {
+fn load_grid(grid: &mut [[u32; 502]; 502], contents: String) {
     for (row_no, line_str) in contents.lines().enumerate() {
         for (col_no, digit_chr) in line_str.chars().enumerate() {
             let digit: u32 = digit_chr.to_digit(10).unwrap().try_into().unwrap();
@@ -76,11 +83,9 @@ fn load_grid(grid: &mut[ [u32; 502] ; 502], contents: String) {
                     grid[point_row_no][point_col_no] = point_digit;
                 }
             }
-            
         }
     }
 }
-
 
 #[cfg(test)]
 mod tests {

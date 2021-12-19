@@ -1,12 +1,12 @@
 // Copyright (c) 2021 Shreepad Shukla
 // SPDX-License-Identifier: MIT
 
-use std::fs;
 use std::collections::HashSet;
+use std::fs;
 
 #[derive(Debug, Clone, PartialEq, Copy)]
 enum FoldDirection {
-    Up, 
+    Up,
     Left,
     Invalid,
 }
@@ -19,7 +19,7 @@ pub fn calculate_visible_dots(file_path: &String, folds: usize, print: bool) -> 
         file_path
     ));
 
-    let mut dot_posns : HashSet<(u16, u16)> = HashSet::new();
+    let mut dot_posns: HashSet<(u16, u16)> = HashSet::new();
     let mut instructions: Vec<(FoldDirection, u16)> = Vec::new();
 
     load_dots_instructions(&mut dot_posns, &mut instructions, contents);
@@ -36,13 +36,12 @@ pub fn calculate_visible_dots(file_path: &String, folds: usize, print: bool) -> 
 }
 
 fn print_paper(dot_posns: &HashSet<(u16, u16)>) {
-
-    let max_x = dot_posns.iter().map(| (x,_) |  x).max().unwrap();
-    let max_y = dot_posns.iter().map(| (_,y) |  y).max().unwrap();
+    let max_x = dot_posns.iter().map(|(x, _)| x).max().unwrap();
+    let max_y = dot_posns.iter().map(|(_, y)| y).max().unwrap();
 
     for y in 0..=*max_y {
         for x in 0..=*max_x {
-            if dot_posns.contains( &(x, y) ) {
+            if dot_posns.contains(&(x, y)) {
                 print!("*");
             } else {
                 print!(" ");
@@ -53,7 +52,6 @@ fn print_paper(dot_posns: &HashSet<(u16, u16)>) {
 }
 
 fn fold(dot_posns: &mut HashSet<(u16, u16)>, instruction: (FoldDirection, u16)) {
-
     let mut fold_dot_posns: Vec<(u16, u16)> = Vec::new();
 
     let (fold_dir, fold_posn) = instruction;
@@ -73,27 +71,26 @@ fn fold(dot_posns: &mut HashSet<(u16, u16)>, instruction: (FoldDirection, u16)) 
     }
 
     for (x, y) in fold_dot_posns.iter() {
-        
-        dot_posns.remove( &(*x, *y) );
+        dot_posns.remove(&(*x, *y));
 
         if fold_dir == FoldDirection::Up {
-            dot_posns.insert( (*x, fold_posn - (*y - fold_posn)) );
+            dot_posns.insert((*x, fold_posn - (*y - fold_posn)));
         }
 
         if fold_dir == FoldDirection::Left {
-            dot_posns.insert( (fold_posn - (*x - fold_posn) , *y) );
+            dot_posns.insert((fold_posn - (*x - fold_posn), *y));
         }
     }
-
 }
 
-fn load_dots_instructions(dot_posns: &mut HashSet<(u16, u16)>, 
-    instructions: &mut Vec<(FoldDirection, u16)>, contents: String) {
-
+fn load_dots_instructions(
+    dot_posns: &mut HashSet<(u16, u16)>,
+    instructions: &mut Vec<(FoldDirection, u16)>,
+    contents: String,
+) {
     let mut load_instructions = false;
 
     for line in contents.lines() {
-        
         // Single line divides points from instructions
         if line.trim().len() == 0 {
             load_instructions = true;
@@ -112,10 +109,10 @@ fn load_dots_instructions(dot_posns: &mut HashSet<(u16, u16)>,
             let fold_dir = match instruction.next().unwrap().to_string().pop() {
                 Some('x') => FoldDirection::Left,
                 Some('y') => FoldDirection::Up,
-                _         => {
+                _ => {
                     println!("Invalid instruction: {}", line);
                     FoldDirection::Invalid
-                },
+                }
             };
 
             let fold_point = instruction.next().unwrap().parse::<u16>().unwrap();
@@ -131,11 +128,12 @@ mod tests {
 
     #[test]
     fn day13_1_works() {
-
-        let result =
-            calculate_visible_dots(&String::from("../resources/tests/day13-1-testdata.txt"), 1, false);
+        let result = calculate_visible_dots(
+            &String::from("../resources/tests/day13-1-testdata.txt"),
+            1,
+            false,
+        );
 
         assert_eq!(result, 17);
-
     }
 }
