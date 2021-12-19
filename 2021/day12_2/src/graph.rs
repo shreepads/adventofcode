@@ -82,22 +82,33 @@ impl Graph {
             return None   // No paths between unknown nodes
         }
 
-        // Count of visited nodes
-        let mut visited_counts : HashMap<String, u8> = HashMap::new();
-        for node_name in self.nodes.keys() {
-            visited_counts.insert(node_name.to_string(), 0);
+        let mut paths: Vec<Vec<String>> = Vec::new();
+
+        // Count of visited nodes with each given Small visited twice
+        for (small_node_name, _) in self.nodes.iter()
+            .filter( |(_, node)| node.node_type == NodeType::Small) {
+
+            let mut visited_counts : HashMap<String, u8> = HashMap::new();
+            for node_name in self.nodes.keys() {
+                visited_counts.insert(node_name.to_string(), 0);
+            }
+            
+            let mut current_path: Vec<String> = Vec::new();
+
+            self.find_all_paths(from_node_name, to_node_name, small_node_name,
+                &mut visited_counts, &mut current_path, &mut paths);
+
         }
 
-        let mut paths: Vec<Vec<String>> = Vec::new();
-        let mut current_path: Vec<String> = Vec::new();
-
-        self.find_all_paths(from_node_name, to_node_name, &mut visited_counts, &mut current_path, &mut paths);
+        paths.sort_unstable();
+        paths.dedup();
 
         Some(paths)
 
     }
 
-    fn find_all_paths(&self, from_node_name: &str, to_node_name: &str, 
+
+    fn find_all_paths(&self, from_node_name: &str, to_node_name: &str, small_node_name: &str,
         visited_counts: &mut HashMap<String, u8>,
         current_path: &mut Vec<String>, 
         paths: &mut Vec<Vec<String>>) {
@@ -106,9 +117,25 @@ impl Graph {
         // deref and re-insert to prevent borrow problems
         let from_node_visit_count = *visited_counts.get(from_node_name).unwrap();
 
-        if from_node.node_type != NodeType::Big  &&  from_node_visit_count > 0 {
+        if from_node.node_type == NodeType::Start  &&  from_node_visit_count > 0 {
             return;
         }
+
+        if from_node.node_type == NodeType::End  &&  from_node_visit_count > 0 {
+            return;
+        }
+
+        if from_node.node_type == NodeType::Small {
+            // Special small node can be visited twice others once
+            if from_node_name == small_node_name  &&  from_node_visit_count > 1 {
+                return;
+            }
+            
+            if from_node_name != small_node_name  && from_node_visit_count > 0 {
+                return;
+            }
+        }
+
 
         if from_node_name == to_node_name {
             // reached the end
@@ -121,7 +148,7 @@ impl Graph {
 
         // visit all linked nodes recursively
         for linked_node_name in from_node.linked_nodes.clone().iter() {
-            self.find_all_paths(linked_node_name, to_node_name,
+            self.find_all_paths(linked_node_name, to_node_name, small_node_name,
                 visited_counts, current_path, paths);
         }
 
