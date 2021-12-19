@@ -4,7 +4,7 @@
 use std::collections::HashMap;
 use std::collections::HashSet;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum NodeType {
     Start,
     Big,
@@ -101,10 +101,40 @@ impl Graph {
 
     }
 
-    fn find_all_paths(self, from_node_name: &str, to_node_name: &str, 
+    fn find_all_paths(&self, from_node_name: &str, to_node_name: &str, 
         visited_counts: &mut HashMap<String, u8>,
         current_path: &mut Vec<String>, 
         paths: &mut Vec<Vec<String>>) {
 
+        let from_node = self.nodes.get(from_node_name).unwrap();
+        let from_node_visit_count = *visited_counts.get(from_node_name).unwrap();
+
+        if from_node.node_type != NodeType::Big  &&  from_node_visit_count > 0 {
+            return;
+        }
+
+        visited_counts.insert(from_node_name.to_string(), from_node_visit_count + 1);
+        current_path.push(from_node_name.to_string());
+
+        if from_node_name == to_node_name {
+            // reached the end
+            paths.push(current_path.to_vec());
+            visited_counts.insert(from_node_name.to_string(), from_node_visit_count);
+            current_path.pop();
+            return;
+        }
+
+        // visit all linked nodes recursively
+        for linked_node_name in from_node.linked_nodes.clone().iter() {
+            self.find_all_paths(linked_node_name, to_node_name,
+                visited_counts, current_path, paths);
+        }
+
+        // Clear from_node from path, visit count
+        visited_counts.insert(from_node_name.to_string(), from_node_visit_count);
+        current_path.pop();
+
+        return;
+   
     }
 }

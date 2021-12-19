@@ -16,8 +16,6 @@ pub fn calculate_total_paths(file_path: &String) -> u32 {
 
     load_graph(&mut graph, contents);
 
-    println!("Graph: {:?}", graph);
-
     graph.all_paths("start", "end").unwrap().len() as u32
 
 }
