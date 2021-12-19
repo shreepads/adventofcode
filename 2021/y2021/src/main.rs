@@ -1,28 +1,6 @@
 // Copyright (c) 2021 Shreepad Shukla
 // SPDX-License-Identifier: MIT
 
-use day10_1;
-use day10_2;
-use day11_1;
-use day11_2;
-use day1_1;
-use day1_2;
-use day2_1;
-use day3_1;
-use day3_2;
-use day4_1;
-use day4_2;
-use day5_1;
-use day5_2;
-use day6_1;
-use day6_2;
-use day7_1;
-use day7_2;
-use day8_1;
-use day8_2;
-use day9_1;
-use day9_2;
-
 fn main() {
     // Day 1, #1
     println!(
@@ -164,5 +142,12 @@ fn main() {
     println!(
         "Day 12, #1: {}",
         day12_1::calculate_total_paths(&String::from("resources/day12-1-input.txt"))
+    );
+
+        
+    // Day 12, #2
+    println!(
+        "Day 12, #2: {}",
+        day12_2::calculate_total_paths(&String::from("resources/day12-1-input.txt"))
     );
 }
