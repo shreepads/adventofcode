@@ -15,9 +15,7 @@ pub enum NodeType {
 #[derive(Debug, Clone)]
 pub struct Node {
     linked_nodes: HashSet<String>,
-    visited: bool,
     node_type: NodeType,
-    node_name: String,
 }
 
 impl Node {
@@ -37,9 +35,7 @@ impl Node {
         
         Node {
             linked_nodes: HashSet::new(),
-            visited: false,
             node_type: node_type,
-            node_name: name,
         }
     }
 }
@@ -107,22 +103,21 @@ impl Graph {
         paths: &mut Vec<Vec<String>>) {
 
         let from_node = self.nodes.get(from_node_name).unwrap();
+        // deref and re-insert to prevent borrow problems
         let from_node_visit_count = *visited_counts.get(from_node_name).unwrap();
 
         if from_node.node_type != NodeType::Big  &&  from_node_visit_count > 0 {
             return;
         }
 
-        visited_counts.insert(from_node_name.to_string(), from_node_visit_count + 1);
-        current_path.push(from_node_name.to_string());
-
         if from_node_name == to_node_name {
             // reached the end
             paths.push(current_path.to_vec());
-            visited_counts.insert(from_node_name.to_string(), from_node_visit_count);
-            current_path.pop();
             return;
         }
+
+        visited_counts.insert(from_node_name.to_string(), from_node_visit_count + 1);
+        current_path.push(from_node_name.to_string());
 
         // visit all linked nodes recursively
         for linked_node_name in from_node.linked_nodes.clone().iter() {
