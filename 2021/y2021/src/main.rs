@@ -170,4 +170,12 @@ fn main() {
         day14_1::calculate_element_diff(&String::from("resources/day14-1-input.txt"), 10)
     );
 
+
+    // Day 15, #1
+    println!(
+        "Day 15, #1: {}",
+        day15_1::calculate_least_risk_path(&String::from("resources/day15-1-input.txt"))
+    );
+
+
 }
