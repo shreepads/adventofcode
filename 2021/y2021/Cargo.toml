@@ -31,3 +31,4 @@ day11_2 = { path = "../day11_2" }
 day12_1 = { path = "../day12_1" }
 day12_2 = { path = "../day12_2" }
 day13_1 = { path = "../day13_1" }
+day14_1 = { path = "../day14_1" }

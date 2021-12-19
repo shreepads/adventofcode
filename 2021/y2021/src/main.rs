@@ -163,4 +163,11 @@ fn main() {
         "Day 13, #3: {}",
         day13_1::calculate_visible_dots(&String::from("resources/day13-1-input.txt"), 12, true)
     );    
+
+    // Day 14, #1
+    println!(
+        "Day 14, #1: {}",
+        day14_1::calculate_element_diff(&String::from("resources/day14-1-input.txt"), 10)
+    );
+
 }
