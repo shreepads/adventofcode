@@ -29,10 +29,27 @@ pub fn calculate_visible_dots(file_path: &String, folds: usize, print: bool) -> 
     }
 
     if print {
-        println!("Print grid here");
+        print_paper(&dot_posns);
     }
 
     dot_posns.len()
+}
+
+fn print_paper(dot_posns: &HashSet<(u16, u16)>) {
+
+    let max_x = dot_posns.iter().map(| (x,_) |  x).max().unwrap();
+    let max_y = dot_posns.iter().map(| (_,y) |  y).max().unwrap();
+
+    for y in 0..=*max_y {
+        for x in 0..=*max_x {
+            if dot_posns.contains( &(x, y) ) {
+                print!("*");
+            } else {
+                print!(" ");
+            }
+        }
+        println!("");
+    }
 }
 
 fn fold(dot_posns: &mut HashSet<(u16, u16)>, instruction: (FoldDirection, u16)) {
