@@ -155,6 +155,12 @@ fn main() {
     // Day 13, #1
     println!(
         "Day 13, #1: {}",
-        day13_1::calculate_visible_dots(&String::from("resources/day13-1-input.txt"), 1)
+        day13_1::calculate_visible_dots(&String::from("resources/day13-1-input.txt"), 1, false)
     );
+
+    // Day 13, #2
+    println!(
+        "Day 13, #3: {}",
+        day13_1::calculate_visible_dots(&String::from("resources/day13-1-input.txt"), 12, true)
+    );    
 }

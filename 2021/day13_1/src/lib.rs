@@ -11,7 +11,7 @@ enum FoldDirection {
     Invalid,
 }
 
-pub fn calculate_visible_dots(file_path: &String, folds: usize) -> usize {
+pub fn calculate_visible_dots(file_path: &String, folds: usize, print: bool) -> usize {
     println!("Loading data from file:{}", file_path);
 
     let contents = fs::read_to_string(file_path).expect(&format!(
@@ -26,6 +26,10 @@ pub fn calculate_visible_dots(file_path: &String, folds: usize) -> usize {
 
     for instruction in instructions.iter().take(folds) {
         fold(&mut dot_posns, *instruction);
+    }
+
+    if print {
+        println!("Print grid here");
     }
 
     dot_posns.len()
@@ -112,7 +116,7 @@ mod tests {
     fn day13_1_works() {
 
         let result =
-            calculate_visible_dots(&String::from("../resources/tests/day13-1-testdata.txt"), 1);
+            calculate_visible_dots(&String::from("../resources/tests/day13-1-testdata.txt"), 1, false);
 
         assert_eq!(result, 17);
 
