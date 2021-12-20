@@ -184,7 +184,7 @@ fn main() {
 
     // Day 16, #1
     println!(
-        "Day 16, #1: {}",
+        "Day 16, #1, 2: {:?}",
         day16_1::calculate_total_version_no(&String::from("resources/day16-1-input.txt"))
     );
 }

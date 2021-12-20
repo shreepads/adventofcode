@@ -7,7 +7,7 @@ use std::fs;
 use packet::Packet;
 
 
-pub fn calculate_total_version_no(file_path: &String) -> u32 {
+pub fn calculate_total_version_no(file_path: &String) -> (u32, u64) {
     println!("Loading data from file:{}", file_path);
 
     let contents = fs::read_to_string(file_path).expect(&format!(
@@ -17,7 +17,7 @@ pub fn calculate_total_version_no(file_path: &String) -> u32 {
 
     let packet = Packet::new(contents);
 
-    packet.version_sum()
+    (packet.version_sum(), packet.value())
 }
 
 
