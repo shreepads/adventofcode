@@ -7,7 +7,7 @@ pub struct Packet {
     type_id: u8,
     lit_value: Option<u64>,
     op_mode: Option<u8>,
-    op_sub_packets_length: Option<u32>,
+    op_sub_packets_length: Option<usize>,
     op_sub_packets_count: Option<u32>,
     op_sub_packets: Option<Vec<Packet>>,
 }
@@ -82,11 +82,30 @@ impl Packet {
                 
                 // Sub-packet length - 15 bits
                 packet.op_sub_packets_length = Some(
-                    u32::from_str_radix(&binary_str[*posn..*posn+15], 2).expect("Invalid sp length")
+                    usize::from_str_radix(&binary_str[*posn..*posn+15], 2).expect("Invalid sp length")
                 );
                 *posn += 15;
 
-            } else {
+                let current_posn: usize = *posn;
+                while *posn < current_posn + packet.op_sub_packets_length.unwrap() {
+
+                    let mut sub_packet = Packet {
+                        version: 0,
+                        type_id: 0,
+                        lit_value: None,
+                        op_mode: None,
+                        op_sub_packets_length: None,
+                        op_sub_packets_count: None,
+                        op_sub_packets: None,
+                    };
+
+                    Self::fill_packet(&mut sub_packet, binary_str, posn);
+                    sub_packets.push(sub_packet);
+
+                }
+
+            } // end mode 0
+            else {
                 packet.op_mode = Some(1);
                 *posn += 1;
 
@@ -96,6 +115,7 @@ impl Packet {
                 );
                 *posn += 11;
 
+                // collect packets recursively
                 for i in 1..=packet.op_sub_packets_count.unwrap() {
 
                     let mut sub_packet = Packet {
@@ -111,20 +131,21 @@ impl Packet {
                     Self::fill_packet(&mut sub_packet, binary_str, posn);
                     sub_packets.push(sub_packet);
                 }
-            } // end mode
+            } // end mode 1
 
             packet.op_sub_packets = Some(sub_packets);
 
         } // end operator
 
+        //println!("Filled packet: {:?}", packet);
     }
 
 
     fn hex_to_binary_str(hex_str: String) -> String {
         
-        let mut binary_str = String::new();
+        let mut binary_str = String::with_capacity(6000);
 
-        for hex_char in hex_str.chars() {
+        for hex_char in hex_str.trim().chars() {
             let hex_value = hex_char.to_digit(16).unwrap();
             binary_str.push_str(&format!("{:04b}", hex_value));
         }
@@ -151,4 +172,12 @@ mod tests {
         println!("Operator packet: {:?}", result);
         assert_eq!(2, 3);   // fail to print
     }
+
+    #[test]
+    fn packet_operator_mode0() {
+        let result = Packet::new("38006F45291200".to_string());
+        println!("Operator packet: {:?}", result);
+        assert_eq!(2, 3);   // fail to print
+    }
+
 }
