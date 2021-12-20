@@ -25,7 +25,7 @@ impl Packet {
             op_sub_packets: None,
         };
         
-        let mut binary_str = Self::hex_to_binary_str(hex_str);
+        let binary_str = Self::hex_to_binary_str(hex_str);
 
         let mut posn = 0usize;
 
@@ -52,14 +52,12 @@ impl Packet {
         if packet.type_id == 4 { // literal
             let mut reached_end = false;
             let mut literal_str = String::new();
-            let mut literal_chunks = 0;
             while !reached_end {
                 // Check leading digit for end (0)
                 if binary_str[*posn..*posn+1].starts_with("0") {
                     reached_end = true;
                 }
 
-                literal_chunks += 1;
                 *posn += 1;
 
                 // Collect 4 bits of literal
@@ -116,7 +114,7 @@ impl Packet {
                 *posn += 11;
 
                 // collect packets recursively
-                for i in 1..=packet.op_sub_packets_count.unwrap() {
+                for _ in 1..=packet.op_sub_packets_count.unwrap() {
 
                     let mut sub_packet = Packet {
                         version: 0,
@@ -152,6 +150,22 @@ impl Packet {
 
         binary_str
     }
+
+    pub fn version_sum(&self) -> u32 {
+        let mut sum = 0u32;
+
+        sum += self.version as u32;
+
+        if self.op_sub_packets == None {
+            return sum;
+        }
+
+        for sub_packet in self.op_sub_packets.as_ref().unwrap().iter() {
+            sum += sub_packet.version_sum();
+        }
+
+        sum
+    }
 }
 
 #[cfg(test)]
@@ -163,21 +177,34 @@ mod tests {
     fn packet_literal() {
         let result = Packet::new("D2FE28".to_string());
         println!("Literal packet: {:?}", result);
-        assert_eq!(2, 3);   // fail to print
+        assert_eq!(6, result.version_sum());   // fail to print
     }
 
     #[test]
     fn packet_operator_mode1() {
         let result = Packet::new("EE00D40C823060".to_string());
         println!("Operator packet: {:?}", result);
-        assert_eq!(2, 3);   // fail to print
+        assert_eq!(14, result.version_sum());   // fail to print
     }
 
     #[test]
     fn packet_operator_mode0() {
         let result = Packet::new("38006F45291200".to_string());
         println!("Operator packet: {:?}", result);
-        assert_eq!(2, 3);   // fail to print
+        assert_eq!(9, result.version_sum());   // fail to print
     }
 
+    #[test]
+    fn packet_3nestedoperator_lit() {
+        let result = Packet::new("8A004A801A8002F478".to_string());
+        println!("Operator packet: {:?}", result);
+        assert_eq!(16, result.version_sum());   // fail to print
+    }
+
+    #[test]
+    fn packet_3nestedoperator_5lit() {
+        let result = Packet::new("A0016C880162017C3686B18A3D4780".to_string());
+        println!("Operator packet: {:?}", result);
+        assert_eq!(31, result.version_sum());   // fail to print
+    }
 }

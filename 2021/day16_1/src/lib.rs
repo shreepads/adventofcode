@@ -17,7 +17,7 @@ pub fn calculate_total_version_no(file_path: &String) -> u32 {
 
     let packet = Packet::new(contents);
 
-    0
+    packet.version_sum()
 }
 
 
