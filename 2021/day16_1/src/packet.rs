@@ -166,6 +166,39 @@ impl Packet {
 
         sum
     }
+
+    pub fn value(&self) -> u64 {
+
+        match self.type_id {
+            0 => self.op_sub_packets.as_ref().unwrap().iter().map(|packet| packet.value() as u64).sum(),
+            1 => self.op_sub_packets.as_ref().unwrap().iter().map(|packet| packet.value() as u64).product(),
+            2 => self.op_sub_packets.as_ref().unwrap().iter().map(|packet| packet.value() as u64).min().unwrap(),
+            3 => self.op_sub_packets.as_ref().unwrap().iter().map(|packet| packet.value() as u64).max().unwrap(),
+            4 => self.lit_value.unwrap(),
+            5 => { // gt
+                let mut iter_gt = self.op_sub_packets.as_ref().unwrap().iter().map(|packet| packet.value() as u64);
+                if iter_gt.next().unwrap() > iter_gt.next().unwrap() {
+                    1
+                }
+                else {0}
+            },
+            6 => { //lt
+                let mut iter_gt = self.op_sub_packets.as_ref().unwrap().iter().map(|packet| packet.value() as u64);
+                if iter_gt.next().unwrap() < iter_gt.next().unwrap() {
+                    1
+                }
+                else {0}
+            },
+            7 => { //eq
+                let mut iter_gt = self.op_sub_packets.as_ref().unwrap().iter().map(|packet| packet.value() as u64);
+                if iter_gt.next().unwrap() == iter_gt.next().unwrap() {
+                    1
+                }
+                else {0}
+            },
+            _ => 0,
+        }
+    }
 }
 
 #[cfg(test)]
@@ -207,4 +240,55 @@ mod tests {
         println!("Operator packet: {:?}", result);
         assert_eq!(31, result.version_sum());   // fail to print
     }
+
+    #[test]
+    fn packet_sum_2lit() {
+        let result = Packet::new("C200B40A82".to_string());
+        println!("Operator packet: {:?}", result);
+        assert_eq!(3, result.value());   // fail to print
+    }
+
+    #[test]
+    fn packet_min_3lit() {
+        let result = Packet::new("880086C3E88112".to_string());
+        println!("Operator packet: {:?}", result);
+        assert_eq!(7, result.value());   // fail to print
+    }
+
+    #[test]
+    fn packet_max_3lit() {
+        let result = Packet::new("CE00C43D881120".to_string());
+        println!("Operator packet: {:?}", result);
+        assert_eq!(9, result.value());   // fail to print
+    }
+
+    #[test]
+    fn packet_gt_2lit() {
+        let result = Packet::new("F600BC2D8F".to_string());
+        println!("Operator packet: {:?}", result);
+        assert_eq!(0, result.value());   // fail to print
+    }
+
+
+    #[test]
+    fn packet_lt_2lit() {
+        let result = Packet::new("D8005AC2A8F0".to_string());
+        println!("Operator packet: {:?}", result);
+        assert_eq!(1, result.value());   // fail to print
+    }
+
+    #[test]
+    fn packet_eq_2lit() {
+        let result = Packet::new("9C005AC2F8F0".to_string());
+        println!("Operator packet: {:?}", result);
+        assert_eq!(0, result.value());   // fail to print
+    }
+
+    #[test]
+    fn packet_eq_sumprod_2lits() {
+        let result = Packet::new("9C0141080250320F1802104A08".to_string());
+        println!("Operator packet: {:?}", result);
+        assert_eq!(1, result.value());   // fail to print
+    }
+
 }
