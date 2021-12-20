@@ -181,4 +181,10 @@ fn main() {
         "Day 15, #2: {}",
         day15_2::calculate_least_risk_path(&String::from("resources/day15-1-input.txt"))
     );
+
+    // Day 16, #1
+    println!(
+        "Day 16, #1: {}",
+        day16_1::calculate_total_version_no(&String::from("resources/day16-1-input.txt"))
+    );
 }
