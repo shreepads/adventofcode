@@ -187,4 +187,11 @@ fn main() {
         "Day 16, #1, 2: {:?}",
         day16_1::calculate_total_version_no(&String::from("resources/day16-1-input.txt"))
     );
+
+    // Day 17, #1
+    println!(
+        "Day 17, #1: {}",
+        day17_1::calculate_maxy_trajectory(235, 259, -62, -118)
+    );
+
 }
