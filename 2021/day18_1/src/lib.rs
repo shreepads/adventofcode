@@ -1,8 +1,10 @@
 // Copyright (c) 2021 Shreepad Shukla
 // SPDX-License-Identifier: MIT
 
+mod sfish_math;
 
 use std::fs;
+use sfish_math::Number;
 
 pub fn calculate_magnitude_sum(file_path: &String) -> u32 {
     println!("Loading data from file:{}", file_path);
@@ -12,7 +14,10 @@ pub fn calculate_magnitude_sum(file_path: &String) -> u32 {
         file_path
     ));
 
-    0
+    let sfish_no = Number::new("Test".to_string());
+    println!("Snailfish #: {:?}", sfish_no);
+    
+    sfish_no.magnitude()
 }
 
 
