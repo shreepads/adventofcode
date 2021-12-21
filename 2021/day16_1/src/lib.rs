@@ -3,9 +3,8 @@
 
 mod packet;
 
-use std::fs;
 use packet::Packet;
-
+use std::fs;
 
 pub fn calculate_total_version_no(file_path: &String) -> (u32, u64) {
     println!("Loading data from file:{}", file_path);
@@ -19,7 +18,6 @@ pub fn calculate_total_version_no(file_path: &String) -> (u32, u64) {
 
     (packet.version_sum(), packet.value())
 }
-
 
 #[cfg(test)]
 mod tests {
