@@ -14,13 +14,14 @@ struct Position {
     y: i32,
 }
 
+#[derive(Debug, Clone, Copy)]
 struct Velocity {
     vx: i32,
     vy: i32,
 }
 
 
-pub fn calculate_maxy_trajectory(x1: i32, x2: i32, y1: i32, y2: i32) -> i32 {
+pub fn calculate_maxy_trajectory(x1: i32, x2: i32, y1: i32, y2: i32) -> (i32, usize) {
     println!(
         "Calculating trajectories for target: ({},{}) - ({},{})",
         x1, y1, x2, y2
@@ -35,18 +36,22 @@ pub fn calculate_maxy_trajectory(x1: i32, x2: i32, y1: i32, y2: i32) -> i32 {
     };
 
     let mut max_maxy = 0i32;
+    let mut strike_vs: Vec<Velocity> = Vec::new();
     
-    for vx in vx_min..vx_max {
+    for vx in vx_min..=vx_max {
         for vy in vy_min..1000 {
             let v = Velocity { vx: vx, vy: vy};
             let (maxy, strike) = calculate_trajectory(v, &target);
+            if strike != None {
+                strike_vs.push(v);
+            }
             if strike != None  &&  maxy > max_maxy {
                 max_maxy = maxy;
             }
         }
     }
 
-    max_maxy
+    (max_maxy, strike_vs.len())
 }
 
 fn calculate_trajectory(init_velocity: Velocity, target: &Target) -> (i32, Option<Position>) {
@@ -117,9 +122,14 @@ mod tests {
     }
 
     #[test]
-    fn max_maxy_1() {
-        let max_maxy = calculate_maxy_trajectory(20, 30, -10, -5);
+    fn max_maxy() {
+        let (max_maxy, _) = calculate_maxy_trajectory(20, 30, -10, -5);
         assert_eq!(max_maxy, 45);
     }
 
+    #[test]
+    fn count_velocities() {
+        let (_, count) = calculate_maxy_trajectory(20, 30, -10, -5);
+        assert_eq!(count, 112);
+    }
 }
