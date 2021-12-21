@@ -191,6 +191,6 @@ fn main() {
     // Day 17, #1
     println!(
         "Day 17, #1: {}",
-        day17_1::calculate_maxy_trajectory(235, 259, -62, -118)
+        day17_1::calculate_maxy_trajectory(235, 259, -118, -62)
     );
 }
