@@ -176,11 +176,13 @@ fn main() {
         day15_1::calculate_least_risk_path(&String::from("resources/day15-1-input.txt"))
     );
 
+    /* Removed for performance, FIX
     // Day 15, #2
     println!(
         "Day 15, #2: {}",
         day15_2::calculate_least_risk_path(&String::from("resources/day15-1-input.txt"))
     );
+    */
 
     // Day 16, #1
     println!(
@@ -193,4 +195,9 @@ fn main() {
         "Day 17, #1, 2: {:?}",
         day17_1::calculate_maxy_trajectory(235, 259, -118, -62)
     );
-}
+
+    // Day 18, #1
+    println!(
+        "Day 18, #1: {:?}",
+        day18_1::calculate_magnitude_sum(&String::from("resources/day18-1-input.txt"))
+    );}
