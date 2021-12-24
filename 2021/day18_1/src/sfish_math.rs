@@ -249,6 +249,8 @@ impl Number {
                 self.stringify(&mut sfish_string, split_id);
                 println!("Splitting node {}: {}", split_id, sfish_string);
 
+                self.split(split_id);
+
                 // Need to go back to explode
                 split_performed = true;
             }
@@ -271,25 +273,13 @@ impl Number {
                 continue;
             }
 
-            // check if it is a leaf node
-            if !node.pair {
+            // check if it is a value node
+            if node.pair {
                 continue;
             }
             
-            // check if either child is value > 10
-            let part1_id = node.part1_id.unwrap();
-            let part2_id = node.part2_id.unwrap();
-
-            if !self.nodes[part1_id].pair {
-                if self.nodes[part1_id].value > Some(9) {
-                    return Some(part1_id);
-                }
-            }
-
-            if !self.nodes[part2_id].pair {
-                if self.nodes[part2_id].value > Some(9) {
-                    return Some(part2_id);
-                }
+            if node.value > Some(9) {
+                return Some(i);
             }
 
         }
