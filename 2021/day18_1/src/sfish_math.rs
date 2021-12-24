@@ -215,6 +215,9 @@ impl Number {
         let mut done = false;
 
         while !done {
+            
+            let mut exploding_complete = false;
+
             // find leftmost node more than 5 deep and explode it
             if let Some(explode_id) = self.leftmost_explode_id() {
                 // explode it
@@ -232,10 +235,12 @@ impl Number {
                 //done = true;    // remove once done
             } else {
                 // no more to explode
-                done = true;
+                exploding_complete = true;
             }
 
             // do we split if we have exploded one? TO DO
+
+            let mut split_performed = false;
 
             // find node to split and split it
             if let Some(split_id) = self.get_split_id() {
@@ -245,7 +250,12 @@ impl Number {
                 println!("Splitting node {}: {}", split_id, sfish_string);
 
                 // Need to go back to explode
-                done = false;
+                split_performed = true;
+            }
+
+            // if exploding complete and no split performed, done
+            if exploding_complete && !split_performed {
+                done = true;
             }
 
         }   // while !done
@@ -345,13 +355,26 @@ impl Number {
         // Update parent id in parts
         self.nodes[part1_id].parent_id = Some(new_parent_id);
         self.nodes[part2_id].parent_id = Some(new_parent_id);
+
+        // Update old parent to point to this new parent
+        if self.nodes[old_parent_id].part1_id == Some(split_id) {
+            self.nodes[old_parent_id].part1_id = Some(new_parent_id);
+        } else if self.nodes[old_parent_id].part2_id == Some(split_id) {
+            self.nodes[old_parent_id].part2_id = Some(new_parent_id);
+        } else {
+            println!("Old parent {} doesn't have split id {} as child", old_parent_id, split_id)
+        }
+
+
+        // Set split node depth to 0 so it doesn't get picked up again
+        self.nodes[split_id].depth = 0;
     }
 
     fn leftmost_explode_id(&self) -> Option<usize> {
         
         for (i, node) in self.nodes.iter().enumerate() {
             
-            println!("Checking node {}", i);
+            //println!("Checking node {}", i);
             
             // check depth
             if node.depth < 4 {
@@ -687,7 +710,7 @@ mod tests {
         assert_eq!("[[3,[2,[8,0]]],[9,[5,[7,0]]]]", sno.to_string());    // force print
     }
 
-
+    
     #[test]
     fn explode_split_explode() {
         let mut sno = Number::new("[[[[[4,3],4],4],[7,[[8,4],9]]],[1,1]]".to_string());
@@ -695,4 +718,5 @@ mod tests {
         println!("Reduced: {}", sno);
         assert_eq!("[[[[0,7],4],[[7,8],[6,0]]],[8,1]]", sno.to_string());    // force print
     }
+    
 }
