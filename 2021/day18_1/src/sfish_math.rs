@@ -44,7 +44,7 @@ impl Number {
         };
 
         let mut stack: Vec<StackElement> = Vec::new();
-        let mut depth = 1u32;
+        let mut depth = 0u32;
 
         // Assume input snailfish number is reduced i.e. single digits
         for (i, sno_char) in line.chars().enumerate() {
@@ -52,11 +52,11 @@ impl Number {
             match sno_char {
                 ',' => {},   // ignore ,
                 '[' => {
+                    depth += 1;
                     if i == 0 {
                         stack.push(StackElement::FirstOpenBracket);
                     } else {
                         stack.push(StackElement::OpenBracket);
-                        depth += 1;
                     }
                 },
                 ']' => {
@@ -207,7 +207,7 @@ impl Number {
             left_id: None,
             right_id: None,
             pair: true,
-            depth: 1,                       
+            depth: 0,                       
         };
 
         self.nodes.push(new_rootnode);
@@ -680,9 +680,11 @@ mod tests {
     #[test]
     fn add_1() {
         let mut sno1 = Number::new("[1,2]".to_string());
+        println!("No 1: {}", sno1.to_debug_string());
         let sno2 = Number::new("[[3,4],5]".to_string());
+        println!("No 2: {}", sno2.to_debug_string());
         sno1.add(&sno2);
-        println!("Addition: {:#?}", sno1);
+        println!("Addition: {}", sno1.to_debug_string());
         assert_eq!("[[1,2],[[3,4],5]]", sno1.to_string());
     }
 
@@ -797,7 +799,7 @@ mod tests {
     }
 
 
-    /*
+    
     #[test]
     fn multi_add_reduce_2() {
         let mut sno = Number::new("[1,1]".to_string());
@@ -834,7 +836,7 @@ mod tests {
 
         assert_eq!("[[[[5,0],[7,4]],[5,5]],[6,6]]", sno.to_string());    // force print
     }
-    */
+    
 
 
 }
