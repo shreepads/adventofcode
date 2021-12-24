@@ -191,6 +191,8 @@ impl Number {
 
         }
 
+        // TODO increase depth of all nodes
+
         // create new parent node
         let new_rootnode = Node {
             part1_id: Some(self.rootnode_id),
@@ -213,7 +215,7 @@ impl Number {
         let mut done = false;
 
         while !done {
-            // find leftmost node more than 5 deep
+            // find leftmost node more than 5 deep and explode it
             if let Some(explode_id) = self.leftmost_explode_id() {
                 // explode it
                 let mut sfish_string = String::new();
@@ -232,7 +234,117 @@ impl Number {
                 // no more to explode
                 done = true;
             }
+
+            // do we split if we have exploded one? TO DO
+
+            // find node to split and split it
+            if let Some(split_id) = self.get_split_id() {
+
+                let mut sfish_string = String::new();
+                self.stringify(&mut sfish_string, split_id);
+                println!("Splitting node {}: {}", split_id, sfish_string);
+
+                // Need to go back to explode
+                done = false;
+            }
+
+        }   // while !done
+    }
+
+    fn get_split_id(&self) -> Option<usize> {
+
+        // find node with number > 10
+        for (i, node) in self.nodes.iter().enumerate() {
+            
+            if node.depth == 0 {
+                // orphan node
+                continue;
+            }
+
+            // check if it is a leaf node
+            if !node.pair {
+                continue;
+            }
+            
+            // check if either child is value > 10
+            let part1_id = node.part1_id.unwrap();
+            let part2_id = node.part2_id.unwrap();
+
+            if !self.nodes[part1_id].pair {
+                if self.nodes[part1_id].value > Some(9) {
+                    return Some(part1_id);
+                }
+            }
+
+            if !self.nodes[part2_id].pair {
+                if self.nodes[part2_id].value > Some(9) {
+                    return Some(part2_id);
+                }
+            }
+
         }
+
+        None
+    
+    }
+
+    fn split(&mut self, split_id: usize) {
+
+        let split_value = self.nodes[split_id].value.unwrap();
+        let split_depth = self.nodes[split_id].depth;
+        let old_parent_id = self.nodes[split_id].parent_id.unwrap();
+
+        let part1_value = split_value / 2;
+        let part2_value = split_value - part1_value;
+
+        // Create and add part1 node
+        let part1 = Node {
+            part1_id: None,
+            part2_id: None,
+            parent_id: None,
+            value: Some(part1_value),
+            left_id: None,
+            right_id: None,
+            pair: false,
+            depth: split_depth + 1,
+        };
+
+        self.nodes.push(part1);
+        let part1_id = self.nodes.len() - 1;
+
+        // Create and add part2 node
+        let part2 = Node {
+            part1_id: None,
+            part2_id: None,
+            parent_id: None,
+            value: Some(part2_value),
+            left_id: None,
+            right_id: None,
+            pair: false,
+            depth: split_depth + 1,
+        };
+
+        self.nodes.push(part2);
+        let part2_id = self.nodes.len() - 1;
+
+        // Create and add parent node
+        let new_parent = Node {
+            part1_id: Some(part1_id),
+            part2_id: Some(part2_id),
+            parent_id: Some(old_parent_id),
+            value: None,
+            left_id: None,
+            right_id: None,
+            pair: true,
+            depth: split_depth,
+        };
+
+        self.nodes.push(new_parent);
+        let new_parent_id = self.nodes.len() - 1;
+
+        // Update parent id in parts
+        self.nodes[part1_id].parent_id = Some(new_parent_id);
+        self.nodes[part2_id].parent_id = Some(new_parent_id);
     }
 
     fn leftmost_explode_id(&self) -> Option<usize> {
@@ -573,5 +685,14 @@ mod tests {
         sno.reduce();
         println!("Exploded: {}", sno);
         assert_eq!("[[3,[2,[8,0]]],[9,[5,[7,0]]]]", sno.to_string());    // force print
+    }
+
+
+    #[test]
+    fn explode_split_explode() {
+        let mut sno = Number::new("[[[[[4,3],4],4],[7,[[8,4],9]]],[1,1]]".to_string());
+        sno.reduce();
+        println!("Reduced: {}", sno);
+        assert_eq!("[[[[0,7],4],[[7,8],[6,0]]],[8,1]]", sno.to_string());    // force print
     }
 }
