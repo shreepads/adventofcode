@@ -143,6 +143,71 @@ impl Number {
         sfish_no
     }
 
+    pub fn add(&mut self, sfish_no: &Number) {
+
+        let id_delta = self.nodes.len();
+
+        // move nodes over to self
+        for node in sfish_no.nodes.iter() {
+            // create new node
+            let mut new_node = Node {
+                part1_id: None,
+                part2_id: None,
+                parent_id: None,
+                value: None,
+                left_id: None,
+                right_id: None,
+                pair: node.pair,
+                depth: node.depth,                       
+            };
+
+            // copy fields, adjusting links
+            if let Some(part1_id) = node.part1_id {
+                new_node.part1_id = Some(part1_id + id_delta);
+            }
+
+            if let Some(part2_id) = node.part2_id {
+                new_node.part2_id = Some(part2_id + id_delta);
+            }
+
+            if let Some(parent_id) = node.parent_id {
+                new_node.parent_id = Some(parent_id + id_delta);
+            }
+
+            if let Some(value) = node.value {
+                new_node.value = Some(value);
+            }
+
+            if let Some(left_id) = node.left_id {
+                new_node.left_id = Some(left_id + id_delta);
+            }
+
+            if let Some(right_id) = node.right_id {
+                new_node.right_id = Some(right_id + id_delta);
+            }
+
+            // add to self
+            self.nodes.push(new_node);
+
+        }
+
+        // create new parent node
+        let mut new_rootnode = Node {
+            part1_id: Some(self.rootnode_id),
+            part2_id: Some(sfish_no.rootnode_id + id_delta),
+            parent_id: None,
+            value: None,
+            left_id: None,
+            right_id: None,
+            pair: true,
+            depth: 1,                       
+        };
+
+        self.nodes.push(new_rootnode);
+        self.rootnode_id = self.nodes.len() - 1;
+
+    }
+    
     pub fn magnitude(&self) -> u32 {
         0
     }
@@ -209,7 +274,18 @@ mod tests {
         let input = "[[1,9],[8,5]]";
         let result = Number::new(input.to_string());
         println!("Sfish Number: {:#?}", result);
-        assert_eq!(input, result.to_string());  // invalid to force print
+        assert_eq!(input, result.to_string());
     }
-    
+
+    #[test]
+    fn add() {
+        let mut sno1 = Number::new("[2,3]".to_string());
+        let sno2 = Number::new("[4,5]".to_string());
+        sno1.add(&sno2);
+        println!("Addition: {:#?}", sno1);
+        println!("Addition str: {}", sno1.to_string());
+        assert_eq!(2, 3);  // invalid to force print
+    }
+
+
 }
