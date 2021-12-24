@@ -160,6 +160,31 @@ impl Number {
     pub fn magnitude(&self) -> u32 {
         0
     }
+
+    pub fn to_string(&self) -> String {
+        
+        let mut sfish_string = String::new();
+
+        self.stringify(&mut sfish_string, self.rootnode_id);
+
+        string
+    }
+
+    fn stringify(&self, sfish_string: &mut String, node_id: usize) {
+        
+        let node = self.nodes[node_id];
+        
+        if !node.pair {
+            sfish_string.push_str(node.value.unwrap().to_string());
+        } else {
+            sfish_string.push('[');
+            stringify(sfish_string, node.left_id);
+            sfish_string.push(',');
+            stringify(sfish_string, node.right_id);
+            sfish_string.push(']');
+        }
+    }
+
 }
 
 
