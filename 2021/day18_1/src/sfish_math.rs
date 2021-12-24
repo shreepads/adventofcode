@@ -146,6 +146,8 @@ impl Number {
     pub fn add(&mut self, sfish_no: &Number) {
 
         let id_delta = self.nodes.len();
+        let self_root_id = self.rootnode_id;
+        let sfish_root_id = sfish_no.rootnode_id;
 
         // move nodes over to self
         for node in sfish_no.nodes.iter() {
@@ -191,7 +193,10 @@ impl Number {
 
         }
 
-        // TODO increase depth of all nodes
+        // TODO increase depth of all nodes by 1
+        for node in self.nodes.iter_mut() {
+            node.depth += 1;
+        }
 
         // create new parent node
         let new_rootnode = Node {
@@ -208,6 +213,9 @@ impl Number {
         self.nodes.push(new_rootnode);
         self.rootnode_id = self.nodes.len() - 1;
 
+        // Set new root as parent of old roots
+        self.nodes[self_root_id].parent_id = Some(self.rootnode_id);
+        self.nodes[sfish_root_id + id_delta].parent_id = Some(self.rootnode_id);
     }
 
     pub fn reduce(&mut self) {
@@ -593,6 +601,41 @@ impl Number {
         }
     }
 
+
+    pub fn to_debug_string(&self) -> String {
+        
+        let mut sfish_string = String::new();
+
+        self.debug_stringify(&mut sfish_string, self.rootnode_id);
+
+        sfish_string
+    }
+
+    fn debug_stringify(&self, sfish_string: &mut String, node_id: usize) {
+        
+        let node = self.nodes[node_id];
+        
+        if !node.pair {
+            let debug_str = format!("#{}d{} {}", node_id, node.depth, node.value.unwrap());
+            sfish_string.push_str(&debug_str);
+        } else {
+            sfish_string.push('[');
+            let mut debug_str = String::new();
+            if let Some(parent_id) = node.parent_id {
+                debug_str.push_str(&format!("#{}d{}p{}", node_id, node.depth, parent_id));    
+            } else {
+                debug_str.push_str(&format!("#{}d{}p*", node_id, node.depth));
+            }
+            sfish_string.push_str(&debug_str);
+            sfish_string.push_str(": ");
+            self.debug_stringify(sfish_string, node.part1_id.unwrap());
+            sfish_string.push_str(", ");
+            self.debug_stringify(sfish_string, node.part2_id.unwrap());
+            sfish_string.push_str("] ");
+        }
+    }
+
+
 }
 
 
@@ -708,5 +751,90 @@ mod tests {
         println!("Reduced: {}", sno);
         assert_eq!("[[[[0,7],4],[[7,8],[6,0]]],[8,1]]", sno.to_string());    // force print
     }
-    
+
+        
+    #[test]
+    fn add_reduce() {
+        let mut sno = Number::new("[[[[4,3],4],4],[7,[[8,4],9]]]".to_string());
+        let sno2 = Number::new("[1,1]".to_string());
+        sno.add(&sno2);
+        println!("Added: {}", sno);
+        sno.reduce();
+        println!("Reduced: {}", sno);
+        assert_eq!("[[[[0,7],4],[[7,8],[6,0]]],[8,1]]", sno.to_string());    // force print
+    }
+
+        
+    #[test]
+    fn multi_add_reduce_1() {
+        let mut sno = Number::new("[1,1]".to_string());
+        
+        let sno2 = Number::new("[2,2]".to_string());
+        sno.add(&sno2);
+        println!("Added  : {}", sno.to_debug_string());
+        sno.reduce();
+        println!("Reduced: {}", sno.to_debug_string());
+
+        let sno3 = Number::new("[3,3]".to_string());
+        sno.add(&sno3);
+        println!("Added  : {}", sno.to_debug_string());
+        sno.reduce();
+        println!("Reduced: {}", sno.to_debug_string());
+
+        let sno4 = Number::new("[4,4]".to_string());
+        sno.add(&sno4);
+        println!("Added  : {}", sno.to_debug_string());
+        sno.reduce();
+        println!("Reduced: {}", sno.to_debug_string());
+
+        let sno5 = Number::new("[5,5]".to_string());
+        sno.add(&sno5);
+        println!("Added  : {}", sno.to_debug_string());
+        sno.reduce();
+        println!("Reduced  : {}", sno.to_debug_string());
+
+        assert_eq!("[[[[3,0],[5,3]],[4,4]],[5,5]]", sno.to_string());    // force print
+    }
+
+
+    /*
+    #[test]
+    fn multi_add_reduce_2() {
+        let mut sno = Number::new("[1,1]".to_string());
+        
+        let sno2 = Number::new("[2,2]".to_string());
+        sno.add(&sno2);
+        println!("Added: {}", sno);
+        sno.reduce();
+        println!("Reduced: {}", sno);
+
+        let sno3 = Number::new("[3,3]".to_string());
+        sno.add(&sno3);
+        println!("Added: {}", sno);
+        sno.reduce();
+        println!("Reduced: {}", sno);
+
+        let sno4 = Number::new("[4,4]".to_string());
+        sno.add(&sno4);
+        println!("Added: {}", sno);
+        sno.reduce();
+        println!("Reduced: {}", sno);
+
+        let sno5 = Number::new("[5,5]".to_string());
+        sno.add(&sno5);
+        println!("Added: {}", sno);
+        sno.reduce();
+        println!("Reduced: {}", sno);
+
+        let sno6 = Number::new("[6,6]".to_string());
+        sno.add(&sno6);
+        println!("Added: {}", sno);
+        sno.reduce();
+        println!("Reduced: {}", sno);
+
+        assert_eq!("[[[[5,0],[7,4]],[5,5]],[6,6]]", sno.to_string());    // force print
+    }
+    */
+
+
 }
