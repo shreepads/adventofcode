@@ -21,27 +21,13 @@ pub struct Number {
     rootnode_id: usize,
 }
 
-/* Revisit using explicit to_string method
+
 impl fmt::Display for Number {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        if self.pair {
-            if let Some(left) = &self.left {
-                let l = left.borrow();
-                if let Some(right) = &self.right {
-                    let r = right.borrow();
-                    write!(f, "[{},{}]", l, r)
-                } else {
-                    write!(f, "{}", self.value.unwrap())
-                }
-            } else {
-                write!(f, "{}", self.value.unwrap())
-            }
-        } else {
-            write!(f, "{}", self.value.unwrap())
-        }
+        write!(f, "{}", self.to_string())
     }
 }
-*/
+
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum StackElement {
@@ -167,7 +153,7 @@ impl Number {
 
         self.stringify(&mut sfish_string, self.rootnode_id);
 
-        string
+        sfish_string
     }
 
     fn stringify(&self, sfish_string: &mut String, node_id: usize) {
@@ -175,12 +161,12 @@ impl Number {
         let node = self.nodes[node_id];
         
         if !node.pair {
-            sfish_string.push_str(node.value.unwrap().to_string());
+            sfish_string.push_str(&node.value.unwrap().to_string());
         } else {
             sfish_string.push('[');
-            stringify(sfish_string, node.left_id);
+            self.stringify(sfish_string, node.part1_id.unwrap());
             sfish_string.push(',');
-            stringify(sfish_string, node.right_id);
+            self.stringify(sfish_string, node.part2_id.unwrap());
             sfish_string.push(']');
         }
     }
@@ -195,29 +181,35 @@ mod tests {
 
     #[test]
     fn new_sno_pair() {
-        let result = Number::new("[1,2]".to_string());
+        let input = "[1,2]";
+        let result = Number::new(input.to_string());
         println!("Sfish Number: {:#?}", result);
-        assert_eq!(2, 4);  // invalid to force print
+        assert_eq!(input, result.to_string());
     }
 
     #[test]
     fn new_sno_pair_lt() {
-        let result = Number::new("[[1,2],3]".to_string());
+        let input = "[[1,2],3]";
+        let result = Number::new(input.to_string());
         println!("Sfish Number: {:#?}", result);
-        assert_eq!(2, 4);  // invalid to force print
+        assert_eq!(input, result.to_string());
     }
 
     #[test]
     fn new_sno_pair_rt() {
-        let result = Number::new("[9,[8,7]]".to_string());
+        let input = "[9,[8,7]]";
+        let result = Number::new(input.to_string());
         println!("Sfish Number: {:#?}", result);
-        assert_eq!(2, 4);  // invalid to force print
+        assert_eq!(input, result.to_string());
     }
 
+    
     #[test]
     fn new_sno_two_pairs() {
-        let result = Number::new("[[1,9],[8,5]]".to_string());
+        let input = "[[1,9],[8,5]]";
+        let result = Number::new(input.to_string());
         println!("Sfish Number: {:#?}", result);
-        assert_eq!(2, 4);  // invalid to force print
+        assert_eq!(input, result.to_string());  // invalid to force print
     }
+    
 }
