@@ -231,7 +231,7 @@ impl Number {
                 // explode it
                 let mut sfish_string = String::new();
                 self.stringify(&mut sfish_string, explode_id);
-                println!("Exploding node {}: {}", explode_id, sfish_string);
+                //println!("Exploding node {}: {}", explode_id, sfish_string);
 
                 // add part1 value to first regular number on left
                 self.add_to_leftid(explode_id);
@@ -255,7 +255,7 @@ impl Number {
 
                 let mut sfish_string = String::new();
                 self.stringify(&mut sfish_string, split_id);
-                println!("Splitting node {}: {}", split_id, sfish_string);
+                //println!("Splitting node {}: {}", split_id, sfish_string);
 
                 self.split(split_id);
 
@@ -459,7 +459,7 @@ impl Number {
 
             let mut sfish_string = String::new();
             self.stringify(&mut sfish_string, left_id);
-            println!("Adding {} to left node {}: {}", part1_value, left_id, sfish_string);
+            //println!("Adding {} to left node {}: {}", part1_value, left_id, sfish_string);
 
             if let Some(mut value) = self.nodes[left_id].value {
                 self.nodes[left_id].value = Some(value + part1_value);
@@ -528,7 +528,7 @@ impl Number {
 
             let mut sfish_string = String::new();
             self.stringify(&mut sfish_string, right_id);
-            println!("Adding {} to right node {}: {}", part2_value, right_id, sfish_string);
+            //println!("Adding {} to right node {}: {}", part2_value, right_id, sfish_string);
 
             if let Some(mut value) = self.nodes[right_id].value {
                 self.nodes[right_id].value = Some(value + part2_value);
@@ -574,8 +574,23 @@ impl Number {
 
 
     pub fn magnitude(&self) -> u32 {
-        0
+        
+        self.calc_magnitude(self.rootnode_id)
     }
+
+    fn calc_magnitude(&self, node_id: usize) -> u32 {
+
+        let node = self.nodes[node_id];
+        
+        if !node.pair {
+            return node.value.unwrap();
+        } else {
+            let mut mag = self.calc_magnitude(node.part1_id.unwrap()) * 3;
+            mag += self.calc_magnitude(node.part2_id.unwrap()) * 2;
+            return mag;
+        }
+    }
+
 
     pub fn to_string(&self) -> String {
         
@@ -764,6 +779,26 @@ mod tests {
         sno.reduce();
         println!("Reduced: {}", sno);
         assert_eq!("[[[[0,7],4],[[7,8],[6,0]]],[8,1]]", sno.to_string());    // force print
+    }
+
+    #[test]
+    fn magnitude_1() {
+        let mut sno = Number::new("[1,9]".to_string());
+        assert_eq!(21, sno.magnitude());    
+    }
+
+
+    #[test]
+    fn magnitude_2() {
+        let mut sno = Number::new("[[9,1],[1,9]]".to_string());
+        assert_eq!(129, sno.magnitude());    
+    }
+
+
+    #[test]
+    fn magnitude_3() {
+        let mut sno = Number::new("[[[[8,7],[7,7]],[[8,6],[7,7]]],[[[0,7],[6,6]],[8,7]]]".to_string());
+        assert_eq!(3488, sno.magnitude());    
     }
 
         

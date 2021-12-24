@@ -14,10 +14,16 @@ pub fn calculate_magnitude_sum(file_path: &String) -> u32 {
         file_path
     ));
 
-    let mut sfish_no = Number::new("[[[[1,2],[3,4]],[[5,6],[7,8]]],9]".to_string());
-    println!("Snailfish #: {}", sfish_no);
-    sfish_no.reduce();
-    println!("Reduced Snailfish #: {}", sfish_no);
+    let mut lines = contents.lines();
+
+    let line = lines.next().unwrap();
+    let mut sfish_no = Number::new(line.to_string());
+
+    for nextline in lines {
+        let next_fish_no = Number::new(nextline.to_string());
+        sfish_no.add(&next_fish_no);
+        sfish_no.reduce()
+    }
     
     sfish_no.magnitude()
 }
