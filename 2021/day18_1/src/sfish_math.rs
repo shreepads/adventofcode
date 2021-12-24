@@ -227,15 +227,12 @@ impl Number {
                 // replace with 0
                 self.replace_with_zero(explode_id);
 
-                done = true;    // remove once done
+                //done = true;    // remove once done
             } else {
                 // no more to explode
                 done = true;
             }
-
-            
         }
-
     }
 
     fn leftmost_explode_id(&self) -> Option<usize> {
@@ -435,6 +432,9 @@ impl Number {
             self.nodes[parent_id].part2_id = Some(self.nodes.len() - 1);
         }
 
+        // Set explode node depth to 0 so it doesn't get picked up again
+        self.nodes[explode_id].depth = 0;
+
         return
 
     }
@@ -564,5 +564,14 @@ mod tests {
         sno.reduce();
         println!("Exploded: {}", sno);
         assert_eq!("[7,[6,[5,[7,0]]]]", sno.to_string());    // force print
+    }
+
+
+    #[test]
+    fn double_explode() {
+        let mut sno = Number::new("[[3,[2,[1,[7,3]]]],[6,[5,[4,[3,2]]]]]".to_string());
+        sno.reduce();
+        println!("Exploded: {}", sno);
+        assert_eq!("[[3,[2,[8,0]]],[9,[5,[7,0]]]]", sno.to_string());    // force print
     }
 }
