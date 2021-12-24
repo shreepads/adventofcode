@@ -2,19 +2,26 @@
 // SPDX-License-Identifier: MIT
 
 use std::fmt;
-use std::rc::Rc;
-use std::cell::{RefCell, RefMut};
 
-#[derive(Debug, Clone, PartialEq)]
-pub struct Number {
-    left: Option<Rc<RefCell<Number>>>,
-    right: Option<Rc<RefCell<Number>>>,
-    parent: Option<Rc<RefCell<Number>>>,
+#[derive(Debug, Clone, PartialEq, Copy)]
+pub struct Node {
+    part1_id: Option<usize>,
+    part2_id: Option<usize>,
+    parent_id: Option<usize>,
     value: Option<u32>,
+    left_id: Option<usize>,
+    right_id: Option<usize>,
     pair: bool,
     depth: u32,
 }
 
+#[derive(Debug, Clone)]
+pub struct Number {
+    nodes: Vec<Node>,
+    rootnode_id: usize,
+}
+
+/* Revisit using explicit to_string method
 impl fmt::Display for Number {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         if self.pair {
@@ -34,23 +41,20 @@ impl fmt::Display for Number {
         }
     }
 }
+*/
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum StackElement {
-    SfishNumber(Rc<RefCell<Number>>),
+    SfishNodeId(usize),
     FirstOpenBracket,
     OpenBracket,
 }
 
 impl Number {
     pub fn new(line: String) -> Number {
-        let mut root_s_no = Number {
-            left: None,
-            right: None,
-            parent: None,
-            value: None,
-            pair: true,    // root element always a pair
-            depth: 1,
+        let mut sfish_no = Number {
+            nodes: Vec::new(),
+            rootnode_id: 0,     // potential error
         };
 
         let mut stack: Vec<StackElement> = Vec::new();
@@ -70,34 +74,60 @@ impl Number {
                     }
                 },
                 ']' => {
+                    // reduce depth
+                    depth -= 1;
+
                     // pop Numbers and open bracket
-                    if let StackElement::SfishNumber(sno2) = stack.pop().unwrap() {
-                        if let StackElement::SfishNumber(sno1) = stack.pop().unwrap() {
+                    if let StackElement::SfishNodeId(sno2) = stack.pop().unwrap() {
+                        if let StackElement::SfishNodeId(sno1) = stack.pop().unwrap() {
                             // check if first open bracket or not
                             match stack.pop().unwrap() {
                                 StackElement::OpenBracket => {
-                                    // create new sno and push
-                                    let s_no = Rc::new(RefCell::new(Number {
-                                        left: Some(Rc::clone(&sno1)),
-                                        right: Some(Rc::clone(&sno2)),
-                                        parent: None,
+                                    // create new node
+                                    let node = Node {
+                                        part1_id: Some(sno1),
+                                        part2_id: Some(sno2),
+                                        parent_id: None,
                                         value: None,
+                                        left_id: None,
+                                        right_id: None,
                                         pair: true,
-                                        depth: depth,
-                                    }));
-                                    sno1.borrow_mut().parent = Some(Rc::clone(&s_no));
-                                    sno2.borrow_mut().parent = Some(Rc::clone(&s_no));
-                                    stack.push(StackElement::SfishNumber(s_no));
+                                        depth: depth,                       
+                                    };
+                                    sfish_no.nodes.push(node);
+                                    let node_id = sfish_no.nodes.len() - 1;
+
+                                    // Set this node as parent of sno1 and sno2
+                                    sfish_no.nodes[sno1].parent_id = Some(node_id);
+                                    sfish_no.nodes[sno2].parent_id = Some(node_id);
+
+                                    // Push back onto stack
+                                    stack.push(StackElement::SfishNodeId(node_id));
                                 },
                                 StackElement::FirstOpenBracket => {
-                                    // map sno1 and sno2 to root_sno
-                                    root_s_no.left = Some(Rc::clone(&sno1));
-                                    root_s_no.right = Some(Rc::clone(&sno2));
+                                    // create root node
+                                    let root_node = Node {
+                                        part1_id: Some(sno1),
+                                        part2_id: Some(sno2),
+                                        parent_id: None,
+                                        value: None,
+                                        left_id: None,
+                                        right_id: None,
+                                        pair: true,
+                                        depth: depth,                       
+                                    };
+                                    sfish_no.nodes.push(root_node);
+                                    let node_id = sfish_no.nodes.len() - 1;
+
+                                    // Set this node as parent of sno1 and sno2
+                                    sfish_no.nodes[sno1].parent_id = Some(node_id);
+                                    sfish_no.nodes[sno2].parent_id = Some(node_id);
+
+                                    // Set this as the root node
+                                    sfish_no.rootnode_id = node_id;
                                 },
                                 _ => println!("Error couldn't pop open bracket after sno1")
                             };
-                            // reduce depth
-                            depth -= 1;
                         } else {
                             println!("Error couldn't pop sno1 after sno2");
                         }
@@ -108,24 +138,27 @@ impl Number {
                 _   => {
                     // get digit value and push
                     let val: u32 = sno_char.to_digit(10).unwrap();
-                    let sno = Rc::new(RefCell::new(Number {
-                        left: None,
-                        right: None,
-                        parent: None,
+                    let node = Node {
+                        part1_id: None,
+                        part2_id: None,
+                        parent_id: None,
                         value: Some(val),
+                        left_id: None,
+                        right_id: None,
                         pair: false,
-                        depth: depth,                        
-                    }));
-                    stack.push(StackElement::SfishNumber(sno));
+                        depth: depth,                       
+                    };
+                    sfish_no.nodes.push(node);
+                    stack.push(StackElement::SfishNodeId(sfish_no.nodes.len() - 1));
                 },
             }
         }
                     
-        root_s_no
+        sfish_no
     }
 
     pub fn magnitude(&self) -> u32 {
-        self.value.unwrap()
+        0
     }
 }
 
