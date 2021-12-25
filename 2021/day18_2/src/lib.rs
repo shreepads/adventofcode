@@ -12,7 +12,33 @@ pub fn calculate_maxmagnitude_sum(file_path: &String) -> u32 {
         file_path
     ));
 
-    0
+    let mut sfish_no_strs: Vec<String> = Vec::new();
+
+    for line in contents.lines() {
+        sfish_no_strs.push(line.to_string());
+    }
+
+    let mut max_magnitude = 0u32;
+
+    for (no1, sno1_str) in sfish_no_strs.iter().enumerate() {
+        for (no2, sno2_str) in sfish_no_strs.iter().enumerate() {
+            if no1 == no2 {
+                continue;
+            }
+
+            let mut sno1 = Number::new(sno1_str.to_string());
+            let sno2 = Number::new(sno2_str.to_string());
+
+            sno1.add(&sno2);
+            sno1.reduce();
+
+            if sno1.magnitude() > max_magnitude {
+                max_magnitude = sno1.magnitude();
+            }
+        }
+    }
+
+    max_magnitude
 }
 
 #[cfg(test)]
