@@ -200,4 +200,13 @@ fn main() {
     println!(
         "Day 18, #1: {:?}",
         day18_1::calculate_magnitude_sum(&String::from("resources/day18-1-input.txt"))
-    );}
+    );
+
+    // Day 18, #2
+    println!(
+        "Day 18, #2: {:?}",
+        day18_2::calculate_maxmagnitude_sum(&String::from("resources/day18-1-input.txt"))
+    );
+
+
+}

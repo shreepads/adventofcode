@@ -22,10 +22,12 @@ struct Velocity {
 
 
 pub fn calculate_maxy_trajectory(x1: i32, x2: i32, y1: i32, y2: i32) -> (i32, usize) {
+    /*
     println!(
         "Calculating trajectories for target: ({},{}) - ({},{})",
         x1, y1, x2, y2
     );
+    */
 
     let vx_min = (2.0 * x1 as f32).powf(0.5) as i32 - 2;
     let vx_max = x2 + 1;

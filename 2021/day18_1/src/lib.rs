@@ -1,7 +1,7 @@
 // Copyright (c) 2021 Shreepad Shukla
 // SPDX-License-Identifier: MIT
 
-mod sfish_math;
+pub mod sfish_math;
 
 use std::fs;
 use sfish_math::Number;
