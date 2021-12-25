@@ -207,4 +207,12 @@ fn main() {
         "Day 18, #2: {:?}",
         day18_2::calculate_maxmagnitude_sum(&String::from("resources/day18-1-input.txt"))
     );
+
+    // Day 19, #1
+    println!(
+        "Day 19, #1: {:?}",
+        day19_1::calculate_beacon_count(&String::from("resources/day19-1-input.txt"))
+    );
+
+
 }
