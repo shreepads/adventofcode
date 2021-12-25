@@ -260,7 +260,7 @@ impl Number {
             // do we split if we have exploded one? TO DO
             if exploding_complete {
                 // find node to split and split it
-                if let Some(split_id) = self.get_split_id() {
+                if let Some(split_id) = self.get_leftmost_split_id() {
 
                     let mut sfish_string = String::new();
                     self.stringify(&mut sfish_string, split_id);
@@ -281,30 +281,54 @@ impl Number {
         }   // while !done
     }
 
-    fn get_split_id(&self) -> Option<usize> {
+    fn get_leftmost_split_id(&self) -> Option<usize> {
 
-        // find node with number > 10
-        for (i, node) in self.nodes.iter().enumerate() {
-            
-            if node.depth == 0 {
-                // orphan node or root node
-                continue;
-            }
+        self.get_left_split_id(self.rootnode_id)
 
-            // check if it is a value node
-            if node.pair {
-                continue;
-            }
-            
-            if node.value > Some(9) {
-                return Some(i);
-            }
+    }
 
+    fn get_left_split_id(&self, node_id: usize) -> Option<usize> {
+
+        let node = self.nodes[node_id];
+        
+        // check if leaf
+        if !node.pair {
+            if node.value.unwrap() > 9 {
+                return Some(node_id);
+            }
+        }
+
+        // check left part
+        let part1_id = node.part1_id.unwrap();
+
+        if !self.nodes[part1_id].pair {
+            if self.nodes[part1_id].value.unwrap() > 9 {
+                return Some(part1_id);
+            }
+        } else {
+            // down the rabbit hole
+            if let Some(part1_split_id) = self.get_left_split_id(part1_id) {
+                return Some(part1_split_id);
+            }
+        }
+
+        // check right part
+        let part2_id = node.part2_id.unwrap();
+
+        if !self.nodes[part2_id].pair {
+            if self.nodes[part2_id].value.unwrap() > 9 {
+                return Some(part2_id);
+            }
+        } else {
+            // down the rabbit hole
+            if let Some(part2_split_id) = self.get_left_split_id(part2_id) {
+                return Some(part2_split_id);
+            }
         }
 
         None
-    
     }
+
 
     fn split(&mut self, split_id: usize) {
 
