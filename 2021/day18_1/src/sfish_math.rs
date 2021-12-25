@@ -442,7 +442,6 @@ impl Number {
         // traverse up till find parent whose part2 is in chain
         while !done {
             let parent_node = self.nodes[parent_id];
-            let child_node = self.nodes[child_id];
 
             if parent_node.part1_id == Some(child_id) {
                 // need to go further up, unless reached root
@@ -474,7 +473,7 @@ impl Number {
             }
 
             // traverse down part2
-            parent_id = child_id;
+            //parent_id = child_id;
             child_id = child_node.part2_id.unwrap();
         }
 
@@ -486,7 +485,7 @@ impl Number {
             self.stringify(&mut sfish_string, left_id);
             //println!("Adding {} to left node {}: {}", part1_value, left_id, sfish_string);
 
-            if let Some(mut value) = self.nodes[left_id].value {
+            if let Some(value) = self.nodes[left_id].value {
                 self.nodes[left_id].value = Some(value + part1_value);
             }
         }
@@ -507,7 +506,6 @@ impl Number {
         // traverse up till find parent whose part1 is in chain
         while !done {
             let parent_node = self.nodes[parent_id];
-            let child_node = self.nodes[child_id];
 
             if parent_node.part2_id == Some(child_id) {
                 // need to go further up, unless reached root
@@ -539,7 +537,7 @@ impl Number {
             }
 
             // traverse down part1
-            parent_id = child_id;
+            //parent_id = child_id;
             child_id = child_node.part1_id.unwrap();
         }
 
@@ -551,7 +549,7 @@ impl Number {
             self.stringify(&mut sfish_string, right_id);
             //println!("Adding {} to right node {}: {}", part2_value, right_id, sfish_string);
 
-            if let Some(mut value) = self.nodes[right_id].value {
+            if let Some(value) = self.nodes[right_id].value {
                 self.nodes[right_id].value = Some(value + part2_value);
             }
         }
@@ -562,7 +560,7 @@ impl Number {
     fn replace_with_zero(&mut self, explode_id: usize) {
         let depth = self.nodes[explode_id].depth;
         let parent_id = self.nodes[explode_id].parent_id.unwrap();
-        let mut parent_node = self.nodes[parent_id];
+        let parent_node = self.nodes[parent_id];
 
         let zero_node = Node {
             part1_id: None,
