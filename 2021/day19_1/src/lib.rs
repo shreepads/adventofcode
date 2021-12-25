@@ -17,9 +17,12 @@ pub fn calculate_beacon_count(file_path: &String) -> u32 {
 
 #[cfg(test)]
 mod tests {
+
+    use super::*;
+
     #[test]
-    fn it_works() {
-        let result = 2 + 2;
-        assert_eq!(result, 4);
+    fn day19_1() {
+        let result = calculate_beacon_count(&String::from("../resources/tests/day19-1-testdata.txt"));
+        assert_eq!(result, 79);
     }
 }
