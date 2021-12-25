@@ -228,8 +228,8 @@ impl Number {
 
         while !done {
             
-            println!("Reducing      : {}" , self);
-            println!("Reducing debug: {}" , self.to_debug_string());
+            //println!("Reducing      : {}" , self);
+            //println!("Reducing debug: {}" , self.to_debug_string());
             
             let mut exploding_complete = false;
 
@@ -238,7 +238,7 @@ impl Number {
                 // explode it
                 let mut sfish_string = String::new();
                 self.stringify(&mut sfish_string, explode_id);
-                println!("Exploding node {}: {}", explode_id, sfish_string);
+                //println!("Exploding node {}: {}", explode_id, sfish_string);
 
                 // add part1 value to first regular number on left
                 self.add_to_leftid(explode_id);
@@ -264,7 +264,7 @@ impl Number {
 
                     let mut sfish_string = String::new();
                     self.stringify(&mut sfish_string, split_id);
-                    println!("Splitting node {}: {}", split_id, sfish_string);
+                    //println!("Splitting node {}: {}", split_id, sfish_string);
 
                     self.split(split_id);
 

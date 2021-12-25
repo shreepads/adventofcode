@@ -23,7 +23,7 @@ pub fn calculate_magnitude_sum(file_path: &String) -> u32 {
         let next_fish_no = Number::new(nextline.to_string());
         sfish_no.add(&next_fish_no);
         sfish_no.reduce();
-        println!("Added, reduced: {}", sfish_no);
+        //println!("Added, reduced: {}", sfish_no);
     }
     
     sfish_no.magnitude()
