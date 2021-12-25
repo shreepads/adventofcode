@@ -33,11 +33,13 @@ pub fn calculate_magnitude_sum(file_path: &String) -> u32 {
 #[cfg(test)]
 mod tests {
 
+    
     use super::*;
     #[test]
     fn day18_1() {
         let result = calculate_magnitude_sum(&String::from("../resources/tests/day18-1-testdata.txt"));
         assert_eq!(result, 4140);
     }
+    
 
 }

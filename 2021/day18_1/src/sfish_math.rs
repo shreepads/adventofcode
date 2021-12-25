@@ -857,6 +857,14 @@ mod tests {
         assert_eq!(3488, sno.magnitude());    
     }
 
+
+    #[test]
+    fn magnitude_4() {
+        let mut sno = Number::new("[[[[6,6],[7,6]],[[7,7],[7,0]]],[[[7,7],[7,7]],[[7,8],[9,9]]]]".to_string());
+        assert_eq!(4140, sno.magnitude());    
+    }
+
+
         
     #[test]
     fn multi_add_reduce_1() {
@@ -952,6 +960,38 @@ mod tests {
         println!("Reduced debug: {}", sno.to_debug_string());
 
         assert_eq!("[[[[6,7],[6,7]],[[7,7],[0,7]]],[[[8,7],[7,7]],[[8,8],[8,0]]]]", sno.to_string());    // force print
+
+        let sno4 = Number::new("[[[[2,4],7],[6,[0,5]]],[[[6,8],[2,8]],[[2,1],[4,5]]]]".to_string());
+        sno.add(&sno4);
+        println!("ADDED        : {}", sno);
+        println!("Added debug  : {}", sno.to_debug_string());
+        sno.reduce();
+        println!("REDUCED      : {}", sno);
+        println!("Reduced debug: {}", sno.to_debug_string());
+
+        assert_eq!("[[[[7,0],[7,7]],[[7,7],[7,8]]],[[[7,7],[8,8]],[[7,7],[8,7]]]]", sno.to_string());    // force print
+
+        let sno5 = Number::new("[7,[5,[[3,8],[1,4]]]]".to_string());
+        sno.add(&sno5);
+        println!("ADDED        : {}", sno);
+        println!("Added debug  : {}", sno.to_debug_string());
+        sno.reduce();
+        println!("REDUCED      : {}", sno);
+        println!("Reduced debug: {}", sno.to_debug_string());
+
+        assert_eq!("[[[[7,7],[7,8]],[[9,5],[8,7]]],[[[6,8],[0,8]],[[9,9],[9,0]]]]", sno.to_string());    // force print
+
+        let sno6 = Number::new("[[2,[2,2]],[8,[8,1]]]".to_string());
+        sno.add(&sno6);
+        println!("ADDED        : {}", sno);
+        println!("Added debug  : {}", sno.to_debug_string());
+        sno.reduce();
+        println!("REDUCED      : {}", sno);
+        println!("Reduced debug: {}", sno.to_debug_string());
+
+        assert_eq!("[[[[6,6],[6,6]],[[6,0],[6,7]]],[[[7,7],[8,9]],[8,[8,1]]]]", sno.to_string());    // force print
+
+        
     }
     
 
