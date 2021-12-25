@@ -195,7 +195,9 @@ impl Number {
 
         // TODO increase depth of all nodes by 1
         for node in self.nodes.iter_mut() {
-            node.depth += 1;
+            if node.depth != 0 { // don't increase for orphans or old roots
+                node.depth += 1;
+            }
         }
 
         // create new parent node
@@ -213,9 +215,11 @@ impl Number {
         self.nodes.push(new_rootnode);
         self.rootnode_id = self.nodes.len() - 1;
 
-        // Set new root as parent of old roots
+        // Set new root as parent of old roots and update their depth
         self.nodes[self_root_id].parent_id = Some(self.rootnode_id);
+        self.nodes[self_root_id].depth = 1;
         self.nodes[sfish_root_id + id_delta].parent_id = Some(self.rootnode_id);
+        self.nodes[sfish_root_id + id_delta].depth = 1;
     }
 
     pub fn reduce(&mut self) {
@@ -224,6 +228,9 @@ impl Number {
 
         while !done {
             
+            println!("Reducing      : {}" , self);
+            println!("Reducing debug: {}" , self.to_debug_string());
+            
             let mut exploding_complete = false;
 
             // find leftmost node more than 5 deep and explode it
@@ -231,7 +238,7 @@ impl Number {
                 // explode it
                 let mut sfish_string = String::new();
                 self.stringify(&mut sfish_string, explode_id);
-                //println!("Exploding node {}: {}", explode_id, sfish_string);
+                println!("Exploding node {}: {}", explode_id, sfish_string);
 
                 // add part1 value to first regular number on left
                 self.add_to_leftid(explode_id);
@@ -246,21 +253,24 @@ impl Number {
                 exploding_complete = true;
             }
 
-            // do we split if we have exploded one? TO DO
+            
 
             let mut split_performed = false;
 
-            // find node to split and split it
-            if let Some(split_id) = self.get_split_id() {
+            // do we split if we have exploded one? TO DO
+            if exploding_complete {
+                // find node to split and split it
+                if let Some(split_id) = self.get_split_id() {
 
-                let mut sfish_string = String::new();
-                self.stringify(&mut sfish_string, split_id);
-                //println!("Splitting node {}: {}", split_id, sfish_string);
+                    let mut sfish_string = String::new();
+                    self.stringify(&mut sfish_string, split_id);
+                    println!("Splitting node {}: {}", split_id, sfish_string);
 
-                self.split(split_id);
+                    self.split(split_id);
 
-                // Need to go back to explode
-                split_performed = true;
+                    // Need to go back to explode
+                    split_performed = true;
+                }
             }
 
             // if exploding complete and no split performed, done
@@ -277,7 +287,7 @@ impl Number {
         for (i, node) in self.nodes.iter().enumerate() {
             
             if node.depth == 0 {
-                // orphan node
+                // orphan node or root node
                 continue;
             }
 
@@ -561,12 +571,22 @@ impl Number {
         // Set parent's child part to explode id to zero
         if parent_node.part1_id == Some(explode_id) {
             self.nodes[parent_id].part1_id = Some(self.nodes.len() - 1);
-        } else {
+        } else if parent_node.part2_id == Some(explode_id) {
             self.nodes[parent_id].part2_id = Some(self.nodes.len() - 1);
+        } else {
+            // error
+            println!("Explode id {} parent doesn't point to explode id", explode_id);
         }
 
         // Set explode node depth to 0 so it doesn't get picked up again
         self.nodes[explode_id].depth = 0;
+
+        // set explode node children depth to 0 so they don't get picked up
+        let part1_id = self.nodes[explode_id].part1_id.unwrap();
+        let part2_id = self.nodes[explode_id].part2_id.unwrap();
+
+        self.nodes[part1_id].depth = 0;
+        self.nodes[part2_id].depth = 0;
 
         return
 
@@ -663,7 +683,7 @@ mod tests {
     fn new_sno_pair() {
         let input = "[1,2]";
         let result = Number::new(input.to_string());
-        println!("Sfish Number: {:#?}", result);
+        //println!("Sfish Number: {:#?}", result);
         assert_eq!(input, result.to_string());
     }
 
@@ -671,7 +691,7 @@ mod tests {
     fn new_sno_pair_lt() {
         let input = "[[1,2],3]";
         let result = Number::new(input.to_string());
-        println!("Sfish Number: {:#?}", result);
+        //println!("Sfish Number: {:#?}", result);
         assert_eq!(input, result.to_string());
     }
 
@@ -679,7 +699,7 @@ mod tests {
     fn new_sno_pair_rt() {
         let input = "[9,[8,7]]";
         let result = Number::new(input.to_string());
-        println!("Sfish Number: {:#?}", result);
+        //println!("Sfish Number: {:#?}", result);
         assert_eq!(input, result.to_string());
     }
 
@@ -688,18 +708,18 @@ mod tests {
     fn new_sno_complex() {
         let input = "[[[2,3],[[4,5],6]],[9,[8,7]]]";
         let result = Number::new(input.to_string());
-        println!("Sfish Number: {:#?}", result);
+        //println!("Sfish Number: {:#?}", result);
         assert_eq!(input, result.to_string());
     }
 
     #[test]
     fn add_1() {
         let mut sno1 = Number::new("[1,2]".to_string());
-        println!("No 1: {}", sno1.to_debug_string());
+        //println!("No 1: {}", sno1.to_debug_string());
         let sno2 = Number::new("[[3,4],5]".to_string());
-        println!("No 2: {}", sno2.to_debug_string());
+        //println!("No 2: {}", sno2.to_debug_string());
         sno1.add(&sno2);
-        println!("Addition: {}", sno1.to_debug_string());
+        //println!("Addition: {}", sno1.to_debug_string());
         assert_eq!("[[1,2],[[3,4],5]]", sno1.to_string());
     }
 
@@ -710,7 +730,7 @@ mod tests {
         let sno3 = Number::new("[9,[8,7]]".to_string());
         sno1.add(&sno2);
         sno1.add(&sno3);
-        println!("Addition: {:#?}", sno1);
+        //println!("Addition: {:#?}", sno1);
         assert_eq!("[[[2,3],[[4,5],6]],[9,[8,7]]]", sno1.to_string());
     }
 
@@ -720,7 +740,7 @@ mod tests {
         let input = "[2,3]";
         let mut sno = Number::new(input.to_string());
         sno.reduce();
-        println!("Reduced: {}", sno);
+        //println!("Reduced: {}", sno);
         assert_eq!(input, sno.to_string());
     }
 
@@ -729,7 +749,7 @@ mod tests {
         let input = "[[[2,3],[[4,5],6]],[9,[8,7]]]";
         let mut sno = Number::new(input.to_string());
         sno.reduce();
-        println!("Reduced: {}", sno);
+        //println!("Reduced: {}", sno);
         assert_eq!(input, sno.to_string());
     }
 
@@ -738,7 +758,7 @@ mod tests {
     fn single_explode_rt() {
         let mut sno = Number::new("[[[[[9,8],1],2],3],4]".to_string());
         sno.reduce();
-        println!("Reduced: {}", sno);
+        //println!("Reduced: {}", sno);
         assert_eq!("[[[[0,9],2],3],4]", sno.to_string());  // force print
     }
 
@@ -747,7 +767,7 @@ mod tests {
     fn single_explode_lt() {
         let mut sno = Number::new("[7,[6,[5,[4,[3,2]]]]]".to_string());
         sno.reduce();
-        println!("Exploded: {}", sno);
+        //println!("Exploded: {}", sno);
         assert_eq!("[7,[6,[5,[7,0]]]]", sno.to_string());    // force print
     }
 
@@ -756,7 +776,7 @@ mod tests {
     fn double_explode() {
         let mut sno = Number::new("[[3,[2,[1,[7,3]]]],[6,[5,[4,[3,2]]]]]".to_string());
         sno.reduce();
-        println!("Exploded: {}", sno);
+        //println!("Exploded: {}", sno);
         assert_eq!("[[3,[2,[8,0]]],[9,[5,[7,0]]]]", sno.to_string());    // force print
     }
 
@@ -765,7 +785,7 @@ mod tests {
     fn explode_split_explode() {
         let mut sno = Number::new("[[[[[4,3],4],4],[7,[[8,4],9]]],[1,1]]".to_string());
         sno.reduce();
-        println!("Reduced: {}", sno);
+        //println!("Reduced: {}", sno);
         assert_eq!("[[[[0,7],4],[[7,8],[6,0]]],[8,1]]", sno.to_string());    // force print
     }
 
@@ -775,9 +795,9 @@ mod tests {
         let mut sno = Number::new("[[[[4,3],4],4],[7,[[8,4],9]]]".to_string());
         let sno2 = Number::new("[1,1]".to_string());
         sno.add(&sno2);
-        println!("Added: {}", sno);
+        //println!("Added: {}", sno);
         sno.reduce();
-        println!("Reduced: {}", sno);
+        //println!("Reduced: {}", sno);
         assert_eq!("[[[[0,7],4],[[7,8],[6,0]]],[8,1]]", sno.to_string());    // force print
     }
 
@@ -808,27 +828,27 @@ mod tests {
         
         let sno2 = Number::new("[2,2]".to_string());
         sno.add(&sno2);
-        println!("Added  : {}", sno.to_debug_string());
+        //println!("Added  : {}", sno.to_debug_string());
         sno.reduce();
-        println!("Reduced: {}", sno.to_debug_string());
+        //println!("Reduced: {}", sno.to_debug_string());
 
         let sno3 = Number::new("[3,3]".to_string());
         sno.add(&sno3);
-        println!("Added  : {}", sno.to_debug_string());
+        //println!("Added  : {}", sno.to_debug_string());
         sno.reduce();
-        println!("Reduced: {}", sno.to_debug_string());
+        //println!("Reduced: {}", sno.to_debug_string());
 
         let sno4 = Number::new("[4,4]".to_string());
         sno.add(&sno4);
-        println!("Added  : {}", sno.to_debug_string());
+        //println!("Added  : {}", sno.to_debug_string());
         sno.reduce();
-        println!("Reduced: {}", sno.to_debug_string());
+        //println!("Reduced: {}", sno.to_debug_string());
 
         let sno5 = Number::new("[5,5]".to_string());
         sno.add(&sno5);
-        println!("Added  : {}", sno.to_debug_string());
+        //println!("Added  : {}", sno.to_debug_string());
         sno.reduce();
-        println!("Reduced  : {}", sno.to_debug_string());
+        //println!("Reduced  : {}", sno.to_debug_string());
 
         assert_eq!("[[[[3,0],[5,3]],[4,4]],[5,5]]", sno.to_string());    // force print
     }
@@ -841,37 +861,59 @@ mod tests {
         
         let sno2 = Number::new("[2,2]".to_string());
         sno.add(&sno2);
-        println!("Added: {}", sno);
+        //println!("Added: {}", sno);
         sno.reduce();
-        println!("Reduced: {}", sno);
+        //println!("Reduced: {}", sno);
 
         let sno3 = Number::new("[3,3]".to_string());
         sno.add(&sno3);
-        println!("Added: {}", sno);
+        //println!("Added: {}", sno);
         sno.reduce();
-        println!("Reduced: {}", sno);
+        //println!("Reduced: {}", sno);
 
         let sno4 = Number::new("[4,4]".to_string());
         sno.add(&sno4);
-        println!("Added: {}", sno);
+        //println!("Added: {}", sno);
         sno.reduce();
-        println!("Reduced: {}", sno);
+        //println!("Reduced: {}", sno);
 
         let sno5 = Number::new("[5,5]".to_string());
         sno.add(&sno5);
-        println!("Added: {}", sno);
+        //println!("Added: {}", sno);
         sno.reduce();
-        println!("Reduced: {}", sno);
+        //println!("Reduced: {}", sno);
 
         let sno6 = Number::new("[6,6]".to_string());
         sno.add(&sno6);
-        println!("Added: {}", sno);
+        //println!("Added: {}", sno);
         sno.reduce();
-        println!("Reduced: {}", sno);
+        //println!("Reduced: {}", sno);
 
         assert_eq!("[[[[5,0],[7,4]],[5,5]],[6,6]]", sno.to_string());    // force print
     }
     
+    #[test]
+    fn complex_add_reduce() {
+        let mut sno = Number::new("[[[0,[4,5]],[0,0]],[[[4,5],[2,6]],[9,5]]]".to_string());
+        
+        let sno2 = Number::new("[7,[[[3,7],[4,3]],[[6,3],[8,8]]]]".to_string());
+        sno.add(&sno2);
+        println!("Added        : {}", sno);
+        println!("Added debug  : {}", sno.to_debug_string());
+        sno.reduce();
+        println!("Reduced      : {}", sno.to_debug_string());
+        println!("Reduced debug: {}", sno.to_debug_string());
 
+        assert_eq!("[[[[4,0],[5,4]],[[7,7],[6,0]]],[[8,[7,7]],[[7,9],[5,0]]]]", sno.to_string());    // force print
+
+        let sno3 = Number::new("[[2,[[0,8],[3,4]]],[[[6,7],1],[7,[1,6]]]]".to_string());
+        sno.add(&sno3);
+        println!("Added: {}", sno.to_debug_string());
+        sno.reduce();
+        println!("Reduced: {}", sno.to_debug_string());
+
+        assert_eq!("[[[[6,7],[6,7]],[[7,7],[0,7]]],[[[8,7],[7,7]],[[8,8],[8,0]]]]", sno.to_string());    // force print
+    }
+    
 
 }
