@@ -380,36 +380,48 @@ impl Number {
 
     fn leftmost_explode_id(&self) -> Option<usize> {
         
-        for (i, node) in self.nodes.iter().enumerate() {
-            
-            //println!("Checking node {}", i);
-            
-            // check depth
-            if node.depth < 4 {
-                continue;
-            }
-            
-            // check if it is a leaf node
-            if !node.pair {
-                continue;
-            }
+        self.get_leftmost_explode_id(self.rootnode_id)
 
-            // check if parts are leaf nodes
-            if let Some(part1) = node.part1_id {
-                if let Some(part2) = node.part2_id {
-                    if !self.nodes[part1].pair  &&  !self.nodes[part2].pair {
-                        return Some(i);
-                    }
-                } else {
-                    println!("No part2 for node {} with pair", i);
-                }
-            } else {
-                println!("No part1 for node {} with pair", i);
+    }
+
+    fn get_leftmost_explode_id(&self, node_id: usize) -> Option<usize> {
+
+        let node = self.nodes[node_id];
+        
+        if !node.pair {
+            return None;
+        }
+
+        
+        let part1_id = node.part1_id.unwrap();
+        let part2_id = node.part2_id.unwrap();
+
+        // check if both parts are leaf nodes
+        if !self.nodes[part1_id].pair  &&  !self.nodes[part2_id].pair {
+            // both parts are leaf nodes, check depth
+            if node.depth > 3 {
+                return Some(node_id);
+            }
+        }
+
+        // if part1 not leaf node, get it's leftmost explode id
+        if self.nodes[part1_id].pair {
+            if let Some(part1_explode_id) = self.get_leftmost_explode_id(part1_id) {
+                return Some(part1_explode_id);
+            }
+        }
+
+        // if part2 not leaf node, get it's leftmost explode id
+        if self.nodes[part2_id].pair {
+            if let Some(part2_explode_id) = self.get_leftmost_explode_id(part2_id) {
+                return Some(part2_explode_id);
             }
         }
 
         None
+
     }
+
 
     fn add_to_leftid(&mut self, explode_id: usize) {
 
@@ -898,19 +910,22 @@ mod tests {
         
         let sno2 = Number::new("[7,[[[3,7],[4,3]],[[6,3],[8,8]]]]".to_string());
         sno.add(&sno2);
-        println!("Added        : {}", sno);
+        println!("ADDED        : {}", sno);
         println!("Added debug  : {}", sno.to_debug_string());
         sno.reduce();
-        println!("Reduced      : {}", sno.to_debug_string());
+        println!("REDUCED      : {}", sno);
         println!("Reduced debug: {}", sno.to_debug_string());
+        println!("***");
 
         assert_eq!("[[[[4,0],[5,4]],[[7,7],[6,0]]],[[8,[7,7]],[[7,9],[5,0]]]]", sno.to_string());    // force print
 
         let sno3 = Number::new("[[2,[[0,8],[3,4]]],[[[6,7],1],[7,[1,6]]]]".to_string());
         sno.add(&sno3);
-        println!("Added: {}", sno.to_debug_string());
+        println!("ADDED        : {}", sno);
+        println!("Added debug  : {}", sno.to_debug_string());
         sno.reduce();
-        println!("Reduced: {}", sno.to_debug_string());
+        println!("REDUCED      : {}", sno);
+        println!("Reduced debug: {}", sno.to_debug_string());
 
         assert_eq!("[[[[6,7],[6,7]],[[7,7],[0,7]]],[[[8,7],[7,7]],[[8,8],[8,0]]]]", sno.to_string());    // force print
     }
