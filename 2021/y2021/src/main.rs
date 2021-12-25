@@ -207,6 +207,4 @@ fn main() {
         "Day 18, #2: {:?}",
         day18_2::calculate_maxmagnitude_sum(&String::from("resources/day18-1-input.txt"))
     );
-
-
 }
