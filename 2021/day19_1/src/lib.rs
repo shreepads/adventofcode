@@ -1,6 +1,9 @@
 // Copyright (c) 2021 Shreepad Shukla
 // SPDX-License-Identifier: MIT
 
+mod space;
+mod rotations;
+
 use std::fs;
 
 pub fn calculate_beacon_count(file_path: &String) -> u32 {
