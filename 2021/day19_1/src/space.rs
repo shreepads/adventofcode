@@ -20,29 +20,23 @@ impl fmt::Display for Point {
 }
 
 impl Point {
-
     pub fn new_zero() -> Point {
-        Point {x:0, y:0, z:0}
+        Point { x: 0, y: 0, z: 0 }
     }
 
     pub fn new(line: String) -> Point {
-        
         // parse string
         let mut coords = line.split(",");
 
         let x = coords.next().unwrap().parse::<i32>().unwrap();
         let y = coords.next().unwrap().parse::<i32>().unwrap();
         let z = coords.next().unwrap().parse::<i32>().unwrap();
-        
-        Point {
-            x: x,
-            y: y,
-            z: z,
-        }
+
+        Point { x: x, y: y, z: z }
     }
 
     pub fn rotate_vec(&self) -> Vec<Point> {
-        let mut rot_points: Vec<Point>  = Vec::new();
+        let mut rot_points: Vec<Point> = Vec::new();
 
         for rot in 0..=MAX_ROT {
             rot_points.push(self.rotate_new(rot));
@@ -50,7 +44,7 @@ impl Point {
 
         rot_points
     }
-    
+
     pub fn rotate_new(&self, rotation: usize) -> Point {
         let mut new_point = Point {
             x: self.x,
@@ -61,7 +55,7 @@ impl Point {
         new_point.rotate(rotation);
 
         new_point
-    } 
+    }
 
     pub fn rotate(&mut self, rotation: usize) {
         if rotation > MAX_ROT {
@@ -73,28 +67,27 @@ impl Point {
 
         // calculate rot x
         let rot_mat_rowx = rot_mat[0];
-        let x = (self.x * rot_mat_rowx[0]) + (self.y * rot_mat_rowx[1]) + (self.z * rot_mat_rowx[2]);
+        let x =
+            (self.x * rot_mat_rowx[0]) + (self.y * rot_mat_rowx[1]) + (self.z * rot_mat_rowx[2]);
 
         // calculate rot y
         let rot_mat_rowy = rot_mat[1];
-        let y = (self.x * rot_mat_rowy[0]) + (self.y * rot_mat_rowy[1]) + (self.z * rot_mat_rowy[2]);
+        let y =
+            (self.x * rot_mat_rowy[0]) + (self.y * rot_mat_rowy[1]) + (self.z * rot_mat_rowy[2]);
 
         // calculate rot z
         let rot_mat_rowz = rot_mat[2];
-        let z = (self.x * rot_mat_rowz[0]) + (self.y * rot_mat_rowz[1]) + (self.z * rot_mat_rowz[2]);
+        let z =
+            (self.x * rot_mat_rowz[0]) + (self.y * rot_mat_rowz[1]) + (self.z * rot_mat_rowz[2]);
 
         self.x = x;
         self.y = y;
         self.z = z;
-    } 
-
-
-    pub fn to_string(&self) -> String {
-        
-        format!("{},{},{}", self.x, self.y, self.z)
-
     }
 
+    pub fn to_string(&self) -> String {
+        format!("{},{},{}", self.x, self.y, self.z)
+    }
 
     pub fn translate_to(&self, refpoint: Point) -> Translation {
         // Generate translation from this point to given reference point
@@ -103,11 +96,9 @@ impl Point {
             deltay: refpoint.y - self.y,
             deltaz: refpoint.z - self.z,
         }
-
     }
 
     pub fn translate_new(&self, trans: Translation) -> Point {
-
         let mut new_point = Point {
             x: self.x,
             y: self.y,
@@ -117,9 +108,7 @@ impl Point {
         new_point.translate(trans);
 
         new_point
-
     }
-
 
     pub fn translate(&mut self, trans: Translation) {
         self.x = self.x + trans.deltax;
@@ -128,7 +117,6 @@ impl Point {
     }
 
     pub fn manhattan_distance(&self, refpoint: Point) -> i32 {
-
         // calculate manhattan distance to ref point
         let mut man_dist = 0i32;
 
@@ -138,8 +126,6 @@ impl Point {
 
         man_dist
     }
-
-
 }
 
 #[derive(Debug, Clone, PartialEq, Copy, Eq, Hash)]
@@ -151,16 +137,23 @@ pub struct Translation {
 
 impl fmt::Display for Translation {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "Δx: {}, Δy: {}, Δz: {}", self.deltax, self.deltay, self.deltaz)
+        write!(
+            f,
+            "Δx: {}, Δy: {}, Δz: {}",
+            self.deltax, self.deltay, self.deltaz
+        )
     }
 }
 
 impl Translation {
     pub fn new_zero() -> Translation {
-        Translation {deltax:0, deltay:0, deltaz:0}
+        Translation {
+            deltax: 0,
+            deltay: 0,
+            deltaz: 0,
+        }
     }
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -185,7 +178,6 @@ mod tests {
         assert_eq!(input, result.to_string());
     }
 
-
     #[test]
     fn rotate_xpos90() {
         let input = "-537,-823,-458";
@@ -196,7 +188,6 @@ mod tests {
         assert_eq!("-537,458,-823", result.to_string());
     }
 
-
     #[test]
     fn rotate_xpos180() {
         let input = "-537,83,-458";
@@ -206,7 +197,6 @@ mod tests {
         println!("Rotated point by {}: {}", ROTS::Xpos180 as usize, result);
         assert_eq!("-537,-83,458", result.to_string());
     }
-
 
     #[test]
     fn rotate_xpos270() {
@@ -225,7 +215,7 @@ mod tests {
         println!("Point             : {}", result);
         let points = result.rotate_vec();
         println!("Rotated points: {:?}", points);
-        assert_eq!(MAX_ROT+1, points.len());
+        assert_eq!(MAX_ROT + 1, points.len());
     }
 
     #[test]
@@ -235,13 +225,13 @@ mod tests {
         let trans = point1.translate_to(point0);
         let result = point1.translate_new(trans);
 
-        println!("Transalating point1 {} to point0 {} using translation {}",
+        println!(
+            "Transalating point1 {} to point0 {} using translation {}",
             point1, point0, trans
         );
 
         assert_eq!(point0, result);
     }
-
 
     #[test]
     fn man_distance() {
@@ -249,15 +239,11 @@ mod tests {
         let point0 = Point::new("2,3,-1".to_string());
         let result = point1.manhattan_distance(point0);
 
-
-        println!("Manhattan distance from point1 {} to point0 {} is {}",
+        println!(
+            "Manhattan distance from point1 {} to point0 {} is {}",
             point1, point0, result
         );
 
         assert_eq!(19, result);
     }
-
-
 }
-
-
