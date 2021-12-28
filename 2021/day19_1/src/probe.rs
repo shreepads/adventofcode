@@ -5,6 +5,7 @@ use std::fmt;
 use std::collections::HashSet;
 
 use crate::space::Point;
+use crate::rotations::MAX_ROT;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct ZeroScanner {
@@ -37,10 +38,17 @@ pub struct OtherScanner {
 
 impl OtherScanner {
     pub fn new() -> OtherScanner {
+
+        let mut beacon_rotations: Vec<Vec<Point>> = Vec::new();
+
+        for i in 0..=MAX_ROT {
+            beacon_rotations.push(Vec::new());
+        }
+
         OtherScanner {
             location: None,
             beacons: Vec::new(),
-            beacon_rotations: Vec::new(),
+            beacon_rotations: beacon_rotations,
         }
     }
 

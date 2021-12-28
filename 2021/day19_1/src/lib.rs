@@ -48,11 +48,12 @@ fn find_matching_beacons(scanner0: &ZeroScanner, scannern: &OtherScanner) {
 
     for rot in 0..=MAX_ROT {
         for point0 in scanner0.beacons.iter() {
-            for point in scannern.beacon_rotations[rot].iter() {
+            for (i, rot_point) in scannern.beacon_rotations[rot].iter().enumerate() {
                 // check alignments for given pair of points
-                
+                let point = scannern.beacons[i];
+                                
                 // find translation to scanner0 reference
-                let trans = point.translate_to(*point0);
+                let trans = rot_point.translate_to(*point0);
 
                 let trans_points: Vec<Point> = scannern.beacon_rotations[rot].iter()
                     .map(|x| x.translate_new(trans)).collect();
@@ -60,14 +61,14 @@ fn find_matching_beacons(scanner0: &ZeroScanner, scannern: &OtherScanner) {
                 let matching_count = trans_points.iter()
                     .filter(|x| scanner0.beacons.contains(x)).count();
 
-                println!("Rot {}, point 0 {}, point {}: {} matching",
-                    rot, point0, point, matching_count);
+                println!("Rot {}, point 0 {}, point {}, rot_point {}: {} matching",
+                    rot, point0, point, rot_point, matching_count);
 
                 if matching_count > max_matching_count {
                     max_matching_count = matching_count;
                     max_rot = rot;
                     max_point0 = *point0;
-                    max_point = *point;
+                    max_point = point;
                 }
             }
         }
@@ -117,7 +118,9 @@ fn load_data(scanner0: &mut ZeroScanner, scanners: &mut VecDeque<OtherScanner>, 
         if scanner0_loaded {
             let point = Point::new(line.to_string());
             otherscanner.beacons.push(point);
-            otherscanner.beacon_rotations.push(point.rotate_vec());
+            for (i, rot_point) in point.rotate_vec().iter().enumerate() {
+                otherscanner.beacon_rotations[i].push(*rot_point);
+            }
         }
 
     }

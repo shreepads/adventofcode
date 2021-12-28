@@ -1,21 +1,30 @@
 // Copyright (c) 2021 Shreepad Shukla
 // SPDX-License-Identifier: MIT
 
-pub const MAX_ROT: usize = 7;   // 24 - 1
+pub const MAX_ROT: usize = 15;   // 24 - 1
 
 #[repr(usize)]
 pub enum ROTS {
-    Xpos0   = 0,
-    Xpos90  = 1,
-    Xpos180 = 2,
-    Xpos270 = 3,
-    Xneg0   = 4,
-    Xneg90  = 5,
-    Xneg180 = 6,
-    Xneg270 = 7,
+    Xpos0   =  0,
+    Xpos90  =  1,
+    Xpos180 =  2,
+    Xpos270 =  3,
+    Xneg0   =  4,
+    Xneg90  =  5,
+    Xneg180 =  6,
+    Xneg270 =  7,
+    Ypos0   =  8,
+    Ypos90  =  9,
+    Ypos180 = 10,
+    Ypos270 = 11,
+    Yneg0   = 12,
+    Yneg90  = 13,
+    Yneg180 = 14,
+    Yneg270 = 15,
+
 }
 
-pub const ROT_MATS: [[ [i32; 3]; 3]; 8] = [
+pub const ROT_MATS: [[ [i32; 3]; 3]; 16] = [
     [  // Xpos0
         [ 1,  0,  0],
         [ 0,  1,  0],
@@ -56,5 +65,46 @@ pub const ROT_MATS: [[ [i32; 3]; 3]; 8] = [
         [ 0,  0,  1],
         [ 0, -1,  0]
     ],
+    [ // Ypos0 (rotate z 270%)
+        [ 0,  1,  0],
+        [-1,  0,  0],
+        [ 0,  0,  1]
+    ],
+    [ // Ypos90
+        [ 0,  1,  0],
+        [ 1,  0,  0],
+        [ 0,  0,  1]
+    ],
+    [ // Ypos180
+        [ 0,  1,  0],
+        [ 1,  0,  0],
+        [ 0,  0, -1]
+    ],
+    [ // Ypos270
+        [ 0,  1,  0],
+        [-1,  0,  0],
+        [ 0,  0, -1]
+    ],
+    [ // Yneg0 (rotate z 90%)
+        [ 0, -1,  0],
+        [ 1,  0,  0],
+        [ 0,  0,  1]
+    ],
+    [ // Yneg90
+        [ 0,  -1, 0],
+        [ 1,  0,  0],
+        [ 0,  0, -1]
+    ],
+    [ // Yneg180
+        [ 0,  1,  0],
+        [-1,  0,  0],
+        [ 0,  0, -1]
+    ],
+    [ // Yneg270
+        [ 0,  1,  0],
+        [-1,  0,  0],
+        [ 0,  0,  1]
+    ],
+
 ];
 
