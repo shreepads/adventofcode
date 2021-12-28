@@ -1,6 +1,15 @@
 // Copyright (c) 2021 Shreepad Shukla
 // SPDX-License-Identifier: MIT
 
+use std::fmt;
+
+pub enum Intersection {
+    Null,
+    Subset(Cuboid),
+    Superset(Cuboid),
+    Overlap(Cuboid),
+}
+
 #[derive(Debug, Clone, PartialEq, Copy, Eq, Hash)]
 pub struct Cuboid {
     x1: i32,
@@ -55,6 +64,17 @@ impl Cuboid {
 
     pub fn to_string(&self) -> String {
         format!("x={}..{},y={}..{},z={}..{}", self.x1, self.x2, self.y1, self.y2, self.z1, self.z2)
+    }
+
+    pub fn intersect(&self, new_cb: &Cuboid) -> Intersection {
+        Intersection::Null
+    }
+}
+
+
+impl fmt::Display for Cuboid {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.to_string())
     }
 }
 
