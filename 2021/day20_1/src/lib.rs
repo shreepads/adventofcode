@@ -22,24 +22,20 @@ pub fn calculate_lit_pixels(file_path: &String, passes: u8) -> usize {
 
     load_mapping(&mut mapping, mapping_str.to_string());
 
-    let mut image: [[char; 120]; 120] = [['.'; 120]; 120];
+    let mut image: [[char; 220]; 220] = [['.'; 220]; 220];
 
     load_image(&mut image, image_str.to_string());
 
     for i in 1..=passes {
-        println!("**** BEFORE ****");
-        print_image(&image);
         enhance(&mut image, &mapping, i);
-        println!("**** AFTER ****");
-        print_image(&image);
     }
 
     lit_pixels(&image)
 }
 
-fn print_image(image: &[[char; 120]; 120]) {
-    for row in 1..21 {
-        for col in 1..21 {
+fn _print_image(image: &[[char; 220]; 220]) {
+    for row in 30..71 {
+        for col in 30..71 {
             print!("{}", image[row][col]);
         }
         println!("");
@@ -47,7 +43,7 @@ fn print_image(image: &[[char; 120]; 120]) {
 }
 
 
-fn lit_pixels(image: &[[char; 120]; 120]) -> usize {
+fn lit_pixels(image: &[[char; 220]; 220]) -> usize {
     
     let mut lit_pixels = 0;
 
@@ -58,17 +54,17 @@ fn lit_pixels(image: &[[char; 120]; 120]) -> usize {
     lit_pixels
 }
 
-fn enhance(image: &mut [[char; 120]; 120], mapping: &HashMap<usize,char>, pass: u8) {
+fn enhance(image: &mut [[char; 220]; 220], mapping: &HashMap<usize,char>, pass: u8) {
 
     let mut fill_char = '.';
     if pass % 2 == 1 {
         fill_char = '#';
     }
 
-    let mut enhanced_image = [[fill_char; 120]; 120];
+    let mut enhanced_image = [[fill_char; 220]; 220];
 
-    for row in 1..119 {
-        for col in 1..119 {
+    for row in 1..219 {
+        for col in 1..219 {
             let mut num_str = String::new();
             num_str.push_str(&image[row-1][col-1..=col+1].iter().collect::<String>());
             num_str.push_str(&image[row][col-1..=col+1].iter().collect::<String>());
@@ -96,11 +92,11 @@ fn load_mapping(mapping: &mut HashMap<usize,char>, mapping_str: String) {
     }
 }
 
-fn load_image(image: &mut [[char; 120]; 120], image_str: String) {
+fn load_image(image: &mut [[char; 220]; 220], image_str: String) {
 
     for (row, line) in image_str.lines().enumerate() {
         for (col, pixel) in line.chars().enumerate() {
-            image[row+10][col+10] = pixel;
+            image[row+60][col+60] = pixel;
         }
     }
 }

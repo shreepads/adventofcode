@@ -223,6 +223,13 @@ fn main() {
         "Day 20, #1: {:?}",
         day20_1::calculate_lit_pixels(&String::from("resources/day20-1-input.txt"), 2)
     );
-    
+
+
+    // Day 20, #2
+    println!(
+        "Day 20, #2: {:?}",
+        day20_1::calculate_lit_pixels(&String::from("resources/day20-1-input.txt"), 50)
+    );
+
 }
 
