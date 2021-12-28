@@ -143,6 +143,11 @@ impl fmt::Display for Translation {
     }
 }
 
+impl Translation {
+    pub fn new_zero() -> Translation {
+        Translation {deltax:0, deltay:0, deltaz:0}
+    }
+}
 
 
 #[cfg(test)]

@@ -9,6 +9,7 @@ use std::fs;
 use std::collections::VecDeque;
 
 use space::Point;
+use space::Translation;
 use rotations::MAX_ROT;
 use probe::ZeroScanner;
 use probe::OtherScanner;
@@ -34,17 +35,59 @@ pub fn calculate_beacon_count(file_path: &String) -> u32 {
         println!("Loaded other scanner {}: {}", i+1, scanner);
     }
 
-    find_matching_beacons(&scanner0, &scanners[0]);
+    let (max_matching_count, max_rot, max_trans) = find_matching_beacons(&scanner0, &scanners[0]);
+
+    if max_matching_count >= 12 {
+        println!("Found match with {} points: rot {}, trans {}. MERGING",
+            max_matching_count, max_rot, max_trans);
+        
+        merge(&mut scanner0, &mut scanners[0], max_rot, max_trans);
+
+        println!("Post merge scannern location: {:?}", scanners[0].location);
+        println!("Post merge scanner0 : {}", scanner0);
+
+    } else {
+        println!("Only found {} points matching", max_matching_count);
+    }
+
+    let (max_matching_count_4, max_rot_4, max_trans_4) = find_matching_beacons(&scanner0, &scanners[3]);
+
+    merge(&mut scanner0, &mut scanners[3], max_rot_4, max_trans_4);
+
+    println!("Post merge scannern location: {:?}", scanners[3].location);
+    println!("Post merge scanner0 : {}", scanner0);
 
     0
 }
 
-fn find_matching_beacons(scanner0: &ZeroScanner, scannern: &OtherScanner) {
+fn merge(scanner0: &mut ZeroScanner, scannern: &mut OtherScanner, max_rot: usize, max_trans: Translation) {
+
+    for (i, rot_point) in scannern.beacon_rotations[max_rot].iter().enumerate() {
+
+        let trans_rot_point = rot_point.translate_new(max_trans);
+
+        if scanner0.beacons.contains(&trans_rot_point) {
+            // just print out
+            println!("Point {} (rot point {}) already in scanner0 as {}",
+                scannern.beacons[i], rot_point, trans_rot_point);
+        } else {
+            // add to scanner0
+            scanner0.beacons.insert(trans_rot_point);
+        }
+    } 
+
+    // Set scannern's location (as per scanner0 ref)
+    scannern.location = Some(Point::new_zero().translate_new(max_trans));
+}
+
+
+fn find_matching_beacons(scanner0: &ZeroScanner, scannern: &OtherScanner) -> (usize, usize, Translation) {
 
     let mut max_matching_count = 0;
     let mut max_rot = usize::MAX;
     let mut max_point0 = Point::new_zero();
     let mut max_point = Point::new_zero();
+    let mut max_trans = Translation::new_zero();
 
     for rot in 0..=MAX_ROT {
         for point0 in scanner0.beacons.iter() {
@@ -61,22 +104,24 @@ fn find_matching_beacons(scanner0: &ZeroScanner, scannern: &OtherScanner) {
                 let matching_count = trans_points.iter()
                     .filter(|x| scanner0.beacons.contains(x)).count();
 
-                println!("Rot {}, point 0 {}, point {}, rot_point {}: {} matching",
-                    rot, point0, point, rot_point, matching_count);
-
                 if matching_count > max_matching_count {
                     max_matching_count = matching_count;
                     max_rot = rot;
                     max_point0 = *point0;
                     max_point = point;
+                    max_trans = trans;
+
+                    println!("Rot {}, point 0 {}, point {}, rot_point {}, trans {}: {} matching",
+                        rot, point0, point, rot_point, trans, matching_count);
                 }
             }
         }
     }
 
-    println!("Max match: rot {}, point 0 {}, point {}, {} matching",
-        max_rot, max_point0, max_point, max_matching_count);
+    println!("Max match: rot {}, point 0 {}, point {}, trans {}: {} matching",
+        max_rot, max_point0, max_point, max_trans, max_matching_count);
 
+    (max_matching_count, max_rot, max_trans)
 }
 
 fn load_data(scanner0: &mut ZeroScanner, scanners: &mut VecDeque<OtherScanner>, contents: String) {
