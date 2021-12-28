@@ -224,11 +224,18 @@ fn main() {
         day20_1::calculate_lit_pixels(&String::from("resources/day20-1-input.txt"), 2)
     );
 
-
+    /* Removed for performance FIX
     // Day 20, #2
     println!(
         "Day 20, #2: {:?}",
         day20_1::calculate_lit_pixels(&String::from("resources/day20-1-input.txt"), 50)
+    );
+    */
+
+    // Day 21, #1
+    println!(
+        "Day 21, #1: {:?}",
+        day21_1::calculate_meaningless_metric(3, 5, 1000)
     );
 
 }
