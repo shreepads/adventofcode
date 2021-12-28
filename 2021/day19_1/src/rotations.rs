@@ -4,7 +4,7 @@
 pub const MAX_ROT: usize = 23; // 24 - 1
 
 #[repr(usize)]
-pub enum ROTS {
+pub enum _ROTS {
     // pretty useless unless there was an easy way to iterate over them or choose type
     Xpos0 = 0,
     Xpos90 = 1,

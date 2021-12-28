@@ -159,7 +159,7 @@ impl Translation {
 mod tests {
 
     use super::*;
-    use crate::rotations::ROTS;
+    use crate::rotations::_ROTS;
 
     #[test]
     fn new_point() {
@@ -173,7 +173,7 @@ mod tests {
     fn rotate_xpos0() {
         let input = "-537,-823,-458";
         let mut result = Point::new(input.to_string());
-        result.rotate(ROTS::Xpos0 as usize);
+        result.rotate(_ROTS::Xpos0 as usize);
         println!("Point: {}", result);
         assert_eq!(input, result.to_string());
     }
@@ -183,8 +183,8 @@ mod tests {
         let input = "-537,-823,-458";
         let mut result = Point::new(input.to_string());
         println!("Point             : {}", result);
-        result.rotate(ROTS::Xpos90 as usize);
-        println!("Rotated point by {}: {}", ROTS::Xpos90 as usize, result);
+        result.rotate(_ROTS::Xpos90 as usize);
+        println!("Rotated point by {}: {}", _ROTS::Xpos90 as usize, result);
         assert_eq!("-537,458,-823", result.to_string());
     }
 
@@ -193,8 +193,8 @@ mod tests {
         let input = "-537,83,-458";
         let mut result = Point::new(input.to_string());
         println!("Point             : {}", result);
-        result.rotate(ROTS::Xpos180 as usize);
-        println!("Rotated point by {}: {}", ROTS::Xpos180 as usize, result);
+        result.rotate(_ROTS::Xpos180 as usize);
+        println!("Rotated point by {}: {}", _ROTS::Xpos180 as usize, result);
         assert_eq!("-537,-83,458", result.to_string());
     }
 
@@ -203,8 +203,8 @@ mod tests {
         let input = "-537,83,-458";
         let mut result = Point::new(input.to_string());
         println!("Point             : {}", result);
-        result.rotate(ROTS::Xpos270 as usize);
-        println!("Rotated point by {}: {}", ROTS::Xpos270 as usize, result);
+        result.rotate(_ROTS::Xpos270 as usize);
+        println!("Rotated point by {}: {}", _ROTS::Xpos270 as usize, result);
         assert_eq!("-537,-458,-83", result.to_string());
     }
 
