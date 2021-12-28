@@ -238,5 +238,12 @@ fn main() {
         day21_1::calculate_meaningless_metric(3, 5, 1000)
     );
 
+
+    // Day 22, #1
+    println!(
+        "Day 22, #1: {:?}",
+        day22_1::calculate_cubes_on(&String::from("resources/day22-1-input.txt"), 50)
+    );
+
 }
 
