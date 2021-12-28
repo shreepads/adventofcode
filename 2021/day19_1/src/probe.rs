@@ -41,7 +41,7 @@ impl OtherScanner {
 
         let mut beacon_rotations: Vec<Vec<Point>> = Vec::new();
 
-        for i in 0..=MAX_ROT {
+        for _ in 0..=MAX_ROT {
             beacon_rotations.push(Vec::new());
         }
 

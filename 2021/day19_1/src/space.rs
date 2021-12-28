@@ -5,7 +5,6 @@ use std::fmt;
 
 use crate::rotations::MAX_ROT;
 use crate::rotations::ROT_MATS;
-use crate::rotations::ROTS;
 
 #[derive(Debug, Clone, PartialEq, Copy, Eq, Hash)]
 pub struct Point {
@@ -128,6 +127,19 @@ impl Point {
         self.z = self.z + trans.deltaz;
     }
 
+    pub fn manhattan_distance(&self, refpoint: Point) -> i32 {
+
+        // calculate manhattan distance to ref point
+        let mut man_dist = 0i32;
+
+        man_dist += (self.x - refpoint.x).abs();
+        man_dist += (self.y - refpoint.y).abs();
+        man_dist += (self.z - refpoint.z).abs();
+
+        man_dist
+    }
+
+
 }
 
 #[derive(Debug, Clone, PartialEq, Copy, Eq, Hash)]
@@ -154,6 +166,7 @@ impl Translation {
 mod tests {
 
     use super::*;
+    use crate::rotations::ROTS;
 
     #[test]
     fn new_point() {
@@ -164,7 +177,7 @@ mod tests {
     }
 
     #[test]
-    fn rotate_Xpos0() {
+    fn rotate_xpos0() {
         let input = "-537,-823,-458";
         let mut result = Point::new(input.to_string());
         result.rotate(ROTS::Xpos0 as usize);
@@ -174,7 +187,7 @@ mod tests {
 
 
     #[test]
-    fn rotate_Xpos90() {
+    fn rotate_xpos90() {
         let input = "-537,-823,-458";
         let mut result = Point::new(input.to_string());
         println!("Point             : {}", result);
@@ -185,7 +198,7 @@ mod tests {
 
 
     #[test]
-    fn rotate_Xpos180() {
+    fn rotate_xpos180() {
         let input = "-537,83,-458";
         let mut result = Point::new(input.to_string());
         println!("Point             : {}", result);
@@ -196,7 +209,7 @@ mod tests {
 
 
     #[test]
-    fn rotate_Xpos270() {
+    fn rotate_xpos270() {
         let input = "-537,83,-458";
         let mut result = Point::new(input.to_string());
         println!("Point             : {}", result);
@@ -227,6 +240,21 @@ mod tests {
         );
 
         assert_eq!(point0, result);
+    }
+
+
+    #[test]
+    fn man_distance() {
+        let point1 = Point::new("8,-5,4".to_string());
+        let point0 = Point::new("2,3,-1".to_string());
+        let result = point1.manhattan_distance(point0);
+
+
+        println!("Manhattan distance from point1 {} to point0 {} is {}",
+            point1, point0, result
+        );
+
+        assert_eq!(19, result);
     }
 
 

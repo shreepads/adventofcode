@@ -14,7 +14,7 @@ use rotations::MAX_ROT;
 use probe::ZeroScanner;
 use probe::OtherScanner;
 
-pub fn calculate_beacon_count(file_path: &String) -> usize {
+pub fn calculate_beacon_count(file_path: &String) -> (usize, i32) {
     println!("Loading data from file:{}", file_path);
 
     let contents = fs::read_to_string(file_path).expect(&format!(
@@ -28,34 +28,19 @@ pub fn calculate_beacon_count(file_path: &String) -> usize {
 
     load_data(&mut scanner0, &mut scanners, contents);
 
-    println!("Loaded scanner0: {}", scanner0);
-
-    for (i, scanner) in scanners.iter().enumerate() {
-        println!("Loaded other scanner {}: {}", i+1, scanner);
-    }
-
     let mut merged_scanners : Vec<OtherScanner> = Vec::new();
-
-    let done = false;
 
     while let Some(mut scannern) =  scanners.pop_back() {
 
         let (max_matching_count, max_rot, max_trans) = find_matching_beacons(&scanner0, &scannern);
 
         if max_matching_count >= 12 {
-            println!("Found match with {} points: rot {}, trans {}. MERGING",
-                max_matching_count, max_rot, max_trans);
             
             merge(&mut scanner0, &mut scannern, max_rot, max_trans);
-
-            println!("Post merge scannern location: {:?}", scannern.location);
-            println!("Post merge scanner0 : {}", scanner0);
 
             merged_scanners.push(scannern);
     
         } else {
-            println!("Only found {} points matching. PUSHING FRONT", max_matching_count);
-
             scanners.push_front(scannern);
         }
 
@@ -63,24 +48,40 @@ pub fn calculate_beacon_count(file_path: &String) -> usize {
 
     println!("FINAL merge scanner0 : {}", scanner0);
 
-    for scannern in merged_scanners {
-        println!("FINAL merge scanner locations: {:?}", scannern.location);
+    (scanner0.beacons.len(), largest_manhattan_distance(&merged_scanners))
+}
+
+fn largest_manhattan_distance(merged_scanners: &Vec<OtherScanner>) -> i32 {
+
+    let mut max_man_dist = 0i32;
+
+    for (i, scanner1) in merged_scanners.iter().enumerate() {
+        for (j, scanner2) in merged_scanners.iter().enumerate() {
+
+            if j >= i {      // man distance the same both ways
+                continue;
+            }
+
+            let loc1 = scanner1.location.unwrap();
+            let loc2 = scanner2.location.unwrap();
+            let man_dist = loc1.manhattan_distance(loc2);
+
+            if man_dist > max_man_dist {
+                max_man_dist = man_dist;
+            }
+        }
     }
 
-    scanner0.beacons.len()
+    max_man_dist
 }
 
 fn merge(scanner0: &mut ZeroScanner, scannern: &mut OtherScanner, max_rot: usize, max_trans: Translation) {
 
-    for (i, rot_point) in scannern.beacon_rotations[max_rot].iter().enumerate() {
+    for rot_point in scannern.beacon_rotations[max_rot].iter() {
 
         let trans_rot_point = rot_point.translate_new(max_trans);
 
-        if scanner0.beacons.contains(&trans_rot_point) {
-            // just print out
-            /*println!("Point {} (rot point {}) already in scanner0 as {}",
-                scannern.beacons[i], rot_point, trans_rot_point);*/
-        } else {
+        if !scanner0.beacons.contains(&trans_rot_point) {
             // add to scanner0
             scanner0.beacons.insert(trans_rot_point);
         }
@@ -95,8 +96,8 @@ fn find_matching_beacons(scanner0: &ZeroScanner, scannern: &OtherScanner) -> (us
 
     let mut max_matching_count = 0;
     let mut max_rot = usize::MAX;
-    let mut max_point0 = Point::new_zero();
-    let mut max_point = Point::new_zero();
+    let mut _max_point0 = Point::new_zero();
+    let mut _max_point = Point::new_zero();
     let mut max_trans = Translation::new_zero();
 
     'outer: for rot in 0..=MAX_ROT {
@@ -117,12 +118,9 @@ fn find_matching_beacons(scanner0: &ZeroScanner, scannern: &OtherScanner) -> (us
                 if matching_count > max_matching_count {
                     max_matching_count = matching_count;
                     max_rot = rot;
-                    max_point0 = *point0;
-                    max_point = point;
+                    _max_point0 = *point0;
+                    _max_point = point;
                     max_trans = trans;
-
-                    println!("Rot {}, point 0 {}, point {}, rot_point {}, trans {}: {} matching",
-                        rot, point0, point, rot_point, trans, matching_count);
 
                     if max_matching_count >= 12 {
                         break 'outer;
@@ -131,9 +129,6 @@ fn find_matching_beacons(scanner0: &ZeroScanner, scannern: &OtherScanner) -> (us
             }
         }
     }
-
-    println!("Max match: rot {}, point 0 {}, point {}, trans {}: {} matching",
-        max_rot, max_point0, max_point, max_trans, max_matching_count);
 
     (max_matching_count, max_rot, max_trans)
 }
@@ -198,7 +193,7 @@ mod tests {
     #[test]
     fn day19_1() {
         let result = calculate_beacon_count(&String::from("../resources/tests/day19-1-testdata.txt"));
-        assert_eq!(result, 79);    
+        assert_eq!(result, (79, 3621));    
     }
 
 }
