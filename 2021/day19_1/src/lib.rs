@@ -99,7 +99,7 @@ fn find_matching_beacons(scanner0: &ZeroScanner, scannern: &OtherScanner) -> (us
     let mut max_point = Point::new_zero();
     let mut max_trans = Translation::new_zero();
 
-    for rot in 0..=MAX_ROT {
+    'outer: for rot in 0..=MAX_ROT {
         for point0 in scanner0.beacons.iter() {
             for (i, rot_point) in scannern.beacon_rotations[rot].iter().enumerate() {
                 // check alignments for given pair of points
@@ -123,6 +123,10 @@ fn find_matching_beacons(scanner0: &ZeroScanner, scannern: &OtherScanner) -> (us
 
                     println!("Rot {}, point 0 {}, point {}, rot_point {}, trans {}: {} matching",
                         rot, point0, point, rot_point, trans, matching_count);
+
+                    if max_matching_count >= 12 {
+                        break 'outer;
+                    }
                 }
             }
         }
