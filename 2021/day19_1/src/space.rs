@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: MIT
 
 use std::fmt;
+
 use crate::rotations::MAX_ROT;
 use crate::rotations::ROT_MATS;
 use crate::rotations::ROTS;
 
-#[derive(Debug, Clone, PartialEq, Copy)]
+#[derive(Debug, Clone, PartialEq, Copy, Eq, Hash)]
 pub struct Point {
     x: i32,
     y: i32,
@@ -20,6 +21,10 @@ impl fmt::Display for Point {
 }
 
 impl Point {
+
+    pub fn new_zero() -> Point {
+        Point {x:0, y:0, z:0}
+    }
 
     pub fn new(line: String) -> Point {
         
@@ -91,6 +96,51 @@ impl Point {
 
     }
 
+
+    pub fn translate_to(&self, refpoint: Point) -> Translation {
+        // Generate translation from this point to given reference point
+        Translation {
+            deltax: refpoint.x - self.x,
+            deltay: refpoint.y - self.y,
+            deltaz: refpoint.z - self.z,
+        }
+
+    }
+
+    pub fn translate_new(&self, trans: Translation) -> Point {
+
+        let mut new_point = Point {
+            x: self.x,
+            y: self.y,
+            z: self.z,
+        };
+
+        new_point.translate(trans);
+
+        new_point
+
+    }
+
+
+    pub fn translate(&mut self, trans: Translation) {
+        self.x = self.x + trans.deltax;
+        self.y = self.y + trans.deltay;
+        self.z = self.z + trans.deltaz;
+    }
+
+}
+
+#[derive(Debug, Clone, PartialEq, Copy, Eq, Hash)]
+pub struct Translation {
+    deltax: i32,
+    deltay: i32,
+    deltaz: i32,
+}
+
+impl fmt::Display for Translation {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "Δx: {}, Δy: {}, Δz: {}", self.deltax, self.deltay, self.deltaz)
+    }
 }
 
 
@@ -157,7 +207,21 @@ mod tests {
         println!("Point             : {}", result);
         let points = result.rotate_vec();
         println!("Rotated points: {:?}", points);
-        assert_eq!(2, 3);
+        assert_eq!(MAX_ROT+1, points.len());
+    }
+
+    #[test]
+    fn translation() {
+        let point1 = Point::new("8,5,4".to_string());
+        let point0 = Point::new("2,3,1".to_string());
+        let trans = point1.translate_to(point0);
+        let result = point1.translate_new(trans);
+
+        println!("Transalating point1 {} to point0 {} using translation {}",
+            point1, point0, trans
+        );
+
+        assert_eq!(point0, result);
     }
 
 
