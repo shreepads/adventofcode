@@ -4,7 +4,7 @@
 use std::fs;
 use std::collections::HashMap;
 
-pub fn calculate_lit_pixels(file_path: &String, passes: u8) -> u32 {
+pub fn calculate_lit_pixels(file_path: &String, passes: u8) -> usize {
 
     println!("Loading data from file:{}", file_path);
 
@@ -26,15 +26,66 @@ pub fn calculate_lit_pixels(file_path: &String, passes: u8) -> u32 {
 
     load_image(&mut image, image_str.to_string());
 
-    for _ in 1..passes {
-        enhance(&mut image, &mapping);
+    for i in 1..=passes {
+        println!("**** BEFORE ****");
+        print_image(&image);
+        enhance(&mut image, &mapping, i);
+        println!("**** AFTER ****");
+        print_image(&image);
     }
 
-    0
+    lit_pixels(&image)
 }
 
-fn enhance(image: &mut [[char; 120]; 120], mapping: &HashMap<usize,char>) {
+fn print_image(image: &[[char; 120]; 120]) {
+    for row in 1..21 {
+        for col in 1..21 {
+            print!("{}", image[row][col]);
+        }
+        println!("");
+    }
+}
 
+
+fn lit_pixels(image: &[[char; 120]; 120]) -> usize {
+    
+    let mut lit_pixels = 0;
+
+    for row in image.iter() {
+        lit_pixels += row.iter().filter(|x| **x == '#').count();
+    }
+
+    lit_pixels
+}
+
+fn enhance(image: &mut [[char; 120]; 120], mapping: &HashMap<usize,char>, pass: u8) {
+
+    let mut fill_char = '.';
+    if pass % 2 == 1 {
+        fill_char = '#';
+    }
+
+    let mut enhanced_image = [[fill_char; 120]; 120];
+
+    for row in 1..119 {
+        for col in 1..119 {
+            let mut num_str = String::new();
+            num_str.push_str(&image[row-1][col-1..=col+1].iter().collect::<String>());
+            num_str.push_str(&image[row][col-1..=col+1].iter().collect::<String>());
+            num_str.push_str(&image[row+1][col-1..=col+1].iter().collect::<String>());
+
+            let mut num = 0usize;
+            for (i, pixel) in num_str.chars().enumerate() {
+                if pixel == '#' {
+                    num += 2usize.pow(8-i as u32);
+                }
+            }
+
+            enhanced_image[row][col] = *mapping.get(&num).unwrap();
+        }
+    }
+
+    *image = enhanced_image;
 }
 
 
