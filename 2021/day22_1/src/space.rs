@@ -66,7 +66,25 @@ impl Cuboid {
         format!("x={}..{},y={}..{},z={}..{}", self.x1, self.x2, self.y1, self.y2, self.z1, self.z2)
     }
 
-    pub fn intersect(&self, new_cb: &Cuboid) -> Intersection {
+    pub fn intersect(&self, new_cb: Cuboid) -> Intersection {
+        
+        if (self.x1..=self.x2).contains(&new_cb.x1)  &&  (self.x1..=self.x2).contains(&new_cb.x2) &&
+           (self.y1..=self.y2).contains(&new_cb.y1)  &&  (self.y1..=self.y2).contains(&new_cb.y2) &&
+           (self.z1..=self.z2).contains(&new_cb.z1)  &&  (self.z1..=self.z2).contains(&new_cb.z2) 
+        {
+            // new_cb is a subset
+            return Intersection::Subset(new_cb);
+        }
+
+        if (new_cb.x1..=new_cb.x2).contains(&self.x1)  &&  (self.x1..=self.x2).contains(&self.x2) &&
+           (new_cb.y1..=new_cb.y2).contains(&self.y1)  &&  (self.y1..=self.y2).contains(&self.y2) &&
+           (new_cb.z1..=new_cb.z2).contains(&self.z1)  &&  (self.z1..=self.z2).contains(&self.z2) 
+        {
+            // new_cb is a subset
+            return Intersection::Subset(new_cb);
+        }
+
+        
         Intersection::Null
     }
 }

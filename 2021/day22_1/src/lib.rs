@@ -52,7 +52,7 @@ fn switch_on(plus_cuboids: &mut Vec<Cuboid>, minus_cuboids: &mut Vec<Cuboid>, ne
     new_plus_cuboids.push(new_cb);
 
     for pcb in plus_cuboids.iter() {
-        match pcb.intersect(&new_cb) {
+        match pcb.intersect(new_cb) {
             Intersection::Null           => {}, // if new cuboid doesn't intersect, nothing to do
             Intersection::Subset(sbcb)   => new_minus_cuboids.push(sbcb), 
             Intersection::Superset(spcb) => new_minus_cuboids.push(spcb),
@@ -61,7 +61,7 @@ fn switch_on(plus_cuboids: &mut Vec<Cuboid>, minus_cuboids: &mut Vec<Cuboid>, ne
     }
 
     for mcb in minus_cuboids.iter() {
-        match mcb.intersect(&new_cb) {
+        match mcb.intersect(new_cb) {
             Intersection::Null           => {}, // if new cuboid doesn't intersect, nothing to do
             Intersection::Subset(sbcb)   => new_plus_cuboids.push(sbcb), 
             Intersection::Superset(spcb) => new_plus_cuboids.push(spcb),
