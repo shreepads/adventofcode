@@ -249,4 +249,16 @@ fn main() {
         "Day 22, #2: {:?}",
         day22_1::calculate_cubes_on(&String::from("resources/day22-1-input.txt"), 150000)
     );
+
+    // Day 23, #1
+    println!("Solving using pencil and notepad...");
+    println!("Day 23, #1: 13066");
+
+    // Day 23, #2
+    println!(
+        "Day 23, #2: {:?}",
+        day23_2::calculate_min_energy(&String::from("resources/day23-2-input.txt"))
+    );
+
+
 }

@@ -38,6 +38,7 @@ members = [
     "day20_1",
     "day21_1",
     "day22_1",
+    "day23_2",
 ]
 
 default-members = ["y2021",]
