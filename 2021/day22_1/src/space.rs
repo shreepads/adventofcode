@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 use std::fmt;
+use std::cmp::max;
+use std::cmp::min;
 
 pub enum Intersection {
     Null,
@@ -45,6 +47,10 @@ impl Cuboid {
         let z1 = z_coords.next().unwrap().parse::<i32>().unwrap();
         let z2 = z_coords.next().unwrap().parse::<i32>().unwrap();
 
+        if x1 > x2  ||  y1 > y2  ||  z1 > z2 {
+            return None;
+        }
+
         if  (-max_limit..=max_limit).contains(&x1) && 
             (-max_limit..=max_limit).contains(&x2) &&
             (-max_limit..=max_limit).contains(&y1) &&
@@ -69,9 +75,31 @@ impl Cuboid {
     pub fn intersect(&self, new_cb: Cuboid) -> Intersection {
         
         let ix1 = max(self.x1, new_cb.x1);
+        let ix2 = min(self.x2, new_cb.x2);
+        let iy1 = max(self.y1, new_cb.y1);
+        let iy2 = min(self.y2, new_cb.y2);
+        let iz1 = max(self.z1, new_cb.z1);
+        let iz2 = min(self.z2, new_cb.z2);
+
+        if ix1 > ix2  ||  iy1 > iy2  ||  iz1 > iz2 {
+            return Intersection::Null;
+        }
+
+        Intersection::Overlap(Cuboid {
+            x1: ix1, x2: ix2,
+            y1: iy1, y2: iy2,
+            z1: iz1, z2: iz2,
+        })
         
-        
-        Intersection::Null
+    }
+
+    pub fn volume(&self) -> u32 {
+
+        let dx = self.x2 - self.x1 + 1;
+        let dy = self.y2 - self.y1 + 1;
+        let dz = self.z2 - self.z1 + 1;
+
+        (dx * dy * dz) as u32
     }
 }
 
