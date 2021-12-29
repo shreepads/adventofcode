@@ -4,6 +4,9 @@
 use std::fmt;
 use std::collections::HashMap;
 
+use crate::path::MAX_PATHS;
+use crate::path::PATHS;
+
 #[derive(Debug, Clone, PartialEq, Copy, Eq, Hash)]
 pub enum AmphiType {
     A,
@@ -56,6 +59,8 @@ impl PositionState {
     }
 }
 
+pub const MAX_POS: usize = 27;         // number of positions in the burrow
+
 pub const NOSTOP_POS: [usize; 4] = [2, 4, 6, 8];
 pub const AHOME_POS: [usize; 4] = [11, 12, 13, 14];
 pub const BHOME_POS: [usize; 4] = [15, 16, 17, 18];
@@ -65,7 +70,7 @@ pub const DHOME_POS: [usize; 4] = [23, 24, 25, 26];
 
 #[derive(Debug, Clone, PartialEq, Copy, Eq, Hash)]
 pub struct BurrowState {
-    pub positions: [PositionState; 27],
+    pub positions: [PositionState; MAX_POS],
 }
 
 impl BurrowState {
@@ -75,7 +80,7 @@ impl BurrowState {
         use self::AmphiType::*;
         use self::PositionState::*;
 
-        let mut posns: [PositionState; 27] = [Empty ; 27];
+        let mut posns: [PositionState; MAX_POS] = [Empty ; MAX_POS];
 
         for pos in AHOME_POS { posns[pos] = Occupied(A); }
         for pos in BHOME_POS { posns[pos] = Occupied(B); }

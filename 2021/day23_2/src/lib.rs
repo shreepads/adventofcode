@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 mod burrow;
+mod path;
 
 use std::fs;
 use std::collections::HashMap;
@@ -9,6 +10,7 @@ use std::collections::HashMap;
 use burrow::AmphiType;
 use burrow::BurrowState;
 use burrow::PositionState;
+use burrow::MAX_POS;
 
 pub fn calculate_min_energy(file_path: &String) -> u32 {
     
@@ -34,7 +36,7 @@ fn load_data(contents: String) -> BurrowState {
     use AmphiType::*;
     use PositionState::*;
 
-    let mut posns: [PositionState; 27] = [Empty ; 27];
+    let mut posns: [PositionState; MAX_POS] = [Empty ; MAX_POS];
 
     let mut lines = contents.lines();
     lines.next();
