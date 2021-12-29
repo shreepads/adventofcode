@@ -3,9 +3,9 @@
 
 mod space;
 
-use std::fs;
 use space::Cuboid;
 use space::Intersection;
+use std::fs;
 
 pub fn calculate_cubes_on(file_path: &String, max_limit: i32) -> u64 {
     println!("Loading data from file:{}", file_path);
@@ -15,8 +15,8 @@ pub fn calculate_cubes_on(file_path: &String, max_limit: i32) -> u64 {
         file_path
     ));
 
-    let mut plus_cuboids : Vec<Cuboid> = Vec::new();
-    let mut minus_cuboids : Vec<Cuboid> = Vec::new();
+    let mut plus_cuboids: Vec<Cuboid> = Vec::new();
+    let mut minus_cuboids: Vec<Cuboid> = Vec::new();
 
     for line in contents.lines() {
         if line.contains("on") {
@@ -40,7 +40,6 @@ pub fn calculate_cubes_on(file_path: &String, max_limit: i32) -> u64 {
 }
 
 fn switch_on(plus_cuboids: &mut Vec<Cuboid>, minus_cuboids: &mut Vec<Cuboid>, new_cb: Cuboid) {
-
     let mut new_plus_cuboids: Vec<Cuboid> = Vec::new();
     let mut new_minus_cuboids: Vec<Cuboid> = Vec::new();
 
@@ -48,45 +47,42 @@ fn switch_on(plus_cuboids: &mut Vec<Cuboid>, minus_cuboids: &mut Vec<Cuboid>, ne
 
     for pcb in plus_cuboids.iter() {
         match pcb.intersect(new_cb) {
-            Intersection::Null           => {}, // if new cuboid doesn't intersect, nothing to do
-            Intersection::Overlap(ocb)   => new_minus_cuboids.push(ocb),
+            Intersection::Null => {} // if new cuboid doesn't intersect, nothing to do
+            Intersection::Overlap(ocb) => new_minus_cuboids.push(ocb),
         }
     }
 
     for mcb in minus_cuboids.iter() {
         match mcb.intersect(new_cb) {
-            Intersection::Null           => {}, // if new cuboid doesn't intersect, nothing to do
-            Intersection::Overlap(ocb)   => new_plus_cuboids.push(ocb),
+            Intersection::Null => {} // if new cuboid doesn't intersect, nothing to do
+            Intersection::Overlap(ocb) => new_plus_cuboids.push(ocb),
         }
     }
 
     plus_cuboids.append(&mut new_plus_cuboids);
     minus_cuboids.append(&mut new_minus_cuboids);
-
 }
 
 fn switch_off(plus_cuboids: &mut Vec<Cuboid>, minus_cuboids: &mut Vec<Cuboid>, new_cb: Cuboid) {
-   
     let mut new_plus_cuboids: Vec<Cuboid> = Vec::new();
     let mut new_minus_cuboids: Vec<Cuboid> = Vec::new();
 
     for pcb in plus_cuboids.iter() {
         match pcb.intersect(new_cb) {
-            Intersection::Null           => {}, // if new cuboid doesn't intersect, nothing to do
-            Intersection::Overlap(ocb)   => new_minus_cuboids.push(ocb),
+            Intersection::Null => {} // if new cuboid doesn't intersect, nothing to do
+            Intersection::Overlap(ocb) => new_minus_cuboids.push(ocb),
         }
     }
 
     for mcb in minus_cuboids.iter() {
         match mcb.intersect(new_cb) {
-            Intersection::Null           => {}, // if new cuboid doesn't intersect, nothing to do
-            Intersection::Overlap(ocb)   => new_plus_cuboids.push(ocb),
+            Intersection::Null => {} // if new cuboid doesn't intersect, nothing to do
+            Intersection::Overlap(ocb) => new_plus_cuboids.push(ocb),
         }
     }
 
     plus_cuboids.append(&mut new_plus_cuboids);
     minus_cuboids.append(&mut new_minus_cuboids);
-
 }
 
 #[cfg(test)]
@@ -96,21 +92,28 @@ mod tests {
 
     #[test]
     fn tiny_test() {
-        let result = calculate_cubes_on(&String::from("../resources/tests/day22-1-testdata1.txt"), 50);
+        let result = calculate_cubes_on(
+            &String::from("../resources/tests/day22-1-testdata1.txt"),
+            50,
+        );
         assert_eq!(result, 39);
     }
 
-
     #[test]
     fn small_test() {
-        let result = calculate_cubes_on(&String::from("../resources/tests/day22-1-testdata2.txt"), 50);
+        let result = calculate_cubes_on(
+            &String::from("../resources/tests/day22-1-testdata2.txt"),
+            50,
+        );
         assert_eq!(result, 590784);
     }
-    
 
     #[test]
     fn big_test() {
-        let result = calculate_cubes_on(&String::from("../resources/tests/day22-2-testdata.txt"), 150000);
+        let result = calculate_cubes_on(
+            &String::from("../resources/tests/day22-2-testdata.txt"),
+            150000,
+        );
         assert_eq!(result, 2758514936282235);
     }
 }
