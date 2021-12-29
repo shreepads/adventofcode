@@ -125,11 +125,11 @@ mod tests {
         assert_eq!(result, 39);
     }
 
-/*
+
     #[test]
     fn small_test() {
         let result = calculate_cubes_on(&String::from("../resources/tests/day22-1-testdata2.txt"), 50);
         assert_eq!(result, 590784);
     }
-    */
+    
 }
