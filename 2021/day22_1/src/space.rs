@@ -7,8 +7,6 @@ use std::cmp::min;
 
 pub enum Intersection {
     Null,
-    Subset(Cuboid),
-    Superset(Cuboid),
     Overlap(Cuboid),
 }
 
@@ -93,13 +91,13 @@ impl Cuboid {
         
     }
 
-    pub fn volume(&self) -> u32 {
+    pub fn volume(&self) -> u64 {
 
-        let dx = self.x2 - self.x1 + 1;
-        let dy = self.y2 - self.y1 + 1;
-        let dz = self.z2 - self.z1 + 1;
+        let dx = (self.x2 - self.x1 + 1) as u64;
+        let dy = (self.y2 - self.y1 + 1) as u64;
+        let dz = (self.z2 - self.z1 + 1) as u64;
 
-        (dx * dy * dz) as u32
+        dx * dy * dz
     }
 }
 

@@ -245,5 +245,12 @@ fn main() {
         day22_1::calculate_cubes_on(&String::from("resources/day22-1-input.txt"), 50)
     );
 
+    // Day 22, #2
+    println!(
+        "Day 22, #2: {:?}",
+        day22_1::calculate_cubes_on(&String::from("resources/day22-1-input.txt"), 150000)
+    );
+  
+
 }
 
