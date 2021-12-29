@@ -5,7 +5,9 @@ use std::fmt;
 use std::collections::HashMap;
 
 use crate::path::MAX_PATHS;
+use crate::path::MAX_STEPS;
 use crate::path::PATHS;
+use crate::path::PathStep::{Nil, Pos};
 
 #[derive(Debug, Clone, PartialEq, Copy, Eq, Hash)]
 pub enum AmphiType {
@@ -108,6 +110,48 @@ impl BurrowState {
         }
 
         str
+    }
+
+    pub fn next_states(&self) -> Vec<BurrowState> {
+
+        let mut next_states = Vec::new();
+
+        for (pos, pstate) in self.positions.iter().enumerate() {
+            
+            if NOSTOP_POS.contains(&pos) {  // can't move from no stop locations
+                continue;
+            }
+
+            match pstate {
+                PositionState::Empty           => {},
+                PositionState::Occupied(atype) => next_states.append(&mut self.next_states_pos(pos, *atype)),
+            }
+        }
+
+        next_states
+    }
+
+    fn next_states_pos(&self, pos: usize, atype: AmphiType) -> Vec<BurrowState> {
+
+        use self::PositionState::*;
+
+        let next_states = Vec::new();
+
+        for path in PATHS[pos].iter() {
+            for step in path.iter() {
+                match step {
+                    Nil       => break,  // can't continue down this path
+                    Pos(posn) => {
+                        match self.positions[*posn] {
+                            Occupied(atype) => break, // can't continue down this path
+                            Empty           => {},
+                        }
+                    }
+                }
+            }
+        }
+
+        next_states
     }
 }
 
