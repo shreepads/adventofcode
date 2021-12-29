@@ -1,8 +1,7 @@
 // Copyright (c) 2021 Shreepad Shukla
 // SPDX-License-Identifier: MIT
 
-//use crate::burrow::MAX_POS;
-pub const MAX_POS: usize = 3;
+use crate::burrow::MAX_POS;
 
 // needed for fixed array const
 pub const MAX_PATHS: usize = 1;    // max number of paths, from a door node
@@ -25,5 +24,80 @@ pub const PATHS : [[[PathStep; MAX_STEPS] ; MAX_PATHS] ; MAX_POS] = [
     [ // paths from position 2
         [Nil, Nil, Nil, Nil, Nil, Nil, Nil, Nil, Nil, Nil, Nil, Nil, Nil, Nil]
     ],
+    [ // paths from position 3
+        [Pos(2), Pos(1), Pos(0), Nil, Nil, Nil, Nil, Nil, Nil, Nil, Nil, Nil, Nil, Nil]
+    ],
+    [ // paths from position 4
+        [Pos(3), Pos(2), Pos(1), Pos(0), Nil, Nil, Nil, Nil, Nil, Nil, Nil, Nil, Nil, Nil]
+    ],
+    [ // paths from position 5
+        [Pos(4), Pos(3), Pos(2), Pos(1), Pos(0), Nil, Nil, Nil, Nil, Nil, Nil, Nil, Nil, Nil]
+    ],
+    [ // paths from position 6
+        [Pos(5), Pos(4), Pos(3), Pos(2), Pos(1), Pos(0), Nil, Nil, Nil, Nil, Nil, Nil, Nil, Nil]
+    ],
+    [ // paths from position 7
+        [Pos(6), Pos(5), Pos(4), Pos(3), Pos(2), Pos(1), Pos(0), Nil, Nil, Nil, Nil, Nil, Nil, Nil]
+    ],
+    [ // paths from position 8
+        [Pos(7), Pos(6), Pos(5), Pos(4), Pos(3), Pos(2), Pos(1), Pos(0), Nil, Nil, Nil, Nil, Nil, Nil]
+    ],
+    [ // paths from position 9
+        [Pos(8), Pos(7), Pos(6), Pos(5), Pos(4), Pos(3), Pos(2), Pos(1), Pos(0), Nil, Nil, Nil, Nil, Nil]
+    ],
+    [ // paths from position 10
+        [Pos(9), Pos(8), Pos(7), Pos(6), Pos(5), Pos(4), Pos(3), Pos(2), Pos(1), Pos(0), Nil, Nil, Nil, Nil]
+    ],
+    [ // paths from position 11
+        [Pos(2), Pos(1), Pos(0), Nil, Nil, Nil, Nil, Nil, Nil, Nil, Nil, Nil, Nil, Nil]
+    ],
+    [ // paths from position 12
+        [Pos(11), Pos(2), Pos(1), Pos(0), Nil, Nil, Nil, Nil, Nil, Nil, Nil, Nil, Nil, Nil]
+    ],
+    [ // paths from position 13
+        [Pos(12), Pos(11), Pos(2), Pos(1), Pos(0), Nil, Nil, Nil, Nil, Nil, Nil, Nil, Nil, Nil]
+    ],
+    [ // paths from position 14
+        [Pos(13), Pos(12), Pos(11), Pos(2), Pos(1), Pos(0), Nil, Nil, Nil, Nil, Nil, Nil, Nil, Nil]
+    ],
+    [ // paths from position 15
+        [Pos(4), Pos(3), Pos(2), Pos(1), Pos(0), Nil, Nil, Nil, Nil, Nil, Nil, Nil, Nil, Nil]
+    ],
+    [ // paths from position 16
+        [Pos(15), Pos(4), Pos(3), Pos(2), Pos(1), Pos(0), Nil, Nil, Nil, Nil, Nil, Nil, Nil, Nil]
+    ],
+    [ // paths from position 17
+        [Pos(16), Pos(15), Pos(4), Pos(3), Pos(2), Pos(1), Pos(0), Nil, Nil, Nil, Nil, Nil, Nil, Nil]
+    ],
+    [ // paths from position 18
+        [Pos(17), Pos(16), Pos(15), Pos(4), Pos(3), Pos(2), Pos(1), Pos(0), Nil, Nil, Nil, Nil, Nil, Nil]
+    ],
+    [ // paths from position 19
+        [Pos(6), Pos(5), Pos(4), Pos(3), Pos(2), Pos(1), Pos(0), Nil, Nil, Nil, Nil, Nil, Nil, Nil]
+    ],
+    [ // paths from position 20
+        [Pos(19), Pos(6), Pos(5), Pos(4), Pos(3), Pos(2), Pos(1), Pos(0), Nil, Nil, Nil, Nil, Nil, Nil]
+    ],
+    [ // paths from position 21
+        [Pos(20), Pos(19), Pos(6), Pos(5), Pos(4), Pos(3), Pos(2), Pos(1), Pos(0), Nil, Nil, Nil, Nil, Nil]
+    ],
+    [ // paths from position 22
+        [Pos(21), Pos(20), Pos(19), Pos(6), Pos(5), Pos(4), Pos(3), Pos(2), Pos(1), Pos(0), Nil, Nil, Nil, Nil]
+    ],
+    [ // paths from position 23
+        [Pos(8), Pos(7), Pos(6), Pos(5), Pos(4), Pos(3), Pos(2), Pos(1), Pos(0), Nil, Nil, Nil, Nil, Nil]        
+    ],
+    [ // paths from position 24
+        [Pos(23), Pos(8), Pos(7), Pos(6), Pos(5), Pos(4), Pos(3), Pos(2), Pos(1), Pos(0), Nil, Nil, Nil, Nil]        
+    ],
+    [ // paths from position 25
+        [Pos(24), Pos(23), Pos(8), Pos(7), Pos(6), Pos(5), Pos(4), Pos(3), Pos(2), Pos(1), Pos(0), Nil, Nil, Nil]
+    ],
+    [ // paths from position 26
+        [Pos(25), Pos(24), Pos(23), Pos(8), Pos(7), Pos(6), Pos(5), Pos(4), Pos(3), Pos(2), Pos(1), Pos(0), Nil, Nil]
+    ],
+
 ];
+
+
 
