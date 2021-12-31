@@ -152,27 +152,36 @@ impl BurrowState {
                             Occupied(atype) => break, // can't continue down this path
                             Empty           => {
                                 
-                                if NOSTOP_POS.contains(&new_posn) {continue;} // can't stop at no stop posns
+                                // can't stop at no stop posns
+                                if NOSTOP_POS.contains(&new_posn) {
+                                    prev_posn = *new_posn;
+                                    continue;
+                                } 
 
                                 // if started in hallway, can't stop in hallway
                                 if HALLWAY_POS.contains(&start_posn)  &&  HALLWAY_POS.contains(&new_posn) {
+                                    prev_posn = *new_posn;
                                     continue;
                                 }
 
                                 // if started in a home, can't stop in same home
                                 if AHOME_POS.contains(&start_posn)  &&  AHOME_POS.contains(&new_posn) {
+                                    prev_posn = *new_posn;
                                     continue;
                                 }
 
                                 if BHOME_POS.contains(&start_posn)  &&  BHOME_POS.contains(&new_posn) {
+                                    prev_posn = *new_posn;
                                     continue;
                                 }
 
                                 if CHOME_POS.contains(&start_posn)  &&  CHOME_POS.contains(&new_posn) {
+                                    prev_posn = *new_posn;
                                     continue;
                                 }
 
                                 if DHOME_POS.contains(&start_posn)  &&  DHOME_POS.contains(&new_posn) {
+                                    prev_posn = *new_posn;
                                     continue;
                                 }
 
@@ -190,30 +199,30 @@ impl BurrowState {
                                 }
 
                                 if atype == C  &&  NOSTOP_POS.contains(&prev_posn) && 
-                                (AHOME_POS.contains(&new_posn) ||  BHOME_POS.contains(&new_posn) || DHOME_POS.contains(&new_posn)) {
-                                    break;
+                                    (AHOME_POS.contains(&new_posn) ||  BHOME_POS.contains(&new_posn) || DHOME_POS.contains(&new_posn)) {
+                                        break;
                                 }
 
                                 if atype == D  &&  NOSTOP_POS.contains(&prev_posn) && 
-                                (AHOME_POS.contains(&new_posn) ||  BHOME_POS.contains(&new_posn) || CHOME_POS.contains(&new_posn)) {
-                                    break;
+                                    (AHOME_POS.contains(&new_posn) ||  BHOME_POS.contains(&new_posn) || CHOME_POS.contains(&new_posn)) {
+                                        break;
                                 }
 
                                 // break if entering own home but its occupied by others
                                 if atype == A  &&  NOSTOP_POS.contains(&prev_posn) && AHOME_POS.contains(&new_posn) {
-                                    if Self::home_contains_others(atype) {break;}
+                                    if self.home_contains_others(atype) {break;}
                                 }
 
                                 if atype == B  &&  NOSTOP_POS.contains(&prev_posn) && BHOME_POS.contains(&new_posn) {
-                                    if Self::home_contains_others(atype) {break;}
+                                    if self.home_contains_others(atype) {break;}
                                 }
 
                                 if atype == C  &&  NOSTOP_POS.contains(&prev_posn) && CHOME_POS.contains(&new_posn) {
-                                    if Self::home_contains_others(atype) {break;}
+                                    if self.home_contains_others(atype) {break;}
                                 }
 
                                 if atype == D  &&  NOSTOP_POS.contains(&prev_posn) && DHOME_POS.contains(&new_posn) {
-                                    if Self::home_contains_others(atype) {break;}
+                                    if self.home_contains_others(atype) {break;}
                                 }
 
                                 // add new state at current non-empty posn
@@ -233,8 +242,8 @@ impl BurrowState {
         next_states
     }
 
-    fn home_contains_others(atype: AmphiType) -> bool {
-        true
+    fn home_contains_others(&self, atype: AmphiType) -> bool {
+        false
     }
 }
 
