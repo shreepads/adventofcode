@@ -27,6 +27,20 @@ pub fn calculate_min_energy(file_path: &String) -> u32 {
     println!("Loaded start pos {}", start_pos);
     println!("End pos {}", end_pos);
 
+    let next_states = start_pos.next_states();
+    println!("Generated {} next states from start pos", next_states.len());
+
+    for state in next_states.iter() {
+        println!("Next state: {}", state);
+    }
+
+    let next_next_states = next_states[0].next_states();
+    println!("Generated {} next next states from state {}", next_next_states.len(), next_states[0]);
+
+    for next_state in next_next_states {
+        println!("Next next state: {}", next_state);
+    }
+
     0
 }
 

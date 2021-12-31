@@ -68,6 +68,7 @@ pub const AHOME_POS: [usize; 4] = [11, 12, 13, 14];
 pub const BHOME_POS: [usize; 4] = [15, 16, 17, 18];
 pub const CHOME_POS: [usize; 4] = [19, 20, 21, 22];
 pub const DHOME_POS: [usize; 4] = [23, 24, 25, 26];
+pub const HALLWAY_POS: [usize; 11] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
 
 #[derive(Debug, Clone, PartialEq, Copy, Eq, Hash)]
@@ -123,7 +124,7 @@ impl BurrowState {
             }
 
             match pstate {
-                PositionState::Empty           => {},
+                PositionState::Empty           => {},  // can't move from empty positions, should handle NOSTOP
                 PositionState::Occupied(atype) => next_states.append(&mut self.next_states_pos(pos, *atype)),
             }
         }
@@ -131,21 +132,99 @@ impl BurrowState {
         next_states
     }
 
-    fn next_states_pos(&self, pos: usize, atype: AmphiType) -> Vec<BurrowState> {
+    fn next_states_pos(&self, start_posn: usize, atype: AmphiType) -> Vec<BurrowState> {
 
         use self::PositionState::*;
+        use self::AmphiType::*;
 
-        let next_states = Vec::new();
+        let mut next_states : Vec<BurrowState> = Vec::new();
+        let mut prev_posn = usize::MAX;
 
-        for path in PATHS[pos].iter() {
-            for step in path.iter() {
+        for path in PATHS[start_posn].iter() {
+            for (step_no, step) in path.iter().enumerate() {
                 match step {
                     Nil       => break,  // can't continue down this path
-                    Pos(posn) => {
-                        match self.positions[*posn] {
+                    Pos(new_posn) => {
+
+                        // TODO : if entering self home, don't stop till reach last empty posn
+
+                        match self.positions[*new_posn] {
                             Occupied(atype) => break, // can't continue down this path
-                            Empty           => {},
+                            Empty           => {
+                                
+                                if NOSTOP_POS.contains(&new_posn) {continue;} // can't stop at no stop posns
+
+                                // if started in hallway, can't stop in hallway
+                                if HALLWAY_POS.contains(&start_posn)  &&  HALLWAY_POS.contains(&new_posn) {
+                                    continue;
+                                }
+
+                                // if started in a home, can't stop in same home
+                                if AHOME_POS.contains(&start_posn)  &&  AHOME_POS.contains(&new_posn) {
+                                    continue;
+                                }
+
+                                if BHOME_POS.contains(&start_posn)  &&  BHOME_POS.contains(&new_posn) {
+                                    continue;
+                                }
+
+                                if CHOME_POS.contains(&start_posn)  &&  CHOME_POS.contains(&new_posn) {
+                                    continue;
+                                }
+
+                                if DHOME_POS.contains(&start_posn)  &&  DHOME_POS.contains(&new_posn) {
+                                    continue;
+                                }
+
+                                
+                                
+                                // break if entering another home
+                                if atype == A  &&  NOSTOP_POS.contains(&prev_posn) && 
+                                    (BHOME_POS.contains(&new_posn) ||  CHOME_POS.contains(&new_posn) || DHOME_POS.contains(&new_posn)) {
+                                        break;
+                                }
+
+                                if atype == B  &&  NOSTOP_POS.contains(&prev_posn) && 
+                                    (AHOME_POS.contains(&new_posn) ||  CHOME_POS.contains(&new_posn) || DHOME_POS.contains(&new_posn)) {
+                                        break;
+                                }
+
+                                if atype == C  &&  NOSTOP_POS.contains(&prev_posn) && 
+                                (AHOME_POS.contains(&new_posn) ||  BHOME_POS.contains(&new_posn) || DHOME_POS.contains(&new_posn)) {
+                                    break;
+                                }
+
+                                if atype == D  &&  NOSTOP_POS.contains(&prev_posn) && 
+                                (AHOME_POS.contains(&new_posn) ||  BHOME_POS.contains(&new_posn) || CHOME_POS.contains(&new_posn)) {
+                                    break;
+                                }
+
+                                // break if entering own home but its occupied by others
+                                if atype == A  &&  NOSTOP_POS.contains(&prev_posn) && AHOME_POS.contains(&new_posn) {
+                                    if Self::home_contains_others(atype) {break;}
+                                }
+
+                                if atype == B  &&  NOSTOP_POS.contains(&prev_posn) && BHOME_POS.contains(&new_posn) {
+                                    if Self::home_contains_others(atype) {break;}
+                                }
+
+                                if atype == C  &&  NOSTOP_POS.contains(&prev_posn) && CHOME_POS.contains(&new_posn) {
+                                    if Self::home_contains_others(atype) {break;}
+                                }
+
+                                if atype == D  &&  NOSTOP_POS.contains(&prev_posn) && DHOME_POS.contains(&new_posn) {
+                                    if Self::home_contains_others(atype) {break;}
+                                }
+
+                                // add new state at current non-empty posn
+                                let mut next_state: BurrowState = *self;
+                                next_state.positions[start_posn] = Empty;
+                                next_state.positions[*new_posn] = Occupied(atype);
+                                next_states.push(next_state);
+                            },
                         }
+
+                        prev_posn = *new_posn;
                     }
                 }
             }
@@ -153,7 +232,12 @@ impl BurrowState {
 
         next_states
     }
+
+    fn home_contains_others(atype: AmphiType) -> bool {
+        true
+    }
 }
+
 
 impl fmt::Display for BurrowState {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
