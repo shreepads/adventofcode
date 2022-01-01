@@ -3,6 +3,7 @@
 
 use std::fmt;
 use std::collections::HashMap;
+use std::collections::HashSet;
 
 use crate::path::MAX_PATHS;
 use crate::path::MAX_STEPS;
@@ -18,7 +19,7 @@ pub enum AmphiType {
 }
 
 impl AmphiType {
-    pub fn energy(&self) -> u32 {   // because Rust can't do static HashMaps
+    pub fn energy(&self) -> usize {   // because Rust can't do static HashMaps
 
         use self::AmphiType::*;
 
@@ -113,7 +114,7 @@ impl BurrowState {
         str
     }
 
-    pub fn next_states(&self) -> Vec<BurrowState> {
+    pub fn next_states(&self) -> Vec<(usize, BurrowState)> {
 
         let mut next_states = Vec::new();
 
@@ -132,12 +133,12 @@ impl BurrowState {
         next_states
     }
 
-    fn next_states_pos(&self, start_posn: usize, atype: AmphiType) -> Vec<BurrowState> {
+    fn next_states_pos(&self, start_posn: usize, atype: AmphiType) -> Vec<(usize, BurrowState)> {
 
         use self::PositionState::*;
         use self::AmphiType::*;
 
-        let mut next_states : Vec<BurrowState> = Vec::new();
+        let mut next_states : HashSet<(usize, BurrowState)> = HashSet::new();
         let mut prev_posn = usize::MAX;
 
         for path in PATHS[start_posn].iter() {
@@ -229,7 +230,10 @@ impl BurrowState {
                                 let mut next_state: BurrowState = *self;
                                 next_state.positions[start_posn] = Empty;
                                 next_state.positions[*new_posn] = Occupied(atype);
-                                next_states.push(next_state);
+
+                                let energy = (step_no + 1) * atype.energy();
+
+                                next_states.insert((energy, next_state));
                             },
                         }
 
@@ -239,10 +243,33 @@ impl BurrowState {
             }
         }
 
-        next_states
+        Vec::from_iter(next_states)
     }
 
     fn home_contains_others(&self, atype: AmphiType) -> bool {
+        
+        use self::PositionState::*;
+        use self::AmphiType::*;
+        
+        let home = match (atype) {
+            A => AHOME_POS,
+            B => BHOME_POS,
+            C => CHOME_POS,
+            D => DHOME_POS,
+        };
+
+        for posn in home {
+           match self.positions[posn] {
+               Empty           => continue,
+               Occupied(home_atype) => {
+                    if home_atype != atype {
+                        // home contains a non atype amph
+                        return true;
+                    }
+               },
+           } 
+        }
+
         false
     }
 }
