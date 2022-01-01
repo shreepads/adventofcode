@@ -26,9 +26,6 @@ pub fn calculate_min_energy(file_path: &String) -> u32 {
     let start_state = load_data(contents);
     let end_state = BurrowState::new_end();
 
-    println!("Loaded start pos {}", start_state);
-    println!("End pos {}", end_state);
-
     let mut graph = Graph::new();
 
     let (start_id, end_id) = load_graph(&mut graph, start_state, end_state);

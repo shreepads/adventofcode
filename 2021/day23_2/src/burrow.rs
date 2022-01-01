@@ -2,11 +2,8 @@
 // SPDX-License-Identifier: MIT
 
 use std::fmt;
-use std::collections::HashMap;
 use std::collections::HashSet;
 
-use crate::path::MAX_PATHS;
-use crate::path::MAX_STEPS;
 use crate::path::PATHS;
 use crate::path::PathStep::{Nil, Pos};
 
