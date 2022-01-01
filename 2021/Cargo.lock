@@ -91,6 +91,9 @@ version = "0.1.0"
 [[package]]
 name = "day23_2"
 version = "0.1.0"
+dependencies = [
+ "day15_1",
+]
 
 [[package]]
 name = "day2_1"

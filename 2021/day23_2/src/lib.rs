@@ -7,6 +7,8 @@ mod path;
 use std::fs;
 use std::collections::HashMap;
 
+use day15_1::graph::Graph;
+
 use burrow::AmphiType;
 use burrow::BurrowState;
 use burrow::PositionState;
@@ -30,24 +32,16 @@ pub fn calculate_min_energy(file_path: &String) -> u32 {
     let next_states = start_pos.next_states();
     println!("Generated {} next states from start pos", next_states.len());
 
-    let next_next_states = next_states[10].1.next_states();
-    println!("Generated {} next next states from state {}", next_next_states.len(), next_states[10].1);
+    let mut graph = Graph::new();
 
-    let last_next_states = next_next_states[9].1.next_states();
-    println!("Generated {} next next states from state {}", last_next_states.len(), next_next_states[9].1);
+    let (start_id, end_id) = load_graph(start_pos, end_pos);
 
-    let final_last_next_states = last_next_states[4].1.next_states();
-    println!("Generated {} next next states from state {}", final_last_next_states.len(), last_next_states[4].1);
+    graph.shortest_path_weight(start_id, end_id).unwrap()
 
-    let truly_final_last_next_states = final_last_next_states[3].1.next_states();
-    println!("Generated {} next next states from state {}", truly_final_last_next_states.len(), final_last_next_states[3].1);
+}
 
-
-    for next_state in truly_final_last_next_states {
-        println!("Next next state with energy {}: {}", next_state.0, next_state.1);
-    }
-
-    0
+fn load_graph(start_pos: BurrowState, end_pos: BurrowState) -> (usize, usize) {
+    (0,0)
 }
 
 

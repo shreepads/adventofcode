@@ -1,6 +1,8 @@
 // Copyright (c) 2021 Shreepad Shukla
 // SPDX-License-Identifier: MIT
 
+// Adapted from https://doc.rust-lang.org/std/collections/binary_heap/index.html
+
 use std::cmp::Ordering;
 use std::collections::BinaryHeap;
 use std::collections::HashMap;
