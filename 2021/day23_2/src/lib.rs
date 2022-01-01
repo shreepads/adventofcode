@@ -23,25 +23,76 @@ pub fn calculate_min_energy(file_path: &String) -> u32 {
         file_path
     ));
 
-    let start_pos = load_data(contents);
-    let end_pos = BurrowState::new_end();
+    let start_state = load_data(contents);
+    let end_state = BurrowState::new_end();
 
-    println!("Loaded start pos {}", start_pos);
-    println!("End pos {}", end_pos);
-
-    let next_states = start_pos.next_states();
-    println!("Generated {} next states from start pos", next_states.len());
+    println!("Loaded start pos {}", start_state);
+    println!("End pos {}", end_state);
 
     let mut graph = Graph::new();
 
-    let (start_id, end_id) = load_graph(start_pos, end_pos);
+    let (start_id, end_id) = load_graph(&mut graph, start_state, end_state);
 
     graph.shortest_path_weight(start_id, end_id).unwrap()
 
 }
 
-fn load_graph(start_pos: BurrowState, end_pos: BurrowState) -> (usize, usize) {
-    (0,0)
+fn load_graph(graph: &mut Graph, start_state: BurrowState, end_state: BurrowState) -> (usize, usize) {
+    
+    let mut states_vec : Vec<BurrowState> = Vec::new();
+    let mut states_hmap : HashMap<BurrowState, usize> = HashMap::new();
+
+    // Insert start and end position
+    states_vec.push(end_state);
+    let end_id = 0;
+    states_hmap.insert(end_state, end_id);
+
+    states_vec.push(start_state);
+    let start_id = 1;
+    states_hmap.insert(start_state, start_id);
+
+    // Insert start posn in to do list
+    let mut todo_states_vec : Vec<BurrowState> = Vec::new();
+    todo_states_vec.push(start_state);
+
+    // Generate next states and insert in graph till no more
+    
+    while let Some(current_state) = todo_states_vec.pop() { 
+        
+        // add current state to collection if not present and get id
+        let current_id: usize = if states_hmap.contains_key(&current_state) {
+            *states_hmap.get(&current_state).unwrap()
+        } else {
+            states_vec.push(current_state);
+            states_hmap.insert(current_state, states_vec.len() - 1);
+            states_vec.len() - 1
+        };
+
+        let next_states = current_state.next_states();
+
+        for (energy, next_state) in next_states.iter() {
+            
+            // if next state not seen before, add to to-do list
+            if !states_hmap.contains_key(next_state) {
+                todo_states_vec.push(*next_state);
+            }
+            
+            // add next state to collection if not present and get id
+            let next_state_id: usize = if states_hmap.contains_key(&next_state) {
+                *states_hmap.get(&next_state).unwrap()
+            } else {
+                states_vec.push(*next_state);
+                states_hmap.insert(*next_state, states_vec.len() - 1);
+                states_vec.len() - 1
+            };
+            
+            // add edge to graph from current_state to next_state
+            graph.add_edge(current_id, next_state_id, *energy as u32);
+            
+        }
+    }
+    
+    (start_id,end_id)
 }
 
 
