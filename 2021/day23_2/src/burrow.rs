@@ -150,8 +150,8 @@ impl BurrowState {
                         // TODO : if entering self home, don't stop till reach last empty posn
 
                         match self.positions[*new_posn] {
-                            Occupied(atype) => break, // can't continue down this path
-                            Empty           => {
+                            Occupied(_) => break, // can't continue down this path
+                            Empty       => {
                                 
                                 // can't stop at no stop posns
                                 if NOSTOP_POS.contains(&new_posn) {
@@ -185,7 +185,6 @@ impl BurrowState {
                                     prev_posn = *new_posn;
                                     continue;
                                 }
-
                                 
                                 
                                 // break if entering another home
@@ -226,6 +225,60 @@ impl BurrowState {
                                     if self.home_contains_others(atype) {break;}
                                 }
 
+
+                                // if entered own home, don't stop till reaching last empty posn
+                                if atype == A  &&  !AHOME_POS.contains(&start_posn) && AHOME_POS.contains(&new_posn) {
+                                    if self.home_contains_others(atype) {
+                                        println!("Error: entered own home when others present, state: {}", self);
+                                        break;
+                                    }
+                                    if AHOME_POS.contains(&(*new_posn + 1)) {
+                                        if self.positions[*new_posn + 1] == Empty {
+                                            prev_posn = *new_posn;
+                                            continue;
+                                        }
+                                    }
+                                }
+
+                                if atype == B  &&  !BHOME_POS.contains(&start_posn) && BHOME_POS.contains(&new_posn) {
+                                    if self.home_contains_others(atype) {
+                                        println!("Error: entered own home when others present, state: {}", self);
+                                        break;
+                                    }
+                                    if BHOME_POS.contains(&(*new_posn + 1)) {
+                                        if self.positions[*new_posn + 1] == Empty {
+                                            prev_posn = *new_posn;
+                                            continue;
+                                        }
+                                    }
+                                }
+
+                                if atype == C  &&  !CHOME_POS.contains(&start_posn) && CHOME_POS.contains(&new_posn) {
+                                    if self.home_contains_others(atype) {
+                                        println!("Error: entered own home when others present, state: {}", self);
+                                        break;
+                                    }
+                                    if CHOME_POS.contains(&(*new_posn + 1)) {
+                                        if self.positions[*new_posn + 1] == Empty {
+                                            prev_posn = *new_posn;
+                                            continue;
+                                        }
+                                    }
+                                }
+
+                                if atype == D  &&  !DHOME_POS.contains(&start_posn) && DHOME_POS.contains(&new_posn) {
+                                    if self.home_contains_others(atype) {
+                                        println!("Error: entered own home when others present, state: {}", self);
+                                        break;
+                                    }
+                                    if DHOME_POS.contains(&(*new_posn + 1)) {
+                                        if self.positions[*new_posn + 1] == Empty {
+                                            prev_posn = *new_posn;
+                                            continue;
+                                        }
+                                    }
+                                }
+
                                 // add new state at current non-empty posn
                                 let mut next_state: BurrowState = *self;
                                 next_state.positions[start_posn] = Empty;
@@ -251,7 +304,7 @@ impl BurrowState {
         use self::PositionState::*;
         use self::AmphiType::*;
         
-        let home = match (atype) {
+        let home = match atype {
             A => AHOME_POS,
             B => BHOME_POS,
             C => CHOME_POS,
