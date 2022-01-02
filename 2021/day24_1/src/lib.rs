@@ -2,12 +2,14 @@
 // SPDX-License-Identifier: MIT
 
 mod alu;
+mod alu2;
 
 use std::fs;
 
 use alu::*;
+use alu2::*;
 
-pub fn calculate_max_serialno(file_path: &String) -> u32 {
+pub fn calculate_max_serialno(file_path: &String) -> i64 {
     
     println!("Loading data from file:{}", file_path);
 
@@ -16,19 +18,20 @@ pub fn calculate_max_serialno(file_path: &String) -> u32 {
         file_path
     ));
 
-    let mut alu = Alu::new();
+    let mut alu = Alu2::new();
+    let input: [i64; 14] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5];
 
     for line in contents.lines() {
-        alu.process_instruction(line.to_string());
+        alu.process_instruction(line.to_string(), input);
     }
 
     //println!("ALU state: {:#?}", alu);
     //println!("ALU z state: {:?}", alu.vars.get(&"z".to_string()).unwrap());
-    println!("ALU state computed");
+    println!("ALU z value: {}", alu.vars.get("z").unwrap());
 
-    let input: [i64; 14] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5];
 
-    alu.calculate_z(input) as u32
+    //alu.calculate_z(input) as u32
+    *alu.vars.get("z").unwrap()
 }
 
 #[cfg(test)]
