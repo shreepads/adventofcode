@@ -23,6 +23,7 @@ pub fn calculate_max_serialno(file_path: &String) -> u32 {
     }
 
     println!("ALU state: {:#?}", alu);
+    //println!("ALU z state: {:?}", alu.vars.get(&"z".to_string()).unwrap());
 
     0
 }
@@ -41,7 +42,35 @@ mod tests {
     #[test]
     fn tiny_add_mul() {
         let result = calculate_max_serialno(&String::from("../resources/tests/day24-1-testdata2.txt"));
+        assert_eq!(result, 0);
+    }
+
+    #[test]
+    fn tiny_add_mul_div() {
+        let result = calculate_max_serialno(&String::from("../resources/tests/day24-1-testdata3.txt"));
+        assert_eq!(result, 0);
+    }
+
+
+    #[test]
+    fn tiny_add_mul_div_mod() {
+        let result = calculate_max_serialno(&String::from("../resources/tests/day24-1-testdata4.txt"));
+        assert_eq!(result, 0);
+    }
+
+
+    #[test]
+    fn tiny_add_commutative() {
+        let result = calculate_max_serialno(&String::from("../resources/tests/day24-1-testdata5.txt"));
+        assert_eq!(result, 0);
+    }
+
+
+    #[test]
+    fn tiny_mul_commutative() {
+        let result = calculate_max_serialno(&String::from("../resources/tests/day24-1-testdata6.txt"));
         assert_eq!(result, 4);
     }
+
 
 }
