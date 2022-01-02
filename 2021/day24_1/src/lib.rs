@@ -22,14 +22,26 @@ pub fn calculate_max_serialno(file_path: &String) -> u32 {
         alu.process_instruction(line.to_string());
     }
 
+    println!("ALU state: {:#?}", alu);
+
     0
 }
 
 #[cfg(test)]
 mod tests {
+
+    use super::*;
+
     #[test]
-    fn it_works() {
-        let result = 2 + 2;
+    fn tiny_add() {
+        let result = calculate_max_serialno(&String::from("../resources/tests/day24-1-testdata1.txt"));
+        assert_eq!(result, 0);
+    }
+
+    #[test]
+    fn tiny_add_mul() {
+        let result = calculate_max_serialno(&String::from("../resources/tests/day24-1-testdata2.txt"));
         assert_eq!(result, 4);
     }
+
 }

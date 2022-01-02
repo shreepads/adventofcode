@@ -1,0 +1,6 @@
+inp x
+add w 5
+mul y w
+mul x 1
+add z w
+mul w z

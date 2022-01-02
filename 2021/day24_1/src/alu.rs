@@ -1,6 +1,8 @@
 // Copyright (c) 2022 Shreepad Shukla
 // SPDX-License-Identifier: MIT
 
+use std::collections::HashMap;
+
 #[derive(Debug, Clone, PartialEq)]
 pub enum Operation {
     Add,
@@ -26,10 +28,7 @@ pub struct Expression {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Alu {
-    w: Value,
-    x: Value,
-    y: Value,
-    z: Value,
+    vars: HashMap<String, Value>,
     current_input: u8,
 }
 
@@ -39,10 +38,12 @@ impl Alu {
         use crate::Value::Val;
 
         Alu {
-            w: Val(0),
-            x: Val(0),
-            y: Val(0),
-            z: Val(0),
+            vars: HashMap::from([
+                ("w".to_string(), Val(0)),
+                ("x".to_string(), Val(0)),
+                ("y".to_string(), Val(0)),
+                ("z".to_string(), Val(0)),
+            ]),
             current_input: 0,
         }
     }
@@ -54,6 +55,9 @@ impl Alu {
         let op = parts.next().unwrap();
 
         let left = parts.next().unwrap();
+        if left.len() > 1  ||  !"wxyz".contains(left) {
+            println!("Invalid left in instr: {}", instr);
+        }
 
         match op {
             "inp" => self.process_inp(left),
@@ -90,16 +94,7 @@ impl Alu {
         // figure out if right is a register or value
         match right.parse::<i32>() {
             Ok(num) => Val(num),
-            Err(_)  => match right {
-                "w" => self.w.clone(),
-                "x" => self.x.clone(),
-                "y" => self.y.clone(),
-                "z" => self.z.clone(),
-                _   => {
-                    println!("Invalid right: {}", right);
-                    Val(0)
-                },                
-            },
+            Err(_)  => self.vars.get(right).unwrap().clone(),
         }
 
     }
@@ -109,14 +104,7 @@ impl Alu {
 
         use crate::Value::Input;
 
-        match left {
-            "w" => self.w = Input(self.current_input),
-            "x" => self.x = Input(self.current_input),
-            "y" => self.y = Input(self.current_input),
-            "z" => self.z = Input(self.current_input),
-            _   => println!("Invalid inp: {}", left),
-        }
-
+        self.vars.insert(left.to_string(), Input(self.current_input));
         self.current_input += 1;
     }
 
@@ -127,40 +115,61 @@ impl Alu {
 
         if right_val == Val(0) {return;}
             
-        let left_val: Value = match left {
-            "w" => self.w.clone(),
-            "x" => self.x.clone(),
-            "y" => self.y.clone(),
-            "z" => self.z.clone(),
-            _   => {
-                println!("Invalid add left: {}", left);
-                Val(0)
-            },
-        };
+        let left_val: Value = self.vars.get(left).unwrap().clone();
+
+        if left_val == Val(0) {
+            self.vars.insert(left.to_string(), right_val);
+            return;
+        }
 
         // if both left and right are values add and store in left
         if let Val(right_v) = right_val {
             if let Val(left_v) = left_val {
-                match left {
-                    "w" => self.w = Val(right_v + left_v),
-                    "x" => self.x = Val(right_v + left_v),
-                    "y" => self.y = Val(right_v + left_v),
-                    "z" => self.z = Val(right_v + left_v),
-                    _   => {
-                        println!("Invalid add left: {}", left);
-                    },
-                };
+                self.vars.insert(left.to_string(), Val(right_v + left_v));
+                return;
             }
         }
 
         // else form new expression and store in left
-
+        self.vars.insert(left.to_string(), Expr(Expression {
+            op: Add,
+            left: Box::new(left_val),
+            right: Box::new(right_val),
+        }));
 
     }
 
     fn process_mul(&mut self, left: &str, right_val: Value) {
 
+        use crate::Value::*;
+        use crate::Operation::Mul;
+
+        if right_val == Val(1) {return;}
+            
+        let left_val: Value = self.vars.get(left).unwrap().clone();
+
+        if right_val == Val(0)  ||  left_val == Val(0) {
+            self.vars.insert(left.to_string(), Val(0));
+            return;
+        }
+
+        // if both left and right are values add and store in left
+        if let Val(right_v) = right_val {
+            if let Val(left_v) = left_val {
+                self.vars.insert(left.to_string(), Val(right_v * left_v));
+                return;
+            }
+        }
+
+        // else form new expression and store in left
+        self.vars.insert(left.to_string(), Expr(Expression {
+            op: Mul,
+            left: Box::new(left_val),
+            right: Box::new(right_val),
+        }));
+
     }
+
 
     fn process_div(&mut self, left: &str, right_val: Value) {
 
