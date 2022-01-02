@@ -15,8 +15,8 @@ pub enum Operation {
 #[derive(Debug, Clone, PartialEq)]
 pub enum Value {
     Expr(Expression),
-    Val(i32),
-    Input(u8),
+    Val(i64),
+    Input(usize),
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -29,7 +29,7 @@ pub struct Expression {
 #[derive(Debug, Clone, PartialEq)]
 pub struct Alu {
     pub vars: HashMap<String, Value>,
-    current_input: u8,
+    current_input: usize,
 }
 
 impl Alu {
@@ -92,7 +92,7 @@ impl Alu {
         use crate::Value::Val;
 
         // figure out if right is a register or value
-        match right.parse::<i32>() {
+        match right.parse::<i64>() {
             Ok(num) => Val(num),
             Err(_)  => self.vars.get(right).unwrap().clone(),
         }
@@ -369,6 +369,73 @@ impl Alu {
 
     fn process_eql(&mut self, left: &str, right_val: Value) {
 
+        use crate::Value::*;
+        use crate::Operation::Eql;
+
+        let left_val: Value = self.vars.get(left).unwrap().clone();
+        
+        // if both left and right are values, compare and store in left
+        if let Val(right_v) = right_val {
+            if let Val(left_v) = left_val {
+                self.vars.insert(left.to_string(), Val(
+                    if right_v == left_v {
+                        1
+                    } else {
+                        0
+                    }
+                ));
+                return;
+            }
+        }
+        
+
+        // If left and right expressions match then set left to 1, can't set 0 if not equal
+        if left_val == right_val {
+            self.vars.insert(left.to_string(), Val(1));
+            return;
+        }
+
+        // form new expression and store in left
+        self.vars.insert(left.to_string(), Expr(Expression {
+            op: Eql,
+            left: Box::new(left_val),
+            right: Box::new(right_val),
+        }));
+
+
+    }
+
+    pub fn calculate_z(&self, input: [i64; 14]) -> i64 {
+
+        let z_val = self.vars.get("z").unwrap();
+
+        let z_calc = Self::calc(z_val.clone(), input);
+
+        z_calc
+    }
+
+    fn calc(val : Value, input : [i64; 14]) -> i64 {
+
+        use crate::Value::*;
+        use crate::Operation::*;
+
+        match val {
+            Val(v)           => v,
+            Input(i)         => input[i],
+            Expr(expr) => {
+                match expr.op {
+                    Add => Self::calc(*expr.left, input) + Self::calc(*expr.right, input),
+                    Mul => Self::calc(*expr.left, input) * Self::calc(*expr.right, input),
+                    Div => Self::calc(*expr.left, input) / Self::calc(*expr.right, input),
+                    Mod => Self::calc(*expr.left, input) % Self::calc(*expr.right, input),
+                    Eql => if Self::calc(*expr.left, input) == Self::calc(*expr.right, input) {
+                        1
+                    } else {
+                        0
+                    }
+                }
+            }
+        }
     }
 
 }
