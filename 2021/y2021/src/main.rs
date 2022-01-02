@@ -249,4 +249,32 @@ fn main() {
         "Day 22, #2: {:?}",
         day22_1::calculate_cubes_on(&String::from("resources/day22-1-input.txt"), 150000)
     );
+
+    // Day 23, #1
+    println!("Solving using pencil and notepad...");
+    println!("Day 23, #1: 13066");
+
+    /* Removed for performance FIX
+    // Day 23, #2
+    println!(
+        "Day 23, #2: {:?}",
+        day23_2::calculate_min_energy(&String::from("resources/day23-2-input.txt"))
+    );
+    */
+
+    /* NOT SOLVED
+    // Day 24, #1
+    println!(
+        "Day 24, #1: {:?}",
+        day24_1::calculate_max_serialno(&String::from("resources/day24-1-input.txt"))
+    );
+    */
+
+    // Day 25, #1
+    println!(
+        "Day 25, #1: {:?}",
+        day25_1::calculate_stop_steps(&String::from("resources/day25-1-input.txt"))
+    );
+
+
 }

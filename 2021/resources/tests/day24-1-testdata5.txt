@@ -1,0 +1,9 @@
+inp w
+add w 5
+add x 3
+add x w
+add y 10
+add w y
+inp z
+add y z
+add y 8

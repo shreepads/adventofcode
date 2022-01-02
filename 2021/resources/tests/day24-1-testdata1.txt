@@ -1,0 +1,6 @@
+add x -1
+add w 5
+inp z
+add x z
+add z y
+add y w

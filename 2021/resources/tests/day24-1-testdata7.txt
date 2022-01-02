@@ -1,0 +1,7 @@
+add x 4
+add y 4
+eql x y
+inp w
+add z w
+eql y x
+eql z w

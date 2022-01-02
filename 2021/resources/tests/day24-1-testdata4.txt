@@ -1,0 +1,7 @@
+inp w
+add x 10
+add y 1
+mul y w
+mod z x
+add z 1
+mod x z

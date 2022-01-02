@@ -1,0 +1,9 @@
+inp w
+add w 2
+inp x
+mul x w
+inp y
+div x y
+inp z
+mod z x
+eql z 0

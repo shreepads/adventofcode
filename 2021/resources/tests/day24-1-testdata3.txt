@@ -1,0 +1,8 @@
+inp w
+mul w 1
+add x 2
+add y 20
+mul x 2
+add z 24
+div z 5
+div y x
