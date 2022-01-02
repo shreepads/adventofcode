@@ -275,6 +275,4 @@ fn main() {
         "Day 25, #1: {:?}",
         day25_1::calculate_stop_steps(&String::from("resources/day25-1-input.txt"))
     );
-
-
 }
