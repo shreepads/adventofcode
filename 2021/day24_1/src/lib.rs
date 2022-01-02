@@ -16,6 +16,12 @@ pub fn calculate_max_serialno(file_path: &String) -> u32 {
         file_path
     ));
 
+    let mut alu = Alu::new();
+
+    for line in contents.lines() {
+        alu.process_instruction(line.to_string());
+    }
+
     0
 }
 
