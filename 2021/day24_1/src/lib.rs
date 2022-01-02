@@ -18,20 +18,49 @@ pub fn calculate_max_serialno(file_path: &String) -> i64 {
         file_path
     ));
 
-    let mut alu = Alu2::new();
-    let input: [i64; 14] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5];
+    'outer: for i1 in (1..=9).rev() {
+        for i2 in (1..=9).rev() {
+            for i3 in (1..=9).rev() {
+                for i4 in (1..=9).rev() {
+                    for i5 in (1..=9).rev() {
+                        for i6 in (1..=9).rev() {
+                            for i7 in (1..=9).rev() {
+                                for i8 in (1..=9).rev() {
+                                    for i9 in (1..=9).rev() {
+                                        for i10 in (1..=9).rev() {
+                                            for i11 in (1..=9).rev() {
+                                                for i12 in (1..=9).rev() {
+                                                    for i13 in (1..=9).rev() {
+                                                        for i14 in (1..=9).rev() {
+                                                            let mut alu = Alu2::new();
+                                                            let input: [i64; 14] = [i1, i2, i3, i4, i5, i6, i7, i8, i9, i10, i11, i12, i13, i14];
 
-    for line in contents.lines() {
-        alu.process_instruction(line.to_string(), input);
+                                                            for line in contents.lines() {
+                                                                alu.process_instruction(line.to_string(), input);
+                                                            }
+
+                                                            if *alu.vars.get("z").unwrap() == 0 {
+                                                                println!("Found serial number: {:?}", input);
+                                                                break 'outer;
+                                                            } else {
+                                                                //println!("Not serial number: {:?}", input);
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
-    //println!("ALU state: {:#?}", alu);
-    //println!("ALU z state: {:?}", alu.vars.get(&"z".to_string()).unwrap());
-    println!("ALU z value: {}", alu.vars.get("z").unwrap());
-
-
-    //alu.calculate_z(input) as u32
-    *alu.vars.get("z").unwrap()
+    0
 }
 
 #[cfg(test)]
