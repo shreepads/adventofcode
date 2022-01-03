@@ -37,7 +37,7 @@ pub fn calculate_element_diff(file_path: &String, steps: usize) -> u64 {
         .windows(2)
         .enumerate()
     {
-        tree_polymerise_count(pair.iter().collect::<String>(), &pair_insert_map,
+        list_polymerise_count(pair.iter().collect::<String>(), &pair_insert_map,
             &mut element_counts, steps - MAX_BRUTE_STEPS);
 
         println!("Completed pair {} {}: Element counts {:?}", i, 
@@ -48,6 +48,44 @@ pub fn calculate_element_diff(file_path: &String, steps: usize) -> u64 {
     let min_count = element_counts.values().min().unwrap();
 
     max_count - min_count
+}
+
+fn list_polymerise_count(pair: String, pair_insert_map: &HashMap<String, char>,
+    element_counts: &mut HashMap<char, u64>, steps: usize) {
+
+    let mut polypair_list : Vec<String> = Vec::with_capacity(70000000);
+    let mut newpair_list : Vec<String> = Vec::with_capacity(70000000);
+
+    polypair_list.push(pair);
+
+    for i in 1..=steps {
+        while let Some(polypair) = polypair_list.pop() {
+
+            let first_element: char = polypair.chars().nth(0).unwrap();
+            let second_element: char = polypair.chars().nth(1).unwrap();
+
+            // get new element for pair
+            let new_element: char = *pair_insert_map.get(&polypair).unwrap();
+
+            // increment new element count
+            let count = element_counts.entry(new_element).or_insert(0);
+            *count += 1;
+
+            // add new pairs
+            let first_pair = format!("{}{}", first_element, new_element);
+            newpair_list.push(first_pair);
+            let second_pair = format!("{}{}", new_element, second_element);
+            newpair_list.push(second_pair);
+
+        }
+
+        println!("Round {}: Adding {} new pairs", i, newpair_list.len());
+
+        // also clears out newpair_list - sequence doesn't matter
+        polypair_list.append(&mut newpair_list);
+
+    }
+
 }
 
 fn tree_polymerise_count(pair: String, pair_insert_map: &HashMap<String, char>,
