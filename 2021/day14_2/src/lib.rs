@@ -2,9 +2,10 @@
 // SPDX-License-Identifier: MIT
 
 use std::collections::HashMap;
+use std::collections::BTreeMap;
 use std::fs;
 
-pub const MAX_BRUTE_STEPS: usize = 16;
+pub const MAX_BRUTE_STEPS: usize = 14;
 
 pub fn calculate_element_diff(file_path: &String, steps: usize) -> u64 {
     println!("Loading data from file:{}", file_path);
@@ -36,16 +37,75 @@ pub fn calculate_element_diff(file_path: &String, steps: usize) -> u64 {
         .windows(2)
         .enumerate()
     {
-        tree_polymerise_count(pair.iter().collect::<String>(), &pair_insert_map, &mut element_counts, steps - MAX_BRUTE_STEPS);
+        tree_polymerise_count(pair.iter().collect::<String>(), &pair_insert_map,
+            &mut element_counts, steps - MAX_BRUTE_STEPS);
+
+        println!("Completed pair {} {}: Element counts {:?}", i, 
+            pair.iter().collect::<String>(), element_counts);
     }
 
+    let max_count = element_counts.values().max().unwrap();
+    let min_count = element_counts.values().min().unwrap();
 
-    0
+    max_count - min_count
 }
 
 fn tree_polymerise_count(pair: String, pair_insert_map: &HashMap<String, char>,
     element_counts: &mut HashMap<char, u64>, steps: usize) {
 
+    let mut poly_tree : BTreeMap<u64, char> = BTreeMap::new();
+
+    let first: char = pair.chars().nth(0).unwrap();
+    let second: char = pair.chars().nth(1).unwrap();
+
+    poly_tree.insert(0, first);
+    poly_tree.insert(u64::MAX, second);
+
+    //println!("Starting poly_tree with pair {}", pair);
+
+    let mut new_elements: Vec<(u64, char)> = Vec::with_capacity(70000000);
+
+    for i in 1..=steps {
+        
+        let mut prev_idx: u64 = 0;
+        let mut prev_element: char = first;
+
+        // move allocation out
+        //let mut new_elements: Vec<(u64, char)> = Vec::new();
+
+        // find new element insertion points
+        for (idx, element) in poly_tree.iter() {
+            // no action on first element
+            if *idx == 0 {
+                continue;
+            }
+
+            // lookup element pair
+            let mut pair_str = String::new();
+            pair_str.push(prev_element);
+            pair_str.push(*element);
+
+            let new_element: char = *pair_insert_map.get(&pair_str).unwrap();
+            let new_element_idx: u64 = prev_idx/2 + idx/2;
+
+            new_elements.push((new_element_idx, new_element));
+
+            prev_idx = *idx;
+            prev_element = *element;
+        }
+
+        // add new elements to tree and counter
+        for (new_element_idx, new_element) in new_elements.iter() {
+
+            poly_tree.insert(*new_element_idx, *new_element);
+            
+            let count = element_counts.entry(*new_element).or_insert(0);
+            *count += 1;
+        }
+
+        //println!("Tree round {}: Inserted elements {:?}", i, new_elements);
+        new_elements.clear();
+    }
 }
 
 fn element_counts(polymer: &String) -> HashMap<char, u64> {
@@ -111,7 +171,10 @@ mod tests {
 
     #[test]
     fn poly_tree() {
-        let result = calculate_element_diff(&String::from("../resources/tests/day14-2-testdata.txt"), 40);
+        let result = calculate_element_diff(
+            &String::from("../resources/tests/day14-2-testdata.txt"), 
+            40);
+            
         assert_eq!(result, 2188189693529);
     }
 }
