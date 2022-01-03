@@ -23,7 +23,7 @@ pub fn calculate_element_diff(file_path: &String, steps: usize) -> u64 {
     let mut element_counts = element_counts(&polymer);
 
     // Setup pair counts
-    let mut polypair_map : HashMap<String, u64> = HashMap::new();
+    let mut polypair_map: HashMap<String, u64> = HashMap::new();
 
     for (_, pair) in polymer
         .chars()
@@ -31,16 +31,16 @@ pub fn calculate_element_diff(file_path: &String, steps: usize) -> u64 {
         .windows(2)
         .enumerate()
     {
-        let pair_count = polypair_map.entry(pair.iter().collect::<String>()).or_insert(0);
+        let pair_count = polypair_map
+            .entry(pair.iter().collect::<String>())
+            .or_insert(0);
         *pair_count += 1;
     }
 
-    let mut newpair_map : HashMap<String, u64> = HashMap::new();
+    let mut newpair_map: HashMap<String, u64> = HashMap::new();
 
     for _ in 1..=steps {
-
         for (polypair, paircount) in polypair_map.drain() {
-
             let first_element: char = polypair.chars().nth(0).unwrap();
             let second_element: char = polypair.chars().nth(1).unwrap();
 
@@ -59,14 +59,12 @@ pub fn calculate_element_diff(file_path: &String, steps: usize) -> u64 {
             let second_pair = format!("{}{}", new_element, second_element);
             let second_pair_count = newpair_map.entry(second_pair).or_insert(0);
             *second_pair_count += paircount;
-
         }
 
         for (k, v) in newpair_map.drain() {
             polypair_map.insert(k, v);
         }
     }
-
 
     let max_count = element_counts.values().max().unwrap();
     let min_count = element_counts.values().min().unwrap();
@@ -89,7 +87,6 @@ fn element_counts(polymer: &String) -> HashMap<char, u64> {
 
     element_counts
 }
-
 
 fn load_data(polymer: &mut String, pair_insert_map: &mut HashMap<String, char>, contents: String) {
     for (line_no, line) in contents.lines().enumerate() {
@@ -118,10 +115,9 @@ mod tests {
 
     #[test]
     fn poly_tree() {
-        let result = calculate_element_diff(
-            &String::from("../resources/tests/day14-2-testdata.txt"), 
-            40);
-            
+        let result =
+            calculate_element_diff(&String::from("../resources/tests/day14-2-testdata.txt"), 40);
+
         assert_eq!(result, 2188189693529);
     }
 }
