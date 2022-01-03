@@ -37,7 +37,7 @@ pub fn calculate_element_diff(file_path: &String, steps: usize) -> u64 {
         .windows(2)
         .enumerate()
     {
-        list_polymerise_count(pair.iter().collect::<String>(), &pair_insert_map,
+        hashmap_polymerise_count(pair.iter().collect::<String>(), &pair_insert_map,
             &mut element_counts, steps - MAX_BRUTE_STEPS);
 
         println!("Completed pair {} {}: Element counts {:?}", i, 
@@ -48,6 +48,47 @@ pub fn calculate_element_diff(file_path: &String, steps: usize) -> u64 {
     let min_count = element_counts.values().min().unwrap();
 
     max_count - min_count
+}
+
+fn hashmap_polymerise_count(pair: String, pair_insert_map: &HashMap<String, char>,
+    element_counts: &mut HashMap<char, u64>, steps: usize) {
+
+    let mut polypair_map : HashMap<String, u64> = HashMap::new();
+    let mut newpair_map : HashMap<String, u64> = HashMap::new();
+
+    polypair_map.insert(pair, 1);
+
+    for i in 1..=steps {
+        for (polypair, paircount) in polypair_map.drain() {
+
+            let first_element: char = polypair.chars().nth(0).unwrap();
+            let second_element: char = polypair.chars().nth(1).unwrap();
+
+            // get new element for pair
+            let new_element: char = *pair_insert_map.get(&polypair).unwrap();
+
+            // increment new element count
+            let count = element_counts.entry(new_element).or_insert(0);
+            *count += paircount;
+
+            // add new pairs
+            let first_pair = format!("{}{}", first_element, new_element);
+            let first_pair_count = newpair_map.entry(first_pair).or_insert(0);
+            *first_pair_count += paircount;
+
+            let second_pair = format!("{}{}", new_element, second_element);
+            let second_pair_count = newpair_map.entry(second_pair).or_insert(0);
+            *second_pair_count += paircount;
+
+        }
+
+        //println!("Round {}: Adding {} new pair counts", i, newpair_map.len());
+
+        for (k, v) in newpair_map.drain() {
+            polypair_map.insert(k, v);
+        }
+    }
+    
 }
 
 fn list_polymerise_count(pair: String, pair_insert_map: &HashMap<String, char>,
