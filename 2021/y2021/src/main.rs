@@ -170,6 +170,12 @@ fn main() {
         day14_1::calculate_element_diff(&String::from("resources/day14-1-input.txt"), 10)
     );
 
+    // Day 14, #2
+    println!(
+        "Day 14, #2: {}",
+        day14_2::calculate_element_diff(&String::from("resources/day14-1-input.txt"), 40)
+    );    
+
     // Day 15, #1
     println!(
         "Day 15, #1: {}",
