@@ -3,30 +3,56 @@
 
 use std::fs;
 
-pub fn calculate_fish_population(file_path: &String, _number_days: u32) -> u64 {
+pub fn calculate_fish_population(file_path: &String, number_days: usize) -> u64 {
     println!("Loading data from file:{}", file_path);
 
     let contents = fs::read_to_string(file_path).expect("Something went wrong reading the file");
 
-    let mut fishy_states: Vec<u8> = Vec::new();
+    // Setup zero counts for all states
+    let mut fishy_state_counts: [u64; 9] = [0; 9];
+    let mut new_fishy_state_counts: [u64; 9] = [0; 9];
 
-    for fishy_state in contents.trim_end().split(",") {
-        fishy_states.push(fishy_state.parse::<u8>().unwrap());
+    for fishy_state_str in contents.trim_end().split(",") {
+        
+        let fishy_state = fishy_state_str.parse::<usize>().unwrap();
+        
+        fishy_state_counts[fishy_state] += 1;
     }
 
-    // How many fishies are in the sea?
-    // u64::MAX == 18,446,744,073,709,551,615
+    for _ in 1..=number_days {
 
-    let fish_count: u64 = fishy_states.len().try_into().unwrap();
+        for (fishy_state, fishy_statecount) in fishy_state_counts.iter().enumerate() {
+            if fishy_state == 0 {
+                new_fishy_state_counts[6] = *fishy_statecount;
+                new_fishy_state_counts[8] = *fishy_statecount;
+            }  else if fishy_state == 7 {
+                new_fishy_state_counts[6] += *fishy_statecount;
+            } else {
+                new_fishy_state_counts[fishy_state - 1] = *fishy_statecount;
+            }
+        }
 
-    fish_count
+        for (new_fishy_state, new_fishy_statecount) in new_fishy_state_counts.iter().enumerate() {
+            fishy_state_counts[new_fishy_state] = *new_fishy_statecount;
+        }
+
+    }
+
+    fishy_state_counts.iter().sum()
 }
 
 #[cfg(test)]
 mod tests {
+
+    use super::*;
+
     #[test]
-    fn it_works() {
-        let result = 2 + 2;
-        assert_eq!(result, 4);
+    fn small_fishes() {
+        let result = calculate_fish_population(
+            &String::from("../resources/tests/day6-2-testdata.txt"),
+            256
+        );
+
+        assert_eq!(result, 26984457539);
     }
 }

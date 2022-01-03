@@ -74,7 +74,7 @@ fn main() {
 
     // Day 6, #2
     println!(
-        "Day 6, #2: {}  NOT SOLVED",
+        "Day 6, #2: {}",
         day6_2::calculate_fish_population(&String::from("resources/day6-1-input.txt"), 256)
     );
 
