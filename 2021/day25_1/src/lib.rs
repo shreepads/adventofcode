@@ -30,7 +30,6 @@ pub fn calculate_stop_steps(file_path: &String) -> u32 {
         done = seac_shuffle(&mut map);
         step += 1;
         //print_map(&map);
-        //thread::sleep(time::Duration::from_secs(3));
     }
 
     step - 1
@@ -110,7 +109,7 @@ fn load_map(map: &mut Vec<Vec<Location>>, contents: String) {
     }
 }
 
-fn print_map(map: &Vec<Vec<Location>>) {
+fn _print_map(map: &Vec<Vec<Location>>) {
     use crate::Location::*;
 
     println!("Map:");
@@ -127,6 +126,8 @@ fn print_map(map: &Vec<Vec<Location>>) {
     }
 
     println!("******");
+
+    thread::sleep(time::Duration::from_secs(3));
 }
 
 #[cfg(test)]

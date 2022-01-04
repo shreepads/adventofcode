@@ -7,15 +7,32 @@ use std::{thread, time};
 pub const MAX_POS: usize = 10;
 pub const MAX_SCORE: usize = 100;   // needed if we're waiting for ALL player x's to win
 
+#[derive(Debug, Clone, PartialEq, Copy, Eq, Hash)]
+pub struct GameState {
+    p1_pos: usize,
+    p1_score: usize,
+
+    p2_pos: usize,
+    p2_score: usize,
+
+    p1_plays_next: bool,
+}
+
+
 pub fn calculate_win_universe_count(p1_start_pos: usize, 
     p2_start_pos: usize, win_score: usize) -> u64 {
 
-    let mut player1_states : [[u64; MAX_SCORE]; MAX_POS] = [[0; MAX_SCORE]; MAX_POS];
-    let mut player2_states : [[u64; MAX_SCORE]; MAX_POS] = [[0; MAX_SCORE]; MAX_POS];
+    let init_game_state = GameState {
+        p1_pos: p1_start_pos,
+        p1_score: 0,
+        p2_pos: p2_start_pos,
+        p2_score: 0,
+        p1_plays_next: true,
+    };
 
-    // Set player start posn at zero score
-    player1_states[p1_start_pos - 1][0] = 1;
-    player2_states[p2_start_pos - 1][0] = 1;
+    // Setup game state
+    let mut games_state_counts : HashMap<GameState, u64> = HashMap::new();
+    games_state_counts.insert(init_game_state, 1);
 
     // Setup map for distribution of throws
     let throw_map: HashMap<usize, u64> = HashMap::from([
@@ -31,33 +48,18 @@ pub fn calculate_win_universe_count(p1_start_pos: usize,
     let mut round = 1;
     
     loop {
-        println!("Round: {}", round);
-        println!("*********");
-        print_states(&player1_states, &player2_states);
 
-        move_pawns(&mut player1_states, &throw_map, win_score);
+        move_pawns(&mut games_state_counts, round, &throw_map, win_score);
 
-        if won_all_universes(&player1_states, win_score) {
-            println!("**** PLAYER 1 WINS ****");
+
+        if all_games_complete(&games_state_counts, win_score) {
             break;
         }
 
-        move_pawns(&mut player2_states, &throw_map, win_score);
-
-        if won_all_universes(&player2_states, win_score) {
-            println!("**** PLAYER 2 WINS ****");
-            break;
-        }
-
-        
-        round += 1;
-        
+        round += 1;        
     }
 
-    let player1_wins = count_win_universes(&player1_states, win_score);
-    let player2_wins = count_win_universes(&player2_states, win_score);
-
-    println!("Player 1 wins in {} univs, Player 2 in {}", player1_wins, player2_wins);
+    let (player1_wins, player2_wins)  = count_win_universes(&games_state_counts, win_score);
     
     if player1_wins > player2_wins {
         player1_wins
@@ -67,93 +69,118 @@ pub fn calculate_win_universe_count(p1_start_pos: usize,
 
 }
 
-fn count_win_universes(player_states: &[[u64; MAX_SCORE]; MAX_POS], win_score: usize) -> u64 {
+fn count_win_universes(games_state_counts: &HashMap<GameState, u64>, win_score: usize) -> (u64, u64) {
     
-    let mut win_count = 0u64;
+    let mut player1_win_count = 0u64;
+    let mut player2_win_count = 0u64;
 
-    for (posn, posn_scores) in player_states.iter().enumerate() {
-        for (score, score_count) in posn_scores.iter().enumerate() {
-            if score < win_score {
-                continue;
-            }
+    for (gamestate, state_count) in games_state_counts.iter() {
 
-            win_count += score_count;
+        if gamestate.p1_score >= win_score {
+            player1_win_count += state_count;
+        } else if gamestate.p2_score >= win_score {
+            player2_win_count += state_count;
+        } else {
+            println!("Something's wrong with gamestate: {:?}", gamestate);
         }
+
     }
 
-    win_count
+    (player1_win_count, player2_win_count)
 }
 
-fn won_all_universes(player_states: &[[u64; MAX_SCORE]; MAX_POS], win_score: usize) -> bool {
 
-    for (posn, posn_scores) in player_states.iter().enumerate() {
-        for (score, score_count) in posn_scores.iter().enumerate() {
-            if score < win_score  &&  *score_count > 0 {
-                return false;
-            }
+fn all_games_complete(games_state_counts: &HashMap<GameState, u64>, win_score: usize) -> bool {
+
+    for gamestate in games_state_counts.keys() {
+        if gamestate.p1_score < win_score  &&  gamestate.p2_score < win_score {
+            return false;
         }
     }
 
     true
-
 }
 
-fn print_states(player1_states: &[[u64; MAX_SCORE]; MAX_POS],
-    player2_states: &[[u64; MAX_SCORE]; MAX_POS]) {
 
-    println!("Player 1:");
-    for (posn, posn_scores) in player1_states.iter().enumerate() {
-        print!("Posn {}: ", posn + 1);
-        for (score, score_count) in posn_scores.iter().enumerate() {
-            if *score_count != 0 {
-                print!("({}, {}); ", score, score_count);
-            }
-        }
-        println!("");
-    }
-    println!("");
+fn _print_game_states(games_state_counts: &HashMap<GameState, u64>) {
 
-    println!("Player 2:");
-    for (posn, posn_scores) in player2_states.iter().enumerate() {
-        print!("Posn {}: ", posn + 1);
-        for (score, score_count) in posn_scores.iter().enumerate() {
-            if *score_count != 0 {
-                print!("({}, {}); ", score, score_count);
-            }
-        }
-        println!("");
-    }
-    println!("");
-
+    println!("Game states: {:?}", games_state_counts);
+    
     thread::sleep(time::Duration::from_secs(1));
 
 }
 
 
-fn move_pawns(player_states: &mut [[u64; MAX_SCORE]; MAX_POS], throw_map: &HashMap<usize, u64>,
+fn move_pawns(games_state_counts: &mut HashMap<GameState, u64>, 
+    round: usize, throw_map: &HashMap<usize, u64>,
     win_score: usize) {
 
-    let mut new_player_states : [[u64; MAX_SCORE]; MAX_POS] = [[0; MAX_SCORE]; MAX_POS];
+    let mut new_games_state_counts : HashMap<GameState, u64> = HashMap::new();
 
-    // Update player states
-    for (posn, posn_scores) in player_states.iter().enumerate() {
-        for (score, score_count) in posn_scores.iter().enumerate() {
-            // For each position, score count, apply all throws
-            if *score_count == 0 {continue;}  // do nothing if no pawns in this position/ score
+    for (gamestate, state_count) in games_state_counts.iter() {
 
-            if score >= win_score {continue;}  // do nothing for those above win_score
-
-            for (throw_total, throw_count) in throw_map.iter() {
-                let new_posn = (posn + throw_total) % MAX_POS;
-                let new_score = score + new_posn + 1;
-                let new_score_count = score_count * throw_count;
-
-                new_player_states[new_posn][new_score] += new_score_count;
-            }
+        if gamestate.p1_score >= win_score  ||  gamestate.p2_score >= win_score {
+            let upd_state_count = new_games_state_counts.entry(*gamestate).or_insert(0);
+            *upd_state_count += state_count;            
+            continue;    // game complete, nothing to do here
         }
+
+        if round % 2 == 1  &&  !gamestate.p1_plays_next {
+            let upd_state_count = new_games_state_counts.entry(*gamestate).or_insert(0);
+            *upd_state_count += state_count;  
+            continue;    // odd rounds to be played by p1
+        }
+
+        if round % 2 == 0  &&  gamestate.p1_plays_next {
+            let upd_state_count = new_games_state_counts.entry(*gamestate).or_insert(0);
+            *upd_state_count += state_count;  
+            continue;    // even rounds to be played by p2
+        }
+
+        if gamestate.p1_plays_next {
+            //move p1
+            for (throw_total, throw_count) in throw_map.iter() {
+                let new_p1_pos = ((gamestate.p1_pos + throw_total - 1) % 10) + 1;
+                let new_p1_score = gamestate.p1_score + new_p1_pos;
+                let new_state_count = state_count * throw_count;
+
+                let new_state = GameState {
+                    p1_pos: new_p1_pos,
+                    p1_score: new_p1_score,
+                    p2_pos: gamestate.p2_pos,
+                    p2_score: gamestate.p2_score,
+                    p1_plays_next: false,
+                };
+
+                let upd_state_count = new_games_state_counts.entry(new_state).or_insert(0);
+                *upd_state_count += new_state_count;
+            }
+
+        } else {
+            // move p2
+            for (throw_total, throw_count) in throw_map.iter() {
+                let new_p2_pos = ((gamestate.p2_pos + throw_total - 1) % 10) + 1;
+                let new_p2_score = gamestate.p2_score + new_p2_pos;
+                let new_state_count = state_count * throw_count;
+
+                let new_state = GameState {
+                    p1_pos: gamestate.p1_pos,
+                    p1_score: gamestate.p1_score,
+                    p2_pos: new_p2_pos,
+                    p2_score: new_p2_score,
+                    p1_plays_next: true,
+                };
+
+                let upd_state_count = new_games_state_counts.entry(new_state).or_insert(0);
+                *upd_state_count += new_state_count;
+            }
+
+        }
+
+
     }
 
-    *player_states = new_player_states;
+    *games_state_counts = new_games_state_counts;
 
 }
 
