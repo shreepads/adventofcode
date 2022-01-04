@@ -518,6 +518,9 @@ impl Alu {
                 right: Box::new(right_val),
             }),
         );
+
+        self.var_mins.insert(left.to_string(), 0);
+        self.var_maxs.insert(left.to_string(), 1);
     }
 
     pub fn calculate_z(&self, input: [i64; 14]) -> i64 {
