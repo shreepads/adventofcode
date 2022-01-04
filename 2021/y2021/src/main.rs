@@ -244,6 +244,13 @@ fn main() {
         day21_1::calculate_meaningless_metric(3, 5, 1000)
     );
 
+    // Day 21, #2
+    println!(
+        "Day 21, #2: {:?}",
+        day21_2::calculate_win_universe_count(3, 5, 21)
+    );
+
+
     // Day 22, #1
     println!(
         "Day 22, #1: {:?}",
