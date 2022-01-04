@@ -29,6 +29,8 @@ pub struct Expression {
 #[derive(Debug, Clone, PartialEq)]
 pub struct Alu {
     pub vars: HashMap<String, Value>,
+    pub var_mins: HashMap<String, i64>,
+    pub var_maxs: HashMap<String, i64>,
     current_input: usize,
 }
 
@@ -42,6 +44,18 @@ impl Alu {
                 ("x".to_string(), Val(0)),
                 ("y".to_string(), Val(0)),
                 ("z".to_string(), Val(0)),
+            ]),
+            var_mins: HashMap::from([
+                ("w".to_string(), 0),
+                ("x".to_string(), 0),
+                ("y".to_string(), 0),
+                ("z".to_string(), 0),
+            ]),
+            var_maxs: HashMap::from([
+                ("w".to_string(), 0),
+                ("x".to_string(), 0),
+                ("y".to_string(), 0),
+                ("z".to_string(), 0),
             ]),
             current_input: 0,
         }
@@ -61,23 +75,28 @@ impl Alu {
             "inp" => self.process_inp(left),
             "add" => {
                 let right = parts.next().unwrap();
-                self.process_add(left, self.right_val(right));
+                self.process_add(left, self.right_val(right),
+                    self.right_min(right), self.right_max(right));
             }
             "mul" => {
                 let right = parts.next().unwrap();
-                self.process_mul(left, self.right_val(right));
+                self.process_mul(left, self.right_val(right),
+                    self.right_min(right), self.right_max(right));
             }
             "div" => {
                 let right = parts.next().unwrap();
-                self.process_div(left, self.right_val(right));
+                self.process_div(left, self.right_val(right),
+                    self.right_min(right), self.right_max(right));
             }
             "mod" => {
                 let right = parts.next().unwrap();
-                self.process_mod(left, self.right_val(right));
+                self.process_mod(left, self.right_val(right),
+                    self.right_min(right), self.right_max(right));
             }
             "eql" => {
                 let right = parts.next().unwrap();
-                self.process_eql(left, self.right_val(right));
+                self.process_eql(left, self.right_val(right),
+                    self.right_min(right), self.right_max(right));
             }
             _ => {
                 println!("Invalid instruction: {}", instr);
@@ -95,15 +114,42 @@ impl Alu {
         }
     }
 
+    fn right_min(&self, right: &str) -> i64 {
+        use crate::Value::Val;
+
+        // figure out if right is a register or value
+        match right.parse::<i64>() {
+            Ok(num) => num,
+            Err(_) => *self.var_mins.get(right).unwrap(),
+        }
+    }
+
+
+    fn right_max(&self, right: &str) -> i64 {
+        use crate::Value::Val;
+
+        // figure out if right is a register or value
+        match right.parse::<i64>() {
+            Ok(num) => num,
+            Err(_) => *self.var_maxs.get(right).unwrap(),
+        }
+    }
+
     fn process_inp(&mut self, left: &str) {
         use crate::Value::Input;
 
+        // set input
         self.vars
             .insert(left.to_string(), Input(self.current_input));
+
+        // set min, max
+        self.var_mins.insert(left.to_string(), 1);
+        self.var_maxs.insert(left.to_string(), 9);
+
         self.current_input += 1;
     }
 
-    fn process_add(&mut self, left: &str, right_val: Value) {
+    fn process_add(&mut self, left: &str, right_val: Value, right_min: i64, right_max: i64) {
         use crate::Operation::Add;
         use crate::Value::*;
 
@@ -112,12 +158,20 @@ impl Alu {
         } // x + 0 == x
 
         let left_val: Value = self.vars.get(left).unwrap().clone();
+        let left_min: i64 = *self.var_mins.get(left).unwrap();
+        let left_max: i64 = *self.var_maxs.get(left).unwrap();
 
         if left_val == Val(0) {
             // 0 + x == x
             self.vars.insert(left.to_string(), right_val);
+            self.var_mins.insert(left.to_string(), right_min);
+            self.var_maxs.insert(left.to_string(), right_max);
             return;
         }
+
+        self.var_mins.insert(left.to_string(), left_min + right_min);
+        self.var_maxs.insert(left.to_string(), left_max + right_max);
+
 
         if let Val(right_v) = right_val {
             // if both left and right are values add and store in left
@@ -200,7 +254,7 @@ impl Alu {
         );
     }
 
-    fn process_mul(&mut self, left: &str, right_val: Value) {
+    fn process_mul(&mut self, left: &str, right_val: Value, right_min: i64, right_max: i64) {
         use crate::Operation::Mul;
         use crate::Value::*;
 
@@ -209,18 +263,27 @@ impl Alu {
         } // x * 1 == x
 
         let left_val: Value = self.vars.get(left).unwrap().clone();
+        let left_min: i64 = *self.var_mins.get(left).unwrap();
+        let left_max: i64 = *self.var_maxs.get(left).unwrap();
 
         if left_val == Val(1) {
             // 1 * x == x
             self.vars.insert(left.to_string(), right_val);
+            self.var_mins.insert(left.to_string(), right_min);
+            self.var_maxs.insert(left.to_string(), right_max);
             return;
         }
 
         if right_val == Val(0) || left_val == Val(0) {
             // 0 * x == x * 0 == 0
             self.vars.insert(left.to_string(), Val(0));
+            self.var_mins.insert(left.to_string(), 0);
+            self.var_maxs.insert(left.to_string(), 0);
             return;
         }
+
+        self.var_mins.insert(left.to_string(), left_min * right_min);
+        self.var_maxs.insert(left.to_string(), left_max * right_max);
 
         if let Val(right_v) = right_val {
             // if both left and right are values add and store in left
@@ -303,7 +366,7 @@ impl Alu {
         );
     }
 
-    fn process_div(&mut self, left: &str, right_val: Value) {
+    fn process_div(&mut self, left: &str, right_val: Value, right_min: i64, right_max: i64) {
         use crate::Operation::Div;
         use crate::Value::*;
 
@@ -318,11 +381,16 @@ impl Alu {
         }
 
         let left_val: Value = self.vars.get(left).unwrap().clone();
+        let left_min: i64 = *self.var_mins.get(left).unwrap();
+        let left_max: i64 = *self.var_maxs.get(left).unwrap();
 
         if left_val == Val(0) {
             // 0 / x == 0
             return;
         }
+
+        self.var_mins.insert(left.to_string(), left_min / right_max);
+        self.var_maxs.insert(left.to_string(), left_max / right_min);
 
         // if both left and right are values add and store in left
         if let Val(right_v) = right_val {
@@ -331,6 +399,7 @@ impl Alu {
                 return;
             }
         }
+
 
         // else form new expression and store in left
         self.vars.insert(
@@ -343,7 +412,7 @@ impl Alu {
         );
     }
 
-    fn process_mod(&mut self, left: &str, right_val: Value) {
+    fn process_mod(&mut self, left: &str, right_val: Value, right_min: i64, right_max: i64) {
         use crate::Operation::Mod;
         use crate::Value::*;
 
@@ -355,22 +424,41 @@ impl Alu {
         if right_val == Val(1) {
             // x mod 1 == 0
             self.vars.insert(left.to_string(), Val(0));
+            self.var_mins.insert(left.to_string(), 0);
+            self.var_maxs.insert(left.to_string(), 0);
             return;
         }
 
         let left_val: Value = self.vars.get(left).unwrap().clone();
+        let left_min: i64 = *self.var_mins.get(left).unwrap();
+        let left_max: i64 = *self.var_maxs.get(left).unwrap();
 
         if left_val == Val(0) {
             // 0 mod x == 0
             return;
         }
 
+
         // if both left and right are values add and store in left
         if let Val(right_v) = right_val {
             if let Val(left_v) = left_val {
                 self.vars.insert(left.to_string(), Val(left_v % right_v));
+                self.var_mins.insert(left.to_string(), left_v % right_v);
+                self.var_maxs.insert(left.to_string(), left_v % right_v);
                 return;
             }
+        }
+
+        if right_min <= left_max {
+            self.var_mins.insert(left.to_string(), 0);
+        } else {
+            self.var_mins.insert(left.to_string(), left_min);
+        }
+
+        if right_max <= left_max {
+            self.var_maxs.insert(left.to_string(), right_max - 1);
+        } else {
+            self.var_maxs.insert(left.to_string(), left_max);
         }
 
         // else form new expression and store in left
@@ -384,17 +472,23 @@ impl Alu {
         );
     }
 
-    fn process_eql(&mut self, left: &str, right_val: Value) {
+    fn process_eql(&mut self, left: &str, right_val: Value, right_min: i64, right_max: i64) {
         use crate::Operation::Eql;
         use crate::Value::*;
 
         let left_val: Value = self.vars.get(left).unwrap().clone();
+        let left_min: i64 = *self.var_mins.get(left).unwrap();
+        let left_max: i64 = *self.var_maxs.get(left).unwrap();
 
         // if both left and right are values, compare and store in left
         if let Val(right_v) = right_val {
             if let Val(left_v) = left_val {
-                self.vars
-                    .insert(left.to_string(), Val(if right_v == left_v { 1 } else { 0 }));
+                let eql_value = if right_v == left_v { 1 } else { 0 };
+                
+                self.vars.insert(left.to_string(), Val(eql_value));
+                self.var_mins.insert(left.to_string(), eql_value);
+                self.var_maxs.insert(left.to_string(), eql_value);
+
                 return;
             }
         }
@@ -402,10 +496,20 @@ impl Alu {
         // If left and right expressions match then set left to 1, can't set 0 if not equal
         if left_val == right_val {
             self.vars.insert(left.to_string(), Val(1));
+            self.var_mins.insert(left.to_string(), 1);
+            self.var_maxs.insert(left.to_string(), 1);
             return;
         }
 
-        // form new expression and store in left
+        // if left and right ranges don't overlap set left to 0
+        if right_max < left_min  ||   left_max < right_min  {
+            self.vars.insert(left.to_string(), Val(0));
+            self.var_mins.insert(left.to_string(), 0);
+            self.var_maxs.insert(left.to_string(), 0);
+            return;
+        }
+
+        // else form new expression and store in left
         self.vars.insert(
             left.to_string(),
             Expr(Expression {
