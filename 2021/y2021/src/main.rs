@@ -74,7 +74,7 @@ fn main() {
 
     // Day 6, #2
     println!(
-        "Day 6, #2: {}  NOT SOLVED",
+        "Day 6, #2: {}",
         day6_2::calculate_fish_population(&String::from("resources/day6-1-input.txt"), 256)
     );
 
@@ -170,6 +170,12 @@ fn main() {
         day14_1::calculate_element_diff(&String::from("resources/day14-1-input.txt"), 10)
     );
 
+    // Day 14, #2
+    println!(
+        "Day 14, #2: {}",
+        day14_2::calculate_element_diff(&String::from("resources/day14-1-input.txt"), 40)
+    );
+
     // Day 15, #1
     println!(
         "Day 15, #1: {}",
@@ -237,6 +243,13 @@ fn main() {
         "Day 21, #1: {:?}",
         day21_1::calculate_meaningless_metric(3, 5, 1000)
     );
+
+    // Day 21, #2
+    println!(
+        "Day 21, #2: {:?}",
+        day21_2::calculate_win_universe_count(3, 5, 21)
+    );
+
 
     // Day 22, #1
     println!(
