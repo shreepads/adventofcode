@@ -250,7 +250,6 @@ fn main() {
         day21_2::calculate_win_universe_count(3, 5, 21)
     );
 
-
     // Day 22, #1
     println!(
         "Day 22, #1: {:?}",
