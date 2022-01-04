@@ -35,14 +35,14 @@ pub fn calculate_win_universe_count(p1_start_pos: usize,
         println!("*********");
         print_states(&player1_states, &player2_states);
 
-        move_pawns(&mut player1_states, &throw_map);
+        move_pawns(&mut player1_states, &throw_map, win_score);
 
         if won_all_universes(&player1_states, win_score) {
             println!("**** PLAYER 1 WINS ****");
             break;
         }
 
-        move_pawns(&mut player2_states, &throw_map);
+        move_pawns(&mut player2_states, &throw_map, win_score);
 
         if won_all_universes(&player2_states, win_score) {
             println!("**** PLAYER 2 WINS ****");
@@ -130,7 +130,8 @@ fn print_states(player1_states: &[[u64; MAX_SCORE]; MAX_POS],
 }
 
 
-fn move_pawns(player_states: &mut [[u64; MAX_SCORE]; MAX_POS], throw_map: &HashMap<usize, u64>) {
+fn move_pawns(player_states: &mut [[u64; MAX_SCORE]; MAX_POS], throw_map: &HashMap<usize, u64>,
+    win_score: usize) {
 
     let mut new_player_states : [[u64; MAX_SCORE]; MAX_POS] = [[0; MAX_SCORE]; MAX_POS];
 
@@ -139,6 +140,8 @@ fn move_pawns(player_states: &mut [[u64; MAX_SCORE]; MAX_POS], throw_map: &HashM
         for (score, score_count) in posn_scores.iter().enumerate() {
             // For each position, score count, apply all throws
             if *score_count == 0 {continue;}  // do nothing if no pawns in this position/ score
+
+            if score >= win_score {continue;}  // do nothing for those above win_score
 
             for (throw_total, throw_count) in throw_map.iter() {
                 let new_posn = (posn + throw_total) % MAX_POS;
