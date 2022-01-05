@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 use std::collections::HashMap;
+use std::collections::HashSet;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Operation {
@@ -31,6 +32,7 @@ pub struct Alu {
     pub vars: HashMap<String, Value>,
     pub var_mins: HashMap<String, i64>,
     pub var_maxs: HashMap<String, i64>,
+    pub var_values: HashMap<String, HashSet<i64>>,
     current_input: usize,
 }
 
@@ -57,6 +59,12 @@ impl Alu {
                 ("y".to_string(), 0),
                 ("z".to_string(), 0),
             ]),
+            var_values: HashMap::from([
+                ("w".to_string(), HashSet::from([0])),
+                ("x".to_string(), HashSet::from([0])),
+                ("y".to_string(), HashSet::from([0])),
+                ("z".to_string(), HashSet::from([0])),
+            ]),
             current_input: 0,
         }
     }
@@ -76,27 +84,27 @@ impl Alu {
             "add" => {
                 let right = parts.next().unwrap();
                 self.process_add(left, self.right_val(right),
-                    self.right_min(right), self.right_max(right));
+                    self.right_min(right), self.right_max(right), self.right_values(right));
             }
             "mul" => {
                 let right = parts.next().unwrap();
                 self.process_mul(left, self.right_val(right),
-                    self.right_min(right), self.right_max(right));
+                    self.right_min(right), self.right_max(right), self.right_values(right));
             }
             "div" => {
                 let right = parts.next().unwrap();
                 self.process_div(left, self.right_val(right),
-                    self.right_min(right), self.right_max(right));
+                    self.right_min(right), self.right_max(right), self.right_values(right));
             }
             "mod" => {
                 let right = parts.next().unwrap();
                 self.process_mod(left, self.right_val(right),
-                    self.right_min(right), self.right_max(right));
+                    self.right_min(right), self.right_max(right), self.right_values(right));
             }
             "eql" => {
                 let right = parts.next().unwrap();
                 self.process_eql(left, self.right_val(right),
-                    self.right_min(right), self.right_max(right));
+                    self.right_min(right), self.right_max(right), self.right_values(right));
             }
             _ => {
                 println!("Invalid instruction: {}", instr);
@@ -135,6 +143,18 @@ impl Alu {
         }
     }
 
+
+    fn right_values(&self, right: &str) -> HashSet<i64> {
+        use crate::Value::Val;
+
+        // figure out if right is a register or value
+        match right.parse::<i64>() {
+            Ok(num) => HashSet::from([num]),
+            Err(_) => self.var_values.get(right).unwrap().clone(),
+        }
+    }
+
+
     fn process_inp(&mut self, left: &str) {
         use crate::Value::Input;
 
@@ -145,11 +165,14 @@ impl Alu {
         // set min, max
         self.var_mins.insert(left.to_string(), 1);
         self.var_maxs.insert(left.to_string(), 9);
+        self.var_values.insert(left.to_string(), HashSet::from_iter(1..=9));
 
         self.current_input += 1;
     }
 
-    fn process_add(&mut self, left: &str, right_val: Value, right_min: i64, right_max: i64) {
+    fn process_add(&mut self, left: &str, right_val: Value, 
+        right_min: i64, right_max: i64, right_values: HashSet<i64>) {
+
         use crate::Operation::Add;
         use crate::Value::*;
 
@@ -160,17 +183,28 @@ impl Alu {
         let left_val: Value = self.vars.get(left).unwrap().clone();
         let left_min: i64 = *self.var_mins.get(left).unwrap();
         let left_max: i64 = *self.var_maxs.get(left).unwrap();
+        let left_values: HashSet<i64> = self.var_values.get(left).unwrap().clone();
 
         if left_val == Val(0) {
             // 0 + x == x
             self.vars.insert(left.to_string(), right_val);
             self.var_mins.insert(left.to_string(), right_min);
             self.var_maxs.insert(left.to_string(), right_max);
+            self.var_values.insert(left.to_string(), right_values);
             return;
         }
 
         self.var_mins.insert(left.to_string(), left_min + right_min);
         self.var_maxs.insert(left.to_string(), left_max + right_max);
+
+        let mut new_left_values: HashSet<i64> = HashSet::new();
+        for left_val in left_values.iter() {
+            for right_val in right_values.iter() {
+                new_left_values.insert(left_val + right_val);
+            }
+        }
+
+        self.var_values.insert(left.to_string(), new_left_values);
 
 
         if let Val(right_v) = right_val {
@@ -254,7 +288,9 @@ impl Alu {
         );
     }
 
-    fn process_mul(&mut self, left: &str, right_val: Value, right_min: i64, right_max: i64) {
+    fn process_mul(&mut self, left: &str, right_val: Value, 
+        right_min: i64, right_max: i64, right_values: HashSet<i64>) {
+
         use crate::Operation::Mul;
         use crate::Value::*;
 
@@ -265,12 +301,14 @@ impl Alu {
         let left_val: Value = self.vars.get(left).unwrap().clone();
         let left_min: i64 = *self.var_mins.get(left).unwrap();
         let left_max: i64 = *self.var_maxs.get(left).unwrap();
+        let left_values: HashSet<i64> = self.var_values.get(left).unwrap().clone();
 
         if left_val == Val(1) {
             // 1 * x == x
             self.vars.insert(left.to_string(), right_val);
             self.var_mins.insert(left.to_string(), right_min);
             self.var_maxs.insert(left.to_string(), right_max);
+            self.var_values.insert(left.to_string(), right_values);
             return;
         }
 
@@ -279,11 +317,21 @@ impl Alu {
             self.vars.insert(left.to_string(), Val(0));
             self.var_mins.insert(left.to_string(), 0);
             self.var_maxs.insert(left.to_string(), 0);
+            self.var_values.insert(left.to_string(), HashSet::from([0]));
             return;
         }
 
         self.var_mins.insert(left.to_string(), left_min * right_min);
         self.var_maxs.insert(left.to_string(), left_max * right_max);
+
+        let mut new_left_values: HashSet<i64> = HashSet::new();
+        for left_val in left_values.iter() {
+            for right_val in right_values.iter() {
+                new_left_values.insert(left_val * right_val);
+            }
+        }
+
+        self.var_values.insert(left.to_string(), new_left_values);
 
         if let Val(right_v) = right_val {
             // if both left and right are values add and store in left
@@ -366,7 +414,9 @@ impl Alu {
         );
     }
 
-    fn process_div(&mut self, left: &str, right_val: Value, right_min: i64, right_max: i64) {
+    fn process_div(&mut self, left: &str, right_val: Value, 
+        right_min: i64, right_max: i64, right_values: HashSet<i64>) {
+
         use crate::Operation::Div;
         use crate::Value::*;
 
@@ -383,6 +433,7 @@ impl Alu {
         let left_val: Value = self.vars.get(left).unwrap().clone();
         let left_min: i64 = *self.var_mins.get(left).unwrap();
         let left_max: i64 = *self.var_maxs.get(left).unwrap();
+        let left_values: HashSet<i64> = self.var_values.get(left).unwrap().clone();
 
         if left_val == Val(0) {
             // 0 / x == 0
@@ -391,6 +442,15 @@ impl Alu {
 
         self.var_mins.insert(left.to_string(), left_min / right_max);
         self.var_maxs.insert(left.to_string(), left_max / right_min);
+
+        let mut new_left_values: HashSet<i64> = HashSet::new();
+        for left_val in left_values.iter() {
+            for right_val in right_values.iter() {
+                new_left_values.insert(left_val / right_val);
+            }
+        }
+
+        self.var_values.insert(left.to_string(), new_left_values);
 
         // if both left and right are values add and store in left
         if let Val(right_v) = right_val {
@@ -412,7 +472,9 @@ impl Alu {
         );
     }
 
-    fn process_mod(&mut self, left: &str, right_val: Value, right_min: i64, right_max: i64) {
+    fn process_mod(&mut self, left: &str, right_val: Value, 
+        right_min: i64, right_max: i64, right_values: HashSet<i64>) {
+
         use crate::Operation::Mod;
         use crate::Value::*;
 
@@ -426,17 +488,29 @@ impl Alu {
             self.vars.insert(left.to_string(), Val(0));
             self.var_mins.insert(left.to_string(), 0);
             self.var_maxs.insert(left.to_string(), 0);
+            self.var_values.insert(left.to_string(), HashSet::from([0]));
             return;
         }
 
         let left_val: Value = self.vars.get(left).unwrap().clone();
         let left_min: i64 = *self.var_mins.get(left).unwrap();
         let left_max: i64 = *self.var_maxs.get(left).unwrap();
+        let left_values: HashSet<i64> = self.var_values.get(left).unwrap().clone();
 
         if left_val == Val(0) {
             // 0 mod x == 0
             return;
         }
+
+
+        let mut new_left_values: HashSet<i64> = HashSet::new();
+        for left_val in left_values.iter() {
+            for right_val in right_values.iter() {
+                new_left_values.insert(left_val % right_val);
+            }
+        }
+
+        self.var_values.insert(left.to_string(), new_left_values);
 
 
         // if both left and right are values add and store in left
@@ -472,13 +546,16 @@ impl Alu {
         );
     }
 
-    fn process_eql(&mut self, left: &str, right_val: Value, right_min: i64, right_max: i64) {
+    fn process_eql(&mut self, left: &str, right_val: Value, 
+        right_min: i64, right_max: i64, right_values: HashSet<i64>) {
+
         use crate::Operation::Eql;
         use crate::Value::*;
 
         let left_val: Value = self.vars.get(left).unwrap().clone();
         let left_min: i64 = *self.var_mins.get(left).unwrap();
         let left_max: i64 = *self.var_maxs.get(left).unwrap();
+        let left_values: HashSet<i64> = self.var_values.get(left).unwrap().clone();
 
         // if both left and right are values, compare and store in left
         if let Val(right_v) = right_val {
@@ -488,6 +565,7 @@ impl Alu {
                 self.vars.insert(left.to_string(), Val(eql_value));
                 self.var_mins.insert(left.to_string(), eql_value);
                 self.var_maxs.insert(left.to_string(), eql_value);
+                self.var_values.insert(left.to_string(), HashSet::from([eql_value]));
 
                 return;
             }
@@ -498,15 +576,28 @@ impl Alu {
             self.vars.insert(left.to_string(), Val(1));
             self.var_mins.insert(left.to_string(), 1);
             self.var_maxs.insert(left.to_string(), 1);
+            self.var_values.insert(left.to_string(), HashSet::from([1]));
+
             return;
         }
 
-        // if left and right ranges don't overlap set left to 0
+        // if left and right ranges don't overlap, set left to 0
         if right_max < left_min  ||   left_max < right_min  {
             self.vars.insert(left.to_string(), Val(0));
             self.var_mins.insert(left.to_string(), 0);
             self.var_maxs.insert(left.to_string(), 0);
+            self.var_values.insert(left.to_string(), HashSet::from([0]));
             return;
+        }
+
+        // if left and right values don't intersect, set left to 0
+        let intersection: HashSet<_> = left_values.intersection(&right_values).collect();
+        if intersection.len() == 0 {
+            self.vars.insert(left.to_string(), Val(0));
+            self.var_mins.insert(left.to_string(), 0);
+            self.var_maxs.insert(left.to_string(), 0);
+            self.var_values.insert(left.to_string(), HashSet::from([0]));
+            return;            
         }
 
         // else form new expression and store in left
@@ -521,6 +612,7 @@ impl Alu {
 
         self.var_mins.insert(left.to_string(), 0);
         self.var_maxs.insert(left.to_string(), 1);
+        self.var_values.insert(left.to_string(), HashSet::from([0, 1]));
     }
 
     pub fn calculate_z(&self, input: [i64; 14]) -> i64 {
