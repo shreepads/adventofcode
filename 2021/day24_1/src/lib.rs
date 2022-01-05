@@ -26,8 +26,8 @@ pub fn calculate_max_serialno(file_path: &String) -> i64 {
         println!("*************************");
         println!("Line {}: {}", i, line);
         println!("*************************");
-        //println!("ALU state: {:?} {:?}", alu.var_mins, alu.var_maxs);
-        println!("ALU state: {:?}", alu);
+        println!("ALU state: {:?} {:?}", alu.var_mins, alu.var_maxs);
+        //println!("ALU state: {:?}", alu);
         thread::sleep(time::Duration::from_secs(1));
     }
 
