@@ -28,7 +28,14 @@ pub fn calculate_max_serialno(file_path: &String) -> i64 {
         println!("*************************");
         //println!("ALU state: {:?} {:?}", alu.var_mins, alu.var_maxs);
         //println!("ALU state: {:?}", alu);
-
+        for (var, vals) in alu.var_values.iter() {
+            if vals.len() > 26 {
+                println!("{}: {} - {}", var, vals.iter().min().unwrap(), vals.iter().max().unwrap());
+            } else {
+                println!("{}: {:?}", var, vals);
+            }
+        }
+    
         //thread::sleep(time::Duration::from_secs(1));
     }
 
@@ -36,13 +43,6 @@ pub fn calculate_max_serialno(file_path: &String) -> i64 {
     println!("*************************");
     //println!("ALU z state: {:?}", alu.vars.get(&"z".to_string()).unwrap());
 
-    for (var, vals) in alu.var_values.iter() {
-        if vals.len() > 20 {
-            println!("{}: {} - {}", var, vals.iter().min().unwrap(), vals.iter().max().unwrap());
-        } else {
-            println!("{}: {:?}", var, vals);
-        }
-    }
 
     0
 }
@@ -112,7 +112,7 @@ mod tests {
     #[test]
     fn test_prod() {
         let result =
-            calculate_max_serialno(&String::from("../resources/tests/day24-1-input-v12.txt"));
+            calculate_max_serialno(&String::from("../resources/day24-1-input.txt"));
         assert_eq!(result, 1);
     }
 
