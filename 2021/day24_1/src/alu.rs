@@ -581,6 +581,7 @@ impl Alu {
             return;
         }
 
+        /*
         // if left and right ranges don't overlap, set left to 0
         if right_max < left_min  ||   left_max < right_min  {
             self.vars.insert(left.to_string(), Val(0));
@@ -589,6 +590,7 @@ impl Alu {
             self.var_values.insert(left.to_string(), HashSet::from([0]));
             return;
         }
+        */
 
         // if left and right values don't intersect, set left to 0
         let intersection: HashSet<_> = left_values.intersection(&right_values).collect();
