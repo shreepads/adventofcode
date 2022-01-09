@@ -1,14 +1,15 @@
 // Copyright (c) 2022 Shreepad Shukla
 // SPDX-License-Identifier: MIT
 
-//mod alu;
+mod alu;
 mod alu2;
 
 use std::fs;
 use std::{thread, time};
+use rand::prelude::*;
 
 
-//use alu::*;
+use alu::*;
 use alu2::*;
 
 pub fn calculate_max_serialno(file_path: &String) -> i64 {
@@ -19,61 +20,61 @@ pub fn calculate_max_serialno(file_path: &String) -> i64 {
         file_path
     ));
 
-    'outer: for i1 in (1..=4).rev() {
-        println!("i1: {}", i1);
-        for i2 in (1..=9).rev() {
-            println!("i2: {}", i2);
-            for i3 in (1..=9).rev() {
-                println!("i3: {}", i3);
-                for i4 in (1..=9).rev() {
-                    println!("i4: {}", i4);
-                    for i5 in (8..=9).rev() {
-                        for i6 in (1..=2).rev() {
-                            for i7 in (1..=9).rev() {
-                                for i8 in (1..=7).rev() {
-                                    for i9 in (3..=9).rev() {
-                                        for i10 in (1..=4).rev() {
-                                            for i11 in (6..=9).rev() {
-                                                for i12 in (1..=9).rev() {
-                                                    for i13 in (9..=9).rev() {
-                                                        for i14 in (9..=9).rev() {
-                                                            let mut alu = Alu2::new();
-                                                            let input: [i64; 14] = [
-                                                                i1, i2, i3, i4, i5, i6, i7, i8, i9,
-                                                                i10, i11, i12, i13, i14,
-                                                            ];
+    let mut test_numbers = [[0i64; 14]; 10];
+    let mut rng = thread_rng();
+    
 
-                                                            for line in contents.lines() {
-                                                                alu.process_instruction(
-                                                                    line.to_string(),
-                                                                    input,
-                                                                );
-                                                            }
-
-                                                            if *alu.vars.get("z").unwrap() == 0 {
-                                                                println!(
-                                                                    "Found serial number: {:?}",
-                                                                    input
-                                                                );
-                                                                break 'outer;
-                                                            } else {
-                                                                //println!("Not serial number: {:?}", input);
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+    // Generate 10 random serial numbers to test both alus
+    for test_number in test_numbers.iter_mut() {
+        for digit in test_number.iter_mut() {
+            *digit = rng.gen_range(1..=9);
         }
     }
 
+    // Setup alu
+    let mut alu = Alu::new();
+
+    for line in contents.lines() {
+        alu.process_instruction(line.to_string());
+    }
+
+    for test_number in test_numbers {
+
+        println!("Test number: {:?}", test_number);
+        println!("*****************************");
+
+        println!("Alu:");
+        println!("--------");
+        println!("w calc: {}", alu.calculate_var("w".to_string(), test_number));
+        println!("x calc: {}", alu.calculate_var("x".to_string(), test_number));
+        println!("y calc: {}", alu.calculate_var("y".to_string(), test_number));
+
+        /*
+        println!("z min max: {} {}", alu.var_mins.get("z").unwrap(), alu.var_maxs.get("z").unwrap());
+        let min_val = alu.var_values.get("z").unwrap().iter().min().unwrap();
+        let max_val = alu.var_values.get("z").unwrap().iter().max().unwrap();
+        println!("z values range: {} - {}", min_val, max_val);
+        */
+        println!("z calc: {}", alu.calculate_var("z".to_string(), test_number));
+
+
+        println!("Alu v2");
+        println!("--------");
+        let mut alu2 = Alu2::new();
+
+        for line in contents.lines() {
+            alu2.process_instruction(
+                line.to_string(),
+                test_number,
+            );
+        }
+
+        println!("w calc: {}", alu2.vars.get("w").unwrap());
+        println!("x calc: {}", alu2.vars.get("x").unwrap());
+        println!("y calc: {}", alu2.vars.get("y").unwrap());
+        println!("z calc: {}\n", alu2.vars.get("z").unwrap());
+
+    }
 
 
     0

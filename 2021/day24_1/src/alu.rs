@@ -617,12 +617,11 @@ impl Alu {
         self.var_values.insert(left.to_string(), HashSet::from([0, 1]));
     }
 
-    pub fn calculate_z(&self, input: [i64; 14]) -> i64 {
-        let z_val = self.vars.get("z").unwrap();
+    pub fn calculate_var(&self, var: String, input: [i64; 14]) -> i64 {
+        let val = self.vars.get(&var).unwrap();
 
-        let z_calc = Self::calc(z_val.clone(), input);
+        Self::calc(val.clone(), input)
 
-        z_calc
     }
 
     fn calc(val: Value, input: [i64; 14]) -> i64 {
