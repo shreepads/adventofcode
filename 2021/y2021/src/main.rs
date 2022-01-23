@@ -250,7 +250,6 @@ fn main() {
         day21_2::calculate_win_universe_count(3, 5, 21)
     );
 
-
     // Day 22, #1
     println!(
         "Day 22, #1: {:?}",
@@ -275,13 +274,11 @@ fn main() {
     );
     */
 
-    /* NOT SOLVED
     // Day 24, #1
-    println!(
-        "Day 24, #1: {:?}",
-        day24_1::calculate_max_serialno(&String::from("resources/day24-1-input.txt"))
-    );
-    */
+    println!("Day 24, #1: {:?}", day24_1::calculate_max_serialno());
+
+    // Day 24, #2
+    println!("Day 24, #2: {:?}", day24_1::calculate_min_serialno());
 
     // Day 25, #1
     println!(

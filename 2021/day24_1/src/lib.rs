@@ -1,134 +1,81 @@
 // Copyright (c) 2022 Shreepad Shukla
 // SPDX-License-Identifier: MIT
 
-mod alu;
-mod alu2;
+// Implementation of the logic at https://www.ericburden.work/blog/2022/01/05/advent-of-code-2021-day-24/
 
-use std::fs;
+pub const INPUTS: usize = 14;
+pub const DX: [i64; INPUTS] = [14, 14, 14, 12, 15, -12, -12, 12, -7, 13, -8, -5, -10, -7];
+pub const DY: [i64; INPUTS] = [14, 2, 1, 13, 5, 5, 5, 9, 3, 13, 2, 1, 11, 8];
+pub const DZ: [i64; INPUTS] = [1, 1, 1, 1, 1, 26, 26, 1, 26, 1, 26, 26, 26, 26];
 
-use alu::*;
-use alu2::*;
+struct StackElement {
+    posn: usize,
+    offset: i64,
+}
 
-pub fn calculate_max_serialno(file_path: &String) -> i64 {
-    println!("Loading data from file:{}", file_path);
+pub fn calculate_max_serialno() -> i64 {
+    let mut stack: Vec<StackElement> = Vec::new();
 
-    let contents = fs::read_to_string(file_path).expect(&format!(
-        "Something went wrong reading the file {}",
-        file_path
-    ));
+    let mut serial: [i64; INPUTS] = [9; INPUTS];
 
-    'outer: for i1 in (1..=9).rev() {
-        for i2 in (1..=9).rev() {
-            for i3 in (1..=9).rev() {
-                for i4 in (1..=9).rev() {
-                    for i5 in (1..=9).rev() {
-                        for i6 in (1..=9).rev() {
-                            for i7 in (1..=9).rev() {
-                                for i8 in (1..=9).rev() {
-                                    for i9 in (1..=9).rev() {
-                                        for i10 in (1..=9).rev() {
-                                            for i11 in (1..=9).rev() {
-                                                for i12 in (1..=9).rev() {
-                                                    for i13 in (1..=9).rev() {
-                                                        for i14 in (1..=9).rev() {
-                                                            let mut alu = Alu2::new();
-                                                            let input: [i64; 14] = [
-                                                                i1, i2, i3, i4, i5, i6, i7, i8, i9,
-                                                                i10, i11, i12, i13, i14,
-                                                            ];
+    for i in 0..INPUTS {
+        if DZ[i] == 1 {
+            // insert onto stack
+            stack.push(StackElement {
+                posn: i,
+                offset: DY[i],
+            });
+        } else {
+            // pop from stack, assume 26
+            if let Some(prev) = stack.pop() {
+                let delta = prev.offset + DX[i];
 
-                                                            for line in contents.lines() {
-                                                                alu.process_instruction(
-                                                                    line.to_string(),
-                                                                    input,
-                                                                );
-                                                            }
-
-                                                            if *alu.vars.get("z").unwrap() == 0 {
-                                                                println!(
-                                                                    "Found serial number: {:?}",
-                                                                    input
-                                                                );
-                                                                break 'outer;
-                                                            } else {
-                                                                //println!("Not serial number: {:?}", input);
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                if delta > 0 {
+                    serial[prev.posn] = 9 - delta;
+                } else {
+                    // assume delta < 0
+                    serial[i] = 9 + delta;
                 }
+            } else {
+                println!("Mismatched element {}", i);
             }
         }
     }
 
-    0
+    serial.iter().fold(0i64, |acc, x| acc * 10 + x)
+}
+
+pub fn calculate_min_serialno() -> i64 {
+    let mut stack: Vec<StackElement> = Vec::new();
+
+    let mut serial: [i64; INPUTS] = [1; INPUTS];
+
+    for i in 0..INPUTS {
+        if DZ[i] == 1 {
+            // insert onto stack
+            stack.push(StackElement {
+                posn: i,
+                offset: DY[i],
+            });
+        } else {
+            // pop from stack, assume 26
+            if let Some(prev) = stack.pop() {
+                let delta = prev.offset + DX[i];
+
+                if delta > 0 {
+                    serial[i] = 1 + delta;
+                } else {
+                    // assume delta < 0
+                    serial[prev.posn] = 1 - delta;
+                }
+            } else {
+                println!("Mismatched element {}", i);
+            }
+        }
+    }
+
+    serial.iter().fold(0i64, |acc, x| acc * 10 + x)
 }
 
 #[cfg(test)]
-mod tests {
-
-    use super::*;
-
-    #[test]
-    fn tiny_add() {
-        let result =
-            calculate_max_serialno(&String::from("../resources/tests/day24-1-testdata1.txt"));
-        assert_eq!(result, 1);
-    }
-
-    #[test]
-    fn tiny_add_mul() {
-        let result =
-            calculate_max_serialno(&String::from("../resources/tests/day24-1-testdata2.txt"));
-        assert_eq!(result, 5);
-    }
-
-    #[test]
-    fn tiny_add_mul_div() {
-        let result =
-            calculate_max_serialno(&String::from("../resources/tests/day24-1-testdata3.txt"));
-        assert_eq!(result, 4);
-    }
-
-    #[test]
-    fn tiny_add_mul_div_mod() {
-        let result =
-            calculate_max_serialno(&String::from("../resources/tests/day24-1-testdata4.txt"));
-        assert_eq!(result, 1);
-    }
-
-    #[test]
-    fn tiny_add_commutative() {
-        let result =
-            calculate_max_serialno(&String::from("../resources/tests/day24-1-testdata5.txt"));
-        assert_eq!(result, 2);
-    }
-
-    #[test]
-    fn tiny_mul_commutative() {
-        let result =
-            calculate_max_serialno(&String::from("../resources/tests/day24-1-testdata6.txt"));
-        assert_eq!(result, 2);
-    }
-
-    #[test]
-    fn tiny_eql() {
-        let result =
-            calculate_max_serialno(&String::from("../resources/tests/day24-1-testdata7.txt"));
-        assert_eq!(result, 1);
-    }
-
-    #[test]
-    fn calc_z() {
-        let result =
-            calculate_max_serialno(&String::from("../resources/tests/day24-1-testdata8.txt"));
-        assert_eq!(result, 1);
-    }
-}
+mod tests {}
