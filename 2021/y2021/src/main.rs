@@ -274,18 +274,11 @@ fn main() {
     );
     */
 
-
     // Day 24, #1
-    println!(
-        "Day 24, #1: {:?}",
-        day24_1::calculate_max_serialno()
-    );
+    println!("Day 24, #1: {:?}", day24_1::calculate_max_serialno());
 
     // Day 24, #2
-    println!(
-        "Day 24, #2: {:?}",
-        day24_1::calculate_min_serialno()
-    );
+    println!("Day 24, #2: {:?}", day24_1::calculate_min_serialno());
 
     // Day 25, #1
     println!(
