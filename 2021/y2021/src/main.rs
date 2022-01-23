@@ -274,13 +274,18 @@ fn main() {
     );
     */
 
-    /* NOT SOLVED
+
     // Day 24, #1
     println!(
         "Day 24, #1: {:?}",
-        day24_1::calculate_max_serialno(&String::from("resources/day24-1-input.txt"))
+        day24_1::calculate_max_serialno()
     );
-    */
+
+    // Day 24, #2
+    println!(
+        "Day 24, #2: {:?}",
+        day24_1::calculate_min_serialno()
+    );
 
     // Day 25, #1
     println!(

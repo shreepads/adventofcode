@@ -1,124 +1,87 @@
 // Copyright (c) 2022 Shreepad Shukla
 // SPDX-License-Identifier: MIT
 
-mod alu;
-mod alu2;
-mod ula;
+// Implementation of the logic at https://www.ericburden.work/blog/2022/01/05/advent-of-code-2021-day-24/
 
-use std::fs;
-use std::{thread, time};
-use std::collections::HashMap;
-use std::collections::HashSet;
+pub const INPUTS: usize = 14;
+pub const DX : [i64; INPUTS] = [14, 14, 14, 12, 15, -12, -12, 12, -7, 13, -8, -5, -10, -7];
+pub const DY : [i64; INPUTS] = [14, 2, 1, 13, 5, 5, 5, 9, 3, 13, 2, 1, 11, 8];
+pub const DZ : [i64; INPUTS] = [1, 1, 1, 1, 1, 26, 26, 1, 26, 1, 26, 26, 26, 26];
 
-use rand::prelude::*;
-
-use alu::*;
-use alu2::*;
-use ula::Ula;
-
-pub fn calculate_max_serialno(file_path: &String) -> i64 {
-    println!("Loading data from file:{}", file_path);
-
-    let contents = fs::read_to_string(file_path).expect(&format!(
-        "Something went wrong reading the file {}",
-        file_path
-    ));
-
-    // Setup alu
-    let mut alu = Alu::new();
-    let mut alu_vals : Vec<HashMap<String, HashSet<i64>>> = Vec::new();
-
-    for line in contents.lines() {
-        alu.process_instruction(line.to_string());
-        alu_vals.push(alu.var_values.clone());
-    }
-
-    // Setp ula
-    let mut ula = Ula::new();
-    //println!("Ula state: {:?}", ula);
-    let mut alu_vals_rev = alu_vals.iter().rev();
-    // skip the last state vals in alu_vals
-    alu_vals_rev.next();
-    for line in contents.lines().rev() {
-        
-        println!("Ula state: {:?}", ula);
-        
-        ula.process_instruction(line.to_string(), alu_vals_rev.next().unwrap());
-        
-        println!("");
-    }
-
-    0
+struct StackElement {
+    posn: usize,
+    offset: i64,
 }
+
+pub fn calculate_max_serialno() -> i64 {
+
+    let mut stack: Vec<StackElement> = Vec::new();
+
+    let mut serial : [i64; INPUTS] = [9; INPUTS];
+
+    for i in 0..INPUTS {
+        if DZ[i] == 1 {
+            // insert onto stack
+            stack.push(StackElement {
+                posn: i,
+                offset: DY[i],
+            });
+        } else {
+            // pop from stack, assume 26
+            if let Some(prev) = stack.pop() {
+                let delta = prev.offset + DX[i];
+
+                if delta > 0 {
+                    serial[prev.posn] = 9 - delta;
+                } else {
+                    // assume delta < 0
+                    serial[i] = 9 + delta;
+                }
+            } else {
+                println!("Mismatched element {}", i);
+            }
+        }
+    }
+
+    serial.iter().fold(0i64, |acc, x| acc * 10 + x)
+}
+
+
+pub fn calculate_min_serialno() -> i64 {
+
+    let mut stack: Vec<StackElement> = Vec::new();
+
+    let mut serial : [i64; INPUTS] = [1; INPUTS];
+
+    for i in 0..INPUTS {
+        if DZ[i] == 1 {
+            // insert onto stack
+            stack.push(StackElement {
+                posn: i,
+                offset: DY[i],
+            });
+        } else {
+            // pop from stack, assume 26
+            if let Some(prev) = stack.pop() {
+                let delta = prev.offset + DX[i];
+
+                if delta > 0 {
+                    serial[i] = 1 + delta;
+                } else {
+                    // assume delta < 0
+                    serial[prev.posn] = 1 - delta;
+                }
+            } else {
+                println!("Mismatched element {}", i);
+            }
+        }
+    }
+
+    serial.iter().fold(0i64, |acc, x| acc * 10 + x)
+}
+
+
 
 #[cfg(test)]
 mod tests {
-
-    use super::*;
-/*
-    #[test]
-    fn tiny_add() {
-        let result =
-            calculate_max_serialno(&String::from("../resources/tests/day24-1-testdata1.txt"));
-        assert_eq!(result, 1);
-    }
-
-    #[test]
-    fn tiny_add_mul() {
-        let result =
-            calculate_max_serialno(&String::from("../resources/tests/day24-1-testdata2.txt"));
-        assert_eq!(result, 5);
-    }
-
-    #[test]
-    fn tiny_add_mul_div() {
-        let result =
-            calculate_max_serialno(&String::from("../resources/tests/day24-1-testdata3.txt"));
-        assert_eq!(result, 4);
-    }
-
-    #[test]
-    fn tiny_add_mul_div_mod() {
-        let result =
-            calculate_max_serialno(&String::from("../resources/tests/day24-1-testdata4.txt"));
-        assert_eq!(result, 1);
-    }
-
-    #[test]
-    fn tiny_add_commutative() {
-        let result =
-            calculate_max_serialno(&String::from("../resources/tests/day24-1-testdata5.txt"));
-        assert_eq!(result, 2);
-    }
-
-    #[test]
-    fn tiny_mul_commutative() {
-        let result =
-            calculate_max_serialno(&String::from("../resources/tests/day24-1-testdata6.txt"));
-        assert_eq!(result, 2);
-    }
-
-    #[test]
-    fn tiny_eql() {
-        let result =
-            calculate_max_serialno(&String::from("../resources/tests/day24-1-testdata7.txt"));
-        assert_eq!(result, 1);
-    }
-
-    #[test]
-    fn calc_z() {
-        let result =
-            calculate_max_serialno(&String::from("../resources/tests/day24-1-testdata8.txt"));
-        assert_eq!(result, 1);
-    }
-*/
-
-    #[test]
-    fn test_prod() {
-        let result =
-            calculate_max_serialno(&String::from("../resources/day24-1-input.txt"));
-        assert_eq!(result, 1);
-    }
-
-
 }
