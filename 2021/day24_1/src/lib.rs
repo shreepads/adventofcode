@@ -35,12 +35,17 @@ pub fn calculate_max_serialno(file_path: &String) -> i64 {
 
     // Setp ula
     let mut ula = Ula::new();
+    //println!("Ula state: {:?}", ula);
     let mut alu_vals_rev = alu_vals.iter().rev();
     // skip the last state vals in alu_vals
     alu_vals_rev.next();
     for line in contents.lines().rev() {
-        ula.process_instruction(line.to_string(), alu_vals_rev.next().unwrap());
+        
         println!("Ula state: {:?}", ula);
+        
+        ula.process_instruction(line.to_string(), alu_vals_rev.next().unwrap());
+        
+        println!("");
     }
 
     0
