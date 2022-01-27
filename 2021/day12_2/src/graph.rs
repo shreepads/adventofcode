@@ -77,7 +77,7 @@ impl Graph {
         }
     }
 
-    pub fn all_paths(self, from_node_name: &str, to_node_name: &str) -> Option<Vec<Vec<String>>> {
+    pub fn all_paths(self, from_node_name: &str, to_node_name: &str) -> Option<HashSet<String>> {
         if !self.nodes.contains_key(from_node_name) {
             return None; // No paths between unknown nodes
         }
@@ -86,7 +86,7 @@ impl Graph {
             return None; // No paths between unknown nodes
         }
 
-        let mut paths: Vec<Vec<String>> = Vec::new();
+        let mut paths: HashSet<String> = HashSet::new();
 
         // Count of visited nodes with each given Small visited twice
         for (small_node_name, _) in self
@@ -111,8 +111,8 @@ impl Graph {
             );
         }
 
-        paths.sort_unstable();
-        paths.dedup();
+        //paths.sort_unstable();
+        //paths.dedup();
 
         Some(paths)
     }
@@ -124,7 +124,7 @@ impl Graph {
         small_node_name: &str,
         visited_counts: &mut HashMap<String, u8>,
         current_path: &mut Vec<String>,
-        paths: &mut Vec<Vec<String>>,
+        paths: &mut HashSet<String>,
     ) {
         let from_node = self.nodes.get(from_node_name).unwrap();
         // deref and re-insert to prevent borrow problems
@@ -150,8 +150,11 @@ impl Graph {
         }
 
         if from_node_name == to_node_name {
-            // reached the end
-            paths.push(current_path.to_vec());
+            // reached the end, insert current path as String in paths
+            let current_path_str = current_path
+                .iter()
+                .fold(String::new(), |acc, x| format!("{}-{}", acc, x));
+            paths.insert(current_path_str);
             return;
         }
 

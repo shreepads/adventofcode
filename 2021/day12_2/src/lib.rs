@@ -34,9 +34,12 @@ fn load_graph(graph: &mut Graph, contents: String) {
 
 #[cfg(test)]
 mod tests {
+
+    use super::*;
+
     #[test]
-    fn it_works() {
-        let result = 2 + 2;
-        assert_eq!(result, 4);
+    fn day12_2_test() {
+        let result = calculate_total_paths(&String::from("../resources/tests/day12-2-testdata.txt"));
+        assert_eq!(result, 3509);
     }
 }

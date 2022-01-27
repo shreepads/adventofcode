@@ -144,13 +144,13 @@ fn main() {
         day12_1::calculate_total_paths(&String::from("resources/day12-1-input.txt"))
     );
 
-    /* Removed for performance, FIX
+    ///* Removed for performance, FIX
     // Day 12, #2
     println!(
         "Day 12, #2: {}",
         day12_2::calculate_total_paths(&String::from("resources/day12-1-input.txt"))
     );
-    */
+    //*/
 
     // Day 13, #1
     println!(
