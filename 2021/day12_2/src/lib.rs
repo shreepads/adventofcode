@@ -6,7 +6,7 @@ pub mod graph;
 use graph::Graph;
 use std::fs;
 
-pub fn calculate_total_paths(file_path: &String) -> u32 {
+pub fn calculate_total_paths(file_path: &String) -> usize {
     println!("Loading data from file:{}", file_path);
 
     let contents = fs::read_to_string(file_path).expect(&format!(
@@ -18,7 +18,7 @@ pub fn calculate_total_paths(file_path: &String) -> u32 {
 
     load_graph(&mut graph, contents);
 
-    graph.all_paths("start", "end").unwrap().len() as u32
+    graph.all_paths("start", "end")
 }
 
 fn load_graph(graph: &mut Graph, contents: String) {
