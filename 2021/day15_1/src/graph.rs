@@ -5,7 +5,7 @@
 
 use std::cmp::Ordering;
 use std::collections::BinaryHeap;
-use std::collections::HashMap;
+use ahash::AHashMap;
 
 // Hold state on BinaryHeap priority queue with min ordering
 #[derive(Copy, Clone, Eq, PartialEq)]
@@ -40,19 +40,19 @@ pub struct Edge {
 
 #[derive(Debug, Clone)]
 pub struct Graph {
-    nodes: HashMap<usize, Vec<Edge>>,
+    nodes: AHashMap<usize, Vec<Edge>>,
 }
 
 impl Graph {
     pub fn new() -> Graph {
         Graph {
-            nodes: HashMap::new(),
+            nodes: AHashMap::new(),
         }
     }
 
     pub fn shortest_path_weight(&self, start_node_id: usize, end_node_id: usize) -> Option<u32> {
         // Initialise distance from start node to all nodes
-        let mut distances: HashMap<usize, u32> = HashMap::new();
+        let mut distances: AHashMap<usize, u32> = AHashMap::new();
         for node_id in self.nodes.keys() {
             distances.insert(*node_id, u32::MAX);
         }
