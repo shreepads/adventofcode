@@ -190,13 +190,13 @@ fn main() {
     );
     
 
-    // Day 16, #1
+    // Day 16, #1, 2
     println!(
         "Day 16, #1, 2: {:?}",
         day16_1::calculate_total_version_no(&String::from("resources/day16-1-input.txt"))
     );
 
-    // Day 17, #1
+    // Day 17, #1, 2
     println!(
         "Day 17, #1, 2: {:?}",
         day17_1::calculate_maxy_trajectory(235, 259, -118, -62)
@@ -208,21 +208,19 @@ fn main() {
         day18_1::calculate_magnitude_sum(&String::from("resources/day18-1-input.txt"))
     );
 
-    /* Removed for performance FIX
+    
     // Day 18, #2
     println!(
         "Day 18, #2: {:?}",
         day18_2::calculate_maxmagnitude_sum(&String::from("resources/day18-1-input.txt"))
     );
-    */
-
-    /* Removed for performance FIX
+    
+    // Slightly improved performance, FIX
     // Day 19, #1
     println!(
         "Day 19, #1, 2: {:?}",
         day19_1::calculate_beacon_count(&String::from("resources/day19-1-input.txt"))
     );
-    */
 
     // Day 20, #1
     println!(

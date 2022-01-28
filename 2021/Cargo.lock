@@ -94,6 +94,9 @@ dependencies = [
 [[package]]
 name = "day19_1"
 version = "0.1.0"
+dependencies = [
+ "ahash",
+]
 
 [[package]]
 name = "day1_1"
