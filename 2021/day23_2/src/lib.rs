@@ -4,7 +4,8 @@
 mod burrow;
 mod path;
 
-use std::collections::HashMap;
+//use std::collections::HashMap;
+use ahash::AHashMap;
 use std::fs;
 
 use day15_1::graph::Graph;
@@ -38,7 +39,7 @@ fn load_graph(
     end_state: BurrowState,
 ) -> (usize, usize) {
     let mut states_vec: Vec<BurrowState> = Vec::new();
-    let mut states_hmap: HashMap<BurrowState, usize> = HashMap::new();
+    let mut states_hmap: AHashMap<BurrowState, usize> = AHashMap::new();
 
     // Insert start and end position
     states_vec.push(end_state);
