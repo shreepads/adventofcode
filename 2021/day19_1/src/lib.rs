@@ -109,14 +109,16 @@ fn find_matching_beacons(
                 // find translation to scanner0 reference
                 let trans = rot_point.translate_to(*point0);
 
+                /*
                 let trans_points: Vec<Point> = scannern.beacon_rotations[rot]
                     .iter()
                     .map(|x| x.translate_new(trans))
                     .collect();
+                */
 
-                let matching_count = trans_points
+                let matching_count = scannern.beacon_rotations[rot]
                     .iter()
-                    .filter(|x| scanner0.beacons.contains(x))
+                    .filter(|x| scanner0.beacons.contains(&x.translate_new(trans)))
                     .count();
 
                 if matching_count > max_matching_count {

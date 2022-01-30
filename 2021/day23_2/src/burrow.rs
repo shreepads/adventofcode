@@ -1,7 +1,7 @@
 // Copyright (c) 2021 Shreepad Shukla
 // SPDX-License-Identifier: MIT
 
-use std::collections::HashSet;
+use ahash::AHashSet; // not imported with day15_1
 use std::fmt;
 
 use crate::path::PathStep::{Nil, Pos};
@@ -60,12 +60,91 @@ impl PositionState {
 
 pub const MAX_POS: usize = 27; // number of positions in the burrow
 
-pub const NOSTOP_POS: [usize; 4] = [2, 4, 6, 8];
+struct NoStopPos {}
+
+impl NoStopPos {
+    #[inline(always)]
+    pub fn contains(x: usize) -> bool {
+        if x == 2 || x == 4 || x == 6 || x == 8 {
+            return true;
+        }
+
+        false
+    }
+}
+
 pub const AHOME_POS: [usize; 4] = [11, 12, 13, 14];
+
+struct AHomePos {}
+
+impl AHomePos {
+    #[inline(always)]
+    pub fn contains(x: usize) -> bool {
+        if x >= 11 && x <= 14 {
+            return true;
+        }
+
+        false
+    }
+}
+
 pub const BHOME_POS: [usize; 4] = [15, 16, 17, 18];
+
+struct BHomePos {}
+
+impl BHomePos {
+    #[inline(always)]
+    pub fn contains(x: usize) -> bool {
+        if x >= 15 && x <= 18 {
+            return true;
+        }
+
+        false
+    }
+}
+
 pub const CHOME_POS: [usize; 4] = [19, 20, 21, 22];
+
+struct CHomePos {}
+
+impl CHomePos {
+    #[inline(always)]
+    pub fn contains(x: usize) -> bool {
+        if x >= 19 && x <= 22 {
+            return true;
+        }
+
+        false
+    }
+}
+
 pub const DHOME_POS: [usize; 4] = [23, 24, 25, 26];
-pub const HALLWAY_POS: [usize; 11] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+struct DHomePos {}
+
+impl DHomePos {
+    #[inline(always)]
+    pub fn contains(x: usize) -> bool {
+        if x >= 23 && x <= 26 {
+            return true;
+        }
+
+        false
+    }
+}
+
+struct HallwayPos {}
+
+impl HallwayPos {
+    #[inline(always)]
+    pub fn contains(x: usize) -> bool {
+        if x <= 10 {
+            return true;
+        }
+
+        false
+    }
+}
 
 #[derive(Debug, Clone, PartialEq, Copy, Eq, Hash)]
 pub struct BurrowState {
@@ -119,7 +198,7 @@ impl BurrowState {
         let mut next_states = Vec::new();
 
         for (pos, pstate) in self.positions.iter().enumerate() {
-            if NOSTOP_POS.contains(&pos) {
+            if NoStopPos::contains(pos) {
                 // can't move from no stop locations
                 continue;
             }
@@ -139,7 +218,7 @@ impl BurrowState {
         use self::AmphiType::*;
         use self::PositionState::*;
 
-        let mut next_states: HashSet<(usize, BurrowState)> = HashSet::new();
+        let mut next_states: AHashSet<(usize, BurrowState)> = AHashSet::new();
         let mut prev_posn = usize::MAX;
 
         for path in PATHS[start_posn].iter() {
@@ -153,85 +232,81 @@ impl BurrowState {
                             Occupied(_) => break, // can't continue down this path
                             Empty => {
                                 // can't stop at no stop posns
-                                if NOSTOP_POS.contains(&new_posn) {
+                                if NoStopPos::contains(*new_posn) {
                                     prev_posn = *new_posn;
                                     continue;
                                 }
 
                                 // if started in hallway, can't stop in hallway
-                                if HALLWAY_POS.contains(&start_posn)
-                                    && HALLWAY_POS.contains(&new_posn)
+                                if HallwayPos::contains(start_posn)
+                                    && HallwayPos::contains(*new_posn)
                                 {
                                     prev_posn = *new_posn;
                                     continue;
                                 }
 
                                 // if started in a home, can't stop in same home
-                                if AHOME_POS.contains(&start_posn) && AHOME_POS.contains(&new_posn)
-                                {
+                                if AHomePos::contains(start_posn) && AHomePos::contains(*new_posn) {
                                     prev_posn = *new_posn;
                                     continue;
                                 }
 
-                                if BHOME_POS.contains(&start_posn) && BHOME_POS.contains(&new_posn)
-                                {
+                                if BHomePos::contains(start_posn) && BHomePos::contains(*new_posn) {
                                     prev_posn = *new_posn;
                                     continue;
                                 }
 
-                                if CHOME_POS.contains(&start_posn) && CHOME_POS.contains(&new_posn)
-                                {
+                                if CHomePos::contains(start_posn) && CHomePos::contains(*new_posn) {
                                     prev_posn = *new_posn;
                                     continue;
                                 }
 
-                                if DHOME_POS.contains(&start_posn) && DHOME_POS.contains(&new_posn)
-                                {
+                                if DHomePos::contains(start_posn) && DHomePos::contains(*new_posn) {
                                     prev_posn = *new_posn;
                                     continue;
                                 }
 
                                 // break if entering another home
                                 if atype == A
-                                    && NOSTOP_POS.contains(&prev_posn)
-                                    && (BHOME_POS.contains(&new_posn)
-                                        || CHOME_POS.contains(&new_posn)
-                                        || DHOME_POS.contains(&new_posn))
+                                    && NoStopPos::contains(prev_posn)
+                                    && (BHomePos::contains(*new_posn)
+                                        || CHomePos::contains(*new_posn)
+                                        || DHomePos::contains(*new_posn))
                                 {
                                     break;
                                 }
 
                                 if atype == B
-                                    && NOSTOP_POS.contains(&prev_posn)
-                                    && (AHOME_POS.contains(&new_posn)
-                                        || CHOME_POS.contains(&new_posn)
-                                        || DHOME_POS.contains(&new_posn))
+                                    && NoStopPos::contains(prev_posn)
+                                    && (AHomePos::contains(*new_posn)
+                                        || CHomePos::contains(*new_posn)
+                                        || DHomePos::contains(*new_posn))
                                 {
                                     break;
                                 }
 
                                 if atype == C
-                                    && NOSTOP_POS.contains(&prev_posn)
-                                    && (AHOME_POS.contains(&new_posn)
-                                        || BHOME_POS.contains(&new_posn)
-                                        || DHOME_POS.contains(&new_posn))
+                                    && NoStopPos::contains(prev_posn)
+                                    && (AHomePos::contains(*new_posn)
+                                        || BHomePos::contains(*new_posn)
+                                        || DHomePos::contains(*new_posn))
                                 {
                                     break;
                                 }
 
                                 if atype == D
-                                    && NOSTOP_POS.contains(&prev_posn)
-                                    && (AHOME_POS.contains(&new_posn)
-                                        || BHOME_POS.contains(&new_posn)
-                                        || CHOME_POS.contains(&new_posn))
+                                    && NoStopPos::contains(prev_posn)
+                                    && (AHomePos::contains(*new_posn)
+                                        || BHomePos::contains(*new_posn)
+                                        || CHomePos::contains(*new_posn))
                                 {
                                     break;
                                 }
 
                                 // break if entering own home but its occupied by others
                                 if atype == A
-                                    && NOSTOP_POS.contains(&prev_posn)
-                                    && AHOME_POS.contains(&new_posn)
+                                    && NoStopPos::contains(prev_posn)
+                                    && AHomePos::contains(*new_posn)
                                 {
                                     if self.home_contains_others(atype) {
                                         break;
@@ -239,8 +314,8 @@ impl BurrowState {
                                 }
 
                                 if atype == B
-                                    && NOSTOP_POS.contains(&prev_posn)
-                                    && BHOME_POS.contains(&new_posn)
+                                    && NoStopPos::contains(prev_posn)
+                                    && BHomePos::contains(*new_posn)
                                 {
                                     if self.home_contains_others(atype) {
                                         break;
@@ -248,8 +323,8 @@ impl BurrowState {
                                 }
 
                                 if atype == C
-                                    && NOSTOP_POS.contains(&prev_posn)
-                                    && CHOME_POS.contains(&new_posn)
+                                    && NoStopPos::contains(prev_posn)
+                                    && CHomePos::contains(*new_posn)
                                 {
                                     if self.home_contains_others(atype) {
                                         break;
@@ -257,8 +332,8 @@ impl BurrowState {
                                 }
 
                                 if atype == D
-                                    && NOSTOP_POS.contains(&prev_posn)
-                                    && DHOME_POS.contains(&new_posn)
+                                    && NoStopPos::contains(prev_posn)
+                                    && DHomePos::contains(*new_posn)
                                 {
                                     if self.home_contains_others(atype) {
                                         break;
@@ -267,14 +342,14 @@ impl BurrowState {
 
                                 // if entered own home, don't stop till reaching last empty posn
                                 if atype == A
-                                    && !AHOME_POS.contains(&start_posn)
-                                    && AHOME_POS.contains(&new_posn)
+                                    && !AHomePos::contains(start_posn)
+                                    && AHomePos::contains(*new_posn)
                                 {
                                     if self.home_contains_others(atype) {
                                         println!("Error: entered own home when others present, state: {}", self);
                                         break;
                                     }
-                                    if AHOME_POS.contains(&(*new_posn + 1)) {
+                                    if AHomePos::contains(*new_posn + 1) {
                                         if self.positions[*new_posn + 1] == Empty {
                                             prev_posn = *new_posn;
                                             continue;
@@ -283,14 +358,14 @@ impl BurrowState {
                                 }
 
                                 if atype == B
-                                    && !BHOME_POS.contains(&start_posn)
-                                    && BHOME_POS.contains(&new_posn)
+                                    && !BHomePos::contains(start_posn)
+                                    && BHomePos::contains(*new_posn)
                                 {
                                     if self.home_contains_others(atype) {
                                         println!("Error: entered own home when others present, state: {}", self);
                                         break;
                                     }
-                                    if BHOME_POS.contains(&(*new_posn + 1)) {
+                                    if BHomePos::contains(*new_posn + 1) {
                                         if self.positions[*new_posn + 1] == Empty {
                                             prev_posn = *new_posn;
                                             continue;
@@ -299,14 +374,14 @@ impl BurrowState {
                                 }
 
                                 if atype == C
-                                    && !CHOME_POS.contains(&start_posn)
-                                    && CHOME_POS.contains(&new_posn)
+                                    && !CHomePos::contains(start_posn)
+                                    && CHomePos::contains(*new_posn)
                                 {
                                     if self.home_contains_others(atype) {
                                         println!("Error: entered own home when others present, state: {}", self);
                                         break;
                                     }
-                                    if CHOME_POS.contains(&(*new_posn + 1)) {
+                                    if CHomePos::contains(*new_posn + 1) {
                                         if self.positions[*new_posn + 1] == Empty {
                                             prev_posn = *new_posn;
                                             continue;
@@ -315,14 +390,14 @@ impl BurrowState {
                                 }
 
                                 if atype == D
-                                    && !DHOME_POS.contains(&start_posn)
-                                    && DHOME_POS.contains(&new_posn)
+                                    && !DHomePos::contains(start_posn)
+                                    && DHomePos::contains(*new_posn)
                                 {
                                     if self.home_contains_others(atype) {
                                         println!("Error: entered own home when others present, state: {}", self);
                                         break;
                                     }
-                                    if DHOME_POS.contains(&(*new_posn + 1)) {
+                                    if DHomePos::contains(*new_posn + 1) {
                                         if self.positions[*new_posn + 1] == Empty {
                                             prev_posn = *new_posn;
                                             continue;

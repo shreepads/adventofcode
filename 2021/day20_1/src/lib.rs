@@ -58,13 +58,20 @@ fn enhance(image: &mut [[char; 220]; 220], mapping: &HashMap<usize, char>, pass:
     }
 
     let mut enhanced_image = [[fill_char; 220]; 220];
+    let mut num_str = String::with_capacity(20);
 
     for row in 1..219 {
         for col in 1..219 {
-            let mut num_str = String::new();
-            num_str.push_str(&image[row - 1][col - 1..=col + 1].iter().collect::<String>());
-            num_str.push_str(&image[row][col - 1..=col + 1].iter().collect::<String>());
-            num_str.push_str(&image[row + 1][col - 1..=col + 1].iter().collect::<String>());
+            num_str.clear();
+            image[row - 1][col - 1..=col + 1]
+                .iter()
+                .for_each(|x| num_str.push(*x));
+            image[row][col - 1..=col + 1]
+                .iter()
+                .for_each(|x| num_str.push(*x));
+            image[row + 1][col - 1..=col + 1]
+                .iter()
+                .for_each(|x| num_str.push(*x));
 
             let mut num = 0usize;
             for (i, pixel) in num_str.chars().enumerate() {
@@ -96,9 +103,12 @@ fn load_image(image: &mut [[char; 220]; 220], image_str: String) {
 
 #[cfg(test)]
 mod tests {
+
+    use super::*;
+
     #[test]
-    fn it_works() {
-        let result = 2 + 2;
-        assert_eq!(result, 4);
+    fn day2_1_perf() {
+        let result = calculate_lit_pixels(&String::from("../resources/day20-1-input.txt"), 50);
+        assert_eq!(result, 16757);
     }
 }

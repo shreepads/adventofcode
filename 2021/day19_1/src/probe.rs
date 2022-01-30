@@ -1,7 +1,7 @@
 // Copyright (c) 2021 Shreepad Shukla
 // SPDX-License-Identifier: MIT
 
-use std::collections::HashSet;
+use ahash::AHashSet;
 use std::fmt;
 
 use crate::rotations::MAX_ROT;
@@ -10,14 +10,14 @@ use crate::space::Point;
 #[derive(Debug, Clone, PartialEq)]
 pub struct ZeroScanner {
     pub location: Point,
-    pub beacons: HashSet<Point>,
+    pub beacons: AHashSet<Point>,
 }
 
 impl ZeroScanner {
     pub fn new() -> ZeroScanner {
         ZeroScanner {
             location: Point::new_zero(),
-            beacons: HashSet::new(),
+            beacons: AHashSet::new(),
         }
     }
 }

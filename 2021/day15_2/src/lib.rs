@@ -89,9 +89,12 @@ fn load_grid(grid: &mut [[u32; 502]; 502], contents: String) {
 
 #[cfg(test)]
 mod tests {
+
+    use super::*;
+
     #[test]
     fn day15_2_works() {
-        let result = 2 + 2;
-        assert_eq!(result, 4);
+        let result = calculate_least_risk_path(&String::from("../resources/day15-1-input.txt"));
+        assert_eq!(result, 3022);
     }
 }

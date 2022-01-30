@@ -144,14 +144,13 @@ fn main() {
         day12_1::calculate_total_paths(&String::from("resources/day12-1-input.txt"))
     );
 
-    /* Removed for performance, FIX
+    // Slightly improved performance, FIX
     // Day 12, #2
     println!(
         "Day 12, #2: {}",
         day12_2::calculate_total_paths(&String::from("resources/day12-1-input.txt"))
     );
-    */
-
+    //*/
     // Day 13, #1
     println!(
         "Day 13, #1: {}",
@@ -182,21 +181,20 @@ fn main() {
         day15_1::calculate_least_risk_path(&String::from("resources/day15-1-input.txt"))
     );
 
-    /* Removed for performance, FIX
+    // Slightly improved performance, FIX
     // Day 15, #2
     println!(
         "Day 15, #2: {}",
         day15_2::calculate_least_risk_path(&String::from("resources/day15-1-input.txt"))
     );
-    */
 
-    // Day 16, #1
+    // Day 16, #1, 2
     println!(
         "Day 16, #1, 2: {:?}",
         day16_1::calculate_total_version_no(&String::from("resources/day16-1-input.txt"))
     );
 
-    // Day 17, #1
+    // Day 17, #1, 2
     println!(
         "Day 17, #1, 2: {:?}",
         day17_1::calculate_maxy_trajectory(235, 259, -118, -62)
@@ -208,21 +206,18 @@ fn main() {
         day18_1::calculate_magnitude_sum(&String::from("resources/day18-1-input.txt"))
     );
 
-    /* Removed for performance FIX
     // Day 18, #2
     println!(
         "Day 18, #2: {:?}",
         day18_2::calculate_maxmagnitude_sum(&String::from("resources/day18-1-input.txt"))
     );
-    */
 
-    /* Removed for performance FIX
+    // Slightly improved performance, FIX
     // Day 19, #1
     println!(
         "Day 19, #1, 2: {:?}",
         day19_1::calculate_beacon_count(&String::from("resources/day19-1-input.txt"))
     );
-    */
 
     // Day 20, #1
     println!(
@@ -230,13 +225,12 @@ fn main() {
         day20_1::calculate_lit_pixels(&String::from("resources/day20-1-input.txt"), 2)
     );
 
-    /* Removed for performance FIX
+    // Partly improved performance FIX
     // Day 20, #2
     println!(
         "Day 20, #2: {:?}",
         day20_1::calculate_lit_pixels(&String::from("resources/day20-1-input.txt"), 50)
     );
-    */
 
     // Day 21, #1
     println!(
@@ -266,13 +260,12 @@ fn main() {
     println!("Solving using pencil and notepad...");
     println!("Day 23, #1: 13066");
 
-    /* Removed for performance FIX
+    // Partly improved performance FIX
     // Day 23, #2
     println!(
         "Day 23, #2: {:?}",
         day23_2::calculate_min_energy(&String::from("resources/day23-2-input.txt"))
     );
-    */
 
     // Day 24, #1
     println!("Day 24, #1: {:?}", day24_1::calculate_max_serialno());

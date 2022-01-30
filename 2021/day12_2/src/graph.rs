@@ -1,8 +1,8 @@
 // Copyright (c) 2021 Shreepad Shukla
 // SPDX-License-Identifier: MIT
 
-use std::collections::HashMap;
-use std::collections::HashSet;
+use ahash::AHashMap;
+use ahash::AHashSet;
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum NodeType {
@@ -14,7 +14,7 @@ pub enum NodeType {
 
 #[derive(Debug, Clone)]
 pub struct Node {
-    linked_nodes: HashSet<String>,
+    linked_nodes: AHashSet<String>,
     node_type: NodeType,
 }
 
@@ -33,7 +33,7 @@ impl Node {
         }
 
         Node {
-            linked_nodes: HashSet::new(),
+            linked_nodes: AHashSet::new(),
             node_type: node_type,
         }
     }
@@ -41,13 +41,13 @@ impl Node {
 
 #[derive(Debug, Clone)]
 pub struct Graph {
-    pub nodes: HashMap<String, Node>,
+    pub nodes: AHashMap<String, Node>,
 }
 
 impl Graph {
     pub fn new() -> Graph {
         Graph {
-            nodes: HashMap::new(),
+            nodes: AHashMap::new(),
         }
     }
 
@@ -77,16 +77,16 @@ impl Graph {
         }
     }
 
-    pub fn all_paths(self, from_node_name: &str, to_node_name: &str) -> Option<Vec<Vec<String>>> {
+    pub fn all_paths(self, from_node_name: &str, to_node_name: &str) -> usize {
         if !self.nodes.contains_key(from_node_name) {
-            return None; // No paths between unknown nodes
+            return 0; // No paths between unknown nodes
         }
 
         if !self.nodes.contains_key(to_node_name) {
-            return None; // No paths between unknown nodes
+            return 0; // No paths between unknown nodes
         }
 
-        let mut paths: Vec<Vec<String>> = Vec::new();
+        let mut paths: AHashSet<String> = AHashSet::new();
 
         // Count of visited nodes with each given Small visited twice
         for (small_node_name, _) in self
@@ -94,7 +94,7 @@ impl Graph {
             .iter()
             .filter(|(_, node)| node.node_type == NodeType::Small)
         {
-            let mut visited_counts: HashMap<String, u8> = HashMap::new();
+            let mut visited_counts: AHashMap<String, u8> = AHashMap::new();
             for node_name in self.nodes.keys() {
                 visited_counts.insert(node_name.to_string(), 0);
             }
@@ -111,10 +111,10 @@ impl Graph {
             );
         }
 
-        paths.sort_unstable();
-        paths.dedup();
+        //paths.sort_unstable();
+        //paths.dedup();
 
-        Some(paths)
+        paths.len()
     }
 
     fn find_all_paths(
@@ -122,9 +122,9 @@ impl Graph {
         from_node_name: &str,
         to_node_name: &str,
         small_node_name: &str,
-        visited_counts: &mut HashMap<String, u8>,
+        visited_counts: &mut AHashMap<String, u8>,
         current_path: &mut Vec<String>,
-        paths: &mut Vec<Vec<String>>,
+        paths: &mut AHashSet<String>,
     ) {
         let from_node = self.nodes.get(from_node_name).unwrap();
         // deref and re-insert to prevent borrow problems
@@ -150,8 +150,11 @@ impl Graph {
         }
 
         if from_node_name == to_node_name {
-            // reached the end
-            paths.push(current_path.to_vec());
+            // reached the end, insert current path as String in paths
+            let current_path_str = current_path
+                .iter()
+                .fold(String::new(), |acc, x| format!("{}-{}", acc, x));
+            paths.insert(current_path_str);
             return;
         }
 
