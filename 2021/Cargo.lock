@@ -126,6 +126,7 @@ version = "0.1.0"
 name = "day23_2"
 version = "0.1.0"
 dependencies = [
+ "ahash",
  "day15_1",
 ]
 
