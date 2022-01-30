@@ -225,7 +225,7 @@ fn main() {
         day20_1::calculate_lit_pixels(&String::from("resources/day20-1-input.txt"), 2)
     );
 
-    // Removed for performance FIX
+    // Partly improved performance FIX
     // Day 20, #2
     println!(
         "Day 20, #2: {:?}",
@@ -260,13 +260,12 @@ fn main() {
     println!("Solving using pencil and notepad...");
     println!("Day 23, #1: 13066");
 
-    // Removed for performance FIX
+    // Partly improved performance FIX
     // Day 23, #2
     println!(
         "Day 23, #2: {:?}",
         day23_2::calculate_min_energy(&String::from("resources/day23-2-input.txt"))
     );
-    
 
     // Day 24, #1
     println!("Day 24, #1: {:?}", day24_1::calculate_max_serialno());

@@ -4,7 +4,6 @@
 mod burrow;
 mod path;
 
-//use std::collections::HashMap;
 use ahash::AHashMap;
 use std::fs;
 

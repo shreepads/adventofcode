@@ -1,7 +1,7 @@
 // Copyright (c) 2021 Shreepad Shukla
 // SPDX-License-Identifier: MIT
 
-use ahash::AHashSet;              // not imported with day15_1
+use ahash::AHashSet; // not imported with day15_1
 use std::fmt;
 
 use crate::path::PathStep::{Nil, Pos};
@@ -60,14 +60,12 @@ impl PositionState {
 
 pub const MAX_POS: usize = 27; // number of positions in the burrow
 
-//pub const NOSTOP_POS: [usize; 4] = [2, 4, 6, 8];
-struct NoStopPos {
-}
+struct NoStopPos {}
 
 impl NoStopPos {
     #[inline(always)]
     pub fn contains(x: usize) -> bool {
-        if x == 2  ||  x == 4  ||  x == 6 ||  x == 8 {
+        if x == 2 || x == 4 || x == 6 || x == 8 {
             return true;
         }
 
@@ -77,13 +75,12 @@ impl NoStopPos {
 
 pub const AHOME_POS: [usize; 4] = [11, 12, 13, 14];
 
-struct AHomePos {
-}
+struct AHomePos {}
 
 impl AHomePos {
     #[inline(always)]
     pub fn contains(x: usize) -> bool {
-        if x >= 11  &&  x <= 14 {
+        if x >= 11 && x <= 14 {
             return true;
         }
 
@@ -91,16 +88,14 @@ impl AHomePos {
     }
 }
 
-
 pub const BHOME_POS: [usize; 4] = [15, 16, 17, 18];
 
-struct BHomePos {
-}
+struct BHomePos {}
 
 impl BHomePos {
     #[inline(always)]
     pub fn contains(x: usize) -> bool {
-        if x >= 15  &&  x <= 18 {
+        if x >= 15 && x <= 18 {
             return true;
         }
 
@@ -108,16 +103,14 @@ impl BHomePos {
     }
 }
 
-
 pub const CHOME_POS: [usize; 4] = [19, 20, 21, 22];
 
-struct CHomePos {
-}
+struct CHomePos {}
 
 impl CHomePos {
     #[inline(always)]
     pub fn contains(x: usize) -> bool {
-        if x >= 19  &&  x <= 22 {
+        if x >= 19 && x <= 22 {
             return true;
         }
 
@@ -125,16 +118,14 @@ impl CHomePos {
     }
 }
 
-
 pub const DHOME_POS: [usize; 4] = [23, 24, 25, 26];
 
-struct DHomePos {
-}
+struct DHomePos {}
 
 impl DHomePos {
     #[inline(always)]
     pub fn contains(x: usize) -> bool {
-        if x >= 23  &&  x <= 26 {
+        if x >= 23 && x <= 26 {
             return true;
         }
 
@@ -142,11 +133,7 @@ impl DHomePos {
     }
 }
 
-
-//pub const HALLWAY_POS: [usize; 11] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-
-struct HallwayPos {
-}
+struct HallwayPos {}
 
 impl HallwayPos {
     #[inline(always)]
@@ -158,7 +145,6 @@ impl HallwayPos {
         false
     }
 }
-
 
 #[derive(Debug, Clone, PartialEq, Copy, Eq, Hash)]
 pub struct BurrowState {
@@ -260,26 +246,22 @@ impl BurrowState {
                                 }
 
                                 // if started in a home, can't stop in same home
-                                if AHomePos::contains(start_posn) && AHomePos::contains(*new_posn)
-                                {
+                                if AHomePos::contains(start_posn) && AHomePos::contains(*new_posn) {
                                     prev_posn = *new_posn;
                                     continue;
                                 }
 
-                                if BHomePos::contains(start_posn) && BHomePos::contains(*new_posn)
-                                {
+                                if BHomePos::contains(start_posn) && BHomePos::contains(*new_posn) {
                                     prev_posn = *new_posn;
                                     continue;
                                 }
 
-                                if CHomePos::contains(start_posn) && CHomePos::contains(*new_posn)
-                                {
+                                if CHomePos::contains(start_posn) && CHomePos::contains(*new_posn) {
                                     prev_posn = *new_posn;
                                     continue;
                                 }
 
-                                if DHomePos::contains(start_posn) && DHomePos::contains(*new_posn)
-                                {
+                                if DHomePos::contains(start_posn) && DHomePos::contains(*new_posn) {
                                     prev_posn = *new_posn;
                                     continue;
                                 }
