@@ -151,7 +151,6 @@ fn main() {
         day12_2::calculate_total_paths(&String::from("resources/day12-1-input.txt"))
     );
     //*/
-
     // Day 13, #1
     println!(
         "Day 13, #1: {}",
@@ -188,7 +187,6 @@ fn main() {
         "Day 15, #2: {}",
         day15_2::calculate_least_risk_path(&String::from("resources/day15-1-input.txt"))
     );
-    
 
     // Day 16, #1, 2
     println!(
@@ -208,13 +206,12 @@ fn main() {
         day18_1::calculate_magnitude_sum(&String::from("resources/day18-1-input.txt"))
     );
 
-    
     // Day 18, #2
     println!(
         "Day 18, #2: {:?}",
         day18_2::calculate_maxmagnitude_sum(&String::from("resources/day18-1-input.txt"))
     );
-    
+
     // Slightly improved performance, FIX
     // Day 19, #1
     println!(
@@ -234,7 +231,6 @@ fn main() {
         "Day 20, #2: {:?}",
         day20_1::calculate_lit_pixels(&String::from("resources/day20-1-input.txt"), 50)
     );
-    
 
     // Day 21, #1
     println!(

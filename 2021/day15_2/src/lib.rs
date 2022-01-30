@@ -91,7 +91,7 @@ fn load_grid(grid: &mut [[u32; 502]; 502], contents: String) {
 mod tests {
 
     use super::*;
-    
+
     #[test]
     fn day15_2_works() {
         let result = calculate_least_risk_path(&String::from("../resources/day15-1-input.txt"));

@@ -63,9 +63,15 @@ fn enhance(image: &mut [[char; 220]; 220], mapping: &HashMap<usize, char>, pass:
     for row in 1..219 {
         for col in 1..219 {
             num_str.clear();
-            image[row - 1][col - 1..=col + 1].iter().for_each(|x| num_str.push(*x));
-            image[row][col - 1..=col + 1].iter().for_each(|x| num_str.push(*x));
-            image[row + 1][col - 1..=col + 1].iter().for_each(|x| num_str.push(*x));
+            image[row - 1][col - 1..=col + 1]
+                .iter()
+                .for_each(|x| num_str.push(*x));
+            image[row][col - 1..=col + 1]
+                .iter()
+                .for_each(|x| num_str.push(*x));
+            image[row + 1][col - 1..=col + 1]
+                .iter()
+                .for_each(|x| num_str.push(*x));
 
             let mut num = 0usize;
             for (i, pixel) in num_str.chars().enumerate() {
@@ -97,7 +103,7 @@ fn load_image(image: &mut [[char; 220]; 220], image_str: String) {
 
 #[cfg(test)]
 mod tests {
-    
+
     use super::*;
 
     #[test]

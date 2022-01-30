@@ -3,9 +3,9 @@
 
 // Adapted from https://doc.rust-lang.org/std/collections/binary_heap/index.html
 
+use ahash::AHashMap;
 use std::cmp::Ordering;
 use std::collections::BinaryHeap;
-use ahash::AHashMap;
 
 // Hold state on BinaryHeap priority queue with min ordering
 #[derive(Copy, Clone, Eq, PartialEq)]

@@ -39,7 +39,8 @@ mod tests {
 
     #[test]
     fn day12_2_test() {
-        let result = calculate_total_paths(&String::from("../resources/tests/day12-2-testdata.txt"));
+        let result =
+            calculate_total_paths(&String::from("../resources/tests/day12-2-testdata.txt"));
         assert_eq!(result, 3509);
     }
 }
