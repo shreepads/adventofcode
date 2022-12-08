@@ -1,0 +1,8 @@
+[workspace]
+
+members = [
+    "y2022",
+    "day1",
+]
+
+default-members = ["y2022",]
