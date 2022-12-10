@@ -11,5 +11,4 @@ fn main() {
         "Day 1, #2: {}",
         day1::top3_total_cals_carried(&String::from("resources/input/day01-1.txt"))
     );
-
 }
