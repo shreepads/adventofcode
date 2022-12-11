@@ -22,4 +22,9 @@ fn main() {
         day2::correct_strategy_guide_score(&String::from("resources/input/day02-1.txt"))
     );
 
+    println!(
+        "Day 3, #1: {}",
+        day3::total_priorities_of_common_types(&String::from("resources/input/day03-1.txt"))
+    );
+
 }
