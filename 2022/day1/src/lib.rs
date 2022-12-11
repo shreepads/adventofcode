@@ -30,7 +30,6 @@ pub fn top3_total_cals_carried(file_path: &String) -> u64 {
 fn load_list_of_lists_of_unumbers(file_path: &String) -> Vec<Vec<u64>> {
     let mut list_of_lists_of_unumbers: Vec<Vec<u64>> = Vec::new();
 
-    println!("Loading data from file:{}", file_path);
     let file_contents =
         fs::read_to_string(file_path).expect("Something went wrong reading the file");
 

@@ -6,6 +6,5 @@ pub enum Move {
     Rock,
     Paper,
     Scissors,
-    Invalid
+    Invalid,
 }
-
