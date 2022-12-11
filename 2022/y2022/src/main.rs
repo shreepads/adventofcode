@@ -26,4 +26,9 @@ fn main() {
         "Day 3, #1: {}",
         day3::total_priorities_of_common_types(&String::from("resources/input/day03-1.txt"))
     );
+
+    println!(
+        "Day 3, #2: {}",
+        day3::total_group_badge_priorities(&String::from("resources/input/day03-1.txt"))
+    );
 }

@@ -19,6 +19,18 @@ pub fn total_priorities_of_common_types(file_path: &String) -> usize {
         .sum()
 }
 
+pub fn total_group_badge_priorities(file_path: &String) -> usize {
+    let file_contents =
+        fs::read_to_string(file_path).expect("Something went wrong reading the file");
+
+    let rucksacks = load_rucksacks(&file_contents);
+
+    rucksacks
+        .chunks(3)
+        .map(|group_rucksacks| Rucksack::common_group_item_type_priority(group_rucksacks))
+        .sum()
+}
+
 fn load_rucksacks(file_contents: &String) -> Vec<Rucksack> {
     let mut rucksacks: Vec<Rucksack> = Vec::new();
 

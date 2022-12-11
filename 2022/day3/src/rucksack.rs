@@ -38,6 +38,28 @@ impl Rucksack {
         0
     }
 
+    pub fn common_group_item_type_priority(group_rucksacks: &[Rucksack]) -> usize {
+        let mut group_rucksacks_iter = group_rucksacks.iter();
+
+        let first_rucksack: &Rucksack = group_rucksacks_iter.next().unwrap();
+        let second_rucksack: &Rucksack = group_rucksacks_iter.next().unwrap();
+        let third_rucksack: &Rucksack = group_rucksacks_iter.next().unwrap();
+
+        for priority_index in 0..MAX_PRIORITY {
+            if (first_rucksack.contents[priority_index].0 > 0
+                || first_rucksack.contents[priority_index].1 > 0)
+                && (second_rucksack.contents[priority_index].0 > 0
+                    || second_rucksack.contents[priority_index].1 > 0)
+                && (third_rucksack.contents[priority_index].0 > 0
+                    || third_rucksack.contents[priority_index].1 > 0)
+            {
+                return priority_index + 1;
+            }
+        }
+
+        0
+    }
+
     #[inline(always)]
     fn get_priority_from_char(c: char) -> usize {
         // convert a-z to 1-26
