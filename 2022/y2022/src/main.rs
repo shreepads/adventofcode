@@ -31,4 +31,10 @@ fn main() {
         "Day 3, #2: {}",
         day3::total_group_badge_priorities(&String::from("resources/input/day03-1.txt"))
     );
+
+    println!(
+        "Day 4, #1: {}",
+        day4::fully_contained_pairs(&String::from("resources/input/day04-1.txt"))
+    );
+
 }
