@@ -11,4 +11,15 @@ fn main() {
         "Day 1, #2: {}",
         day1::top3_total_cals_carried(&String::from("resources/input/day01-1.txt"))
     );
+
+    println!(
+        "Day 2, #1: {}",
+        day2::strategy_guide_score(&String::from("resources/input/day02-1.txt"))
+    );
+
+    println!(
+        "Day 2, #2: {}",
+        day2::correct_strategy_guide_score(&String::from("resources/input/day02-1.txt"))
+    );
+
 }
