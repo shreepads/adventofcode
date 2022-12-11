@@ -37,4 +37,8 @@ fn main() {
         day4::fully_contained_pairs(&String::from("resources/input/day04-1.txt"))
     );
 
+    println!(
+        "Day 4, #2: {}",
+        day4::overlapping_pairs(&String::from("resources/input/day04-1.txt"))
+    );
 }
