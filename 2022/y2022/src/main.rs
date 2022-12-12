@@ -51,4 +51,15 @@ fn main() {
         "Day 5, #2: {}",
         day5::correct_rearrange_message(&String::from("resources/input/day05-1.txt"))
     );
+
+    println!(
+        "Day 6, #1: {}",
+        day6::start_of_packet_marker(&String::from("resources/input/day06-1.txt"), 4)
+    );
+
+    println!(
+        "Day 6, #2: {}",
+        day6::start_of_packet_marker(&String::from("resources/input/day06-1.txt"), 14)
+    );
+
 }
