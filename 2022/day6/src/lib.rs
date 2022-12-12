@@ -1,8 +1,8 @@
 // Copyright (c) 2022 Shreepad Shukla
 // SPDX-License-Identifier: MIT
 
-use std::fs;
 use ahash::AHashSet;
+use std::fs;
 
 pub fn start_of_packet_marker(file_path: &String, window_size: usize) -> usize {
     let file_contents =
@@ -15,13 +15,14 @@ pub fn start_of_packet_marker(file_path: &String, window_size: usize) -> usize {
     file_contents.chars().for_each(|ch| signal.push(ch));
 
     for (i, char_window) in signal.windows(window_size).enumerate() {
-
         let mut char_set = AHashSet::new();
 
-        char_window.iter().for_each(|ch| {char_set.insert(ch);});
+        char_window.iter().for_each(|ch| {
+            char_set.insert(ch);
+        });
 
         if char_set.len() == window_size {
-            return i + window_size
+            return i + window_size;
         }
     }
 

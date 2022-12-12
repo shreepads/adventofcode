@@ -61,5 +61,4 @@ fn main() {
         "Day 6, #2: {}",
         day6::start_of_packet_marker(&String::from("resources/input/day06-1.txt"), 14)
     );
-
 }
