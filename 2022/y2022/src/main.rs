@@ -41,4 +41,9 @@ fn main() {
         "Day 4, #2: {}",
         day4::overlapping_pairs(&String::from("resources/input/day04-1.txt"))
     );
+
+    println!(
+        "Day 5, #1: {}",
+        day5::rearrange_message(&String::from("resources/input/day05-1.txt"))
+    );
 }
