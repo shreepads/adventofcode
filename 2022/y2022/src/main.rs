@@ -46,4 +46,9 @@ fn main() {
         "Day 5, #1: {}",
         day5::rearrange_message(&String::from("resources/input/day05-1.txt"))
     );
+
+    println!(
+        "Day 5, #2: {}",
+        day5::correct_rearrange_message(&String::from("resources/input/day05-1.txt"))
+    );
 }
