@@ -61,4 +61,11 @@ fn main() {
         "Day 6, #2: {}",
         day6::start_of_packet_marker(&String::from("resources/input/day06-1.txt"), 14)
     );
+
+    // Day 7 needs a Tree struc
+
+    println!(
+        "Day 8, #1: {}",
+        day8::visible_trees(&String::from("resources/input/day08-1.txt"))
+    );
 }
