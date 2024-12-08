@@ -23,9 +23,27 @@ pub fn visible_trees(file_path: &String) -> usize {
     let file_contents =
         fs::read_to_string(file_path).expect("Something went wrong reading the file");
 
-    let tree_grid = load_tree_grid(&file_contents);
+    let mut tree_grid = load_tree_grid(&file_contents);
 
-    print_tree(&tree_grid);
+    //print_tree(&tree_grid);
+
+    // scan tree lines L to R
+
+    for (row_id, tree_line) in tree_grid.iter().enumerate() {
+
+        // skip top and bottom row
+        if row_id == 0 ||  row_id == TREE_GRID_SIDE - 1 {
+            break;
+        }
+
+        for (col_id, tree) in tree_line.iter().enumerate() {
+            
+            // skip left and right ends
+            if col_id == 0 ||  col_id == TREE_GRID_SIDE - 1 {
+                break;
+            }
+        }
+    } 
 
     0
 }
