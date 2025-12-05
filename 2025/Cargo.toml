@@ -1,0 +1,9 @@
+[workspace]
+
+members = [
+    "y2025",
+]
+
+resolver = "2"
+
+default-members = ["y2025",]
