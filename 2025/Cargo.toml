@@ -2,6 +2,7 @@
 
 members = [
     "y2025",
+    "day1",
 ]
 
 resolver = "2"

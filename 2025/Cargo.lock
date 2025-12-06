@@ -3,5 +3,12 @@
 version = 4
 
 [[package]]
+name = "day1"
+version = "0.1.0"
+
+[[package]]
 name = "y2025"
 version = "0.1.0"
+dependencies = [
+ "day1",
+]
