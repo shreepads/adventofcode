@@ -4,7 +4,7 @@
 use std::cmp::Ordering;
 use std::fs;
 
-pub fn num_dial_at_zero(file_path: &String) -> u64 {
+pub fn num_dial_stop_zero(file_path: &String) -> u64 {
     let file_contents =
         fs::read_to_string(file_path).expect("Something went wrong reading the file");
 
@@ -41,6 +41,54 @@ pub fn num_dial_at_zero(file_path: &String) -> u64 {
     password
 }
 
+pub fn num_dial_at_zero(file_path: &String) -> u64 {
+    let file_contents =
+        fs::read_to_string(file_path).expect("Something went wrong reading the file");
+
+    let mut password = 0;
+    let mut position = 50;
+    let dial_nums = 100;
+
+    for instruction in file_contents.lines() {
+        let direction = instruction.get(0..1).expect("Invalid instructon");
+        let mut distance = instruction
+            .get(1..)
+            .expect("Invalid instructon")
+            .parse::<u64>()
+            .unwrap();
+
+        let full_turns = distance / dial_nums;
+
+        password += full_turns;
+
+        distance = make_mod(distance, dial_nums);
+
+        match direction {
+            "R" => {
+                if position + distance > dial_nums {
+                    password += 1
+                };
+                position = add_mod(position, distance, dial_nums);
+            }
+            "L" => {
+                if position != 0 {
+                    if distance > position {
+                        password += 1;
+                    }
+                };
+                position = sub_mod(position, distance, dial_nums);
+            }
+            _ => panic!("Invalid instruction"),
+        }
+
+        if position == 0 {
+            password += 1;
+        };
+    }
+
+    password
+}
+
 // Convert num to mod base
 #[inline(always)]
 fn make_mod(num: u64, base: u64) -> u64 {
@@ -68,6 +116,12 @@ fn sub_mod(num1: u64, num2: u64, base: u64) -> u64 {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_num_dial_at_zero() {
+        let result = num_dial_at_zero(&String::from("../resources/test-input/day01-test.txt"));
+        assert_eq!(result, 6);
+    }
 
     #[test]
     fn test_make_mod() {
