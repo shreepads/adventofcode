@@ -26,4 +26,9 @@ fn main() {
         "Day 3, #1: {}",
         day3::total_joltage(&String::from("resources/input/day03.txt"))
     );
+
+    println!(
+        "Day 3, #2: {}",
+        day3::super_total_joltage(&String::from("resources/input/day03.txt"))
+    );
 }
