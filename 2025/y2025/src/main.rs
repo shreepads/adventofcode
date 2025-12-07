@@ -21,4 +21,9 @@ fn main() {
         "Day 2, #2: {}",
         day2::sum_invalid_ids2(&String::from("resources/input/day02.txt"))
     );
+
+    println!(
+        "Day 3, #1: {}",
+        day3::total_joltage(&String::from("resources/input/day03.txt"))
+    );
 }
