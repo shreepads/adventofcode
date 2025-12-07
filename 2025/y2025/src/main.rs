@@ -16,4 +16,9 @@ fn main() {
         "Day 2, #1: {}",
         day2::sum_invalid_ids(&String::from("resources/input/day02.txt"))
     );
+
+    println!(
+        "Day 2, #2: {}",
+        day2::sum_invalid_ids2(&String::from("resources/input/day02.txt"))
+    );
 }
