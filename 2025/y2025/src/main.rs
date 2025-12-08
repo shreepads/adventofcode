@@ -34,6 +34,6 @@ fn main() {
 
     println!(
         "Day 4, #1: {}",
-        day4::reachable_rolls(&String::from("resources/input/day03.txt"))
+        day4::reachable_rolls(&String::from("resources/input/day04.txt"))
     );
 }
