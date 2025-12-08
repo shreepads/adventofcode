@@ -75,8 +75,16 @@ fn is_valid_id(id: u64, repeat_num: u64) -> bool {
 
     let mut nums = vec![];
 
-    for _ in 0..repeat_num {
-        nums.push(id_mut % 10_u64.pow(chunk_length));
+    for i in 0..repeat_num {
+        let chunk_num = id_mut % 10_u64.pow(chunk_length);
+
+        if i != 0 {
+            if chunk_num != nums[(i - 1) as usize] {
+                return true;
+            }
+        }
+
+        nums.push(chunk_num);
         id_mut = id_mut / 10_u64.pow(chunk_length);
     }
 
