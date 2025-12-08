@@ -36,4 +36,9 @@ fn main() {
         "Day 4, #1: {}",
         day4::reachable_rolls(&String::from("resources/input/day04.txt"))
     );
+
+    println!(
+        "Day 4, #2: {}",
+        day4::ultimately_reachable_rolls(&String::from("resources/input/day04.txt"))
+    );
 }
