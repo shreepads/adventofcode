@@ -31,4 +31,9 @@ fn main() {
         "Day 3, #2: {}",
         day3::super_total_joltage(&String::from("resources/input/day03.txt"))
     );
+
+    println!(
+        "Day 4, #1: {}",
+        day4::reachable_rolls(&String::from("resources/input/day03.txt"))
+    );
 }
