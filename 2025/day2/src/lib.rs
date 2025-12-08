@@ -73,27 +73,22 @@ fn is_valid_id(id: u64, repeat_num: u64) -> bool {
 
     let chunk_length = (id_len / repeat_num) as u32;
 
-    let mut nums = vec![];
+    let mut prev_chunk_num = 0;
 
     for i in 0..repeat_num {
         let chunk_num = id_mut % 10_u64.pow(chunk_length);
 
         if i != 0 {
-            if chunk_num != nums[(i - 1) as usize] {
+            if chunk_num != prev_chunk_num {
                 return true;
             }
         }
 
-        nums.push(chunk_num);
+        prev_chunk_num = chunk_num;
         id_mut = id_mut / 10_u64.pow(chunk_length);
     }
 
-    // heck if all nums same
-    if nums.windows(2).all(|w| w[0] == w[1]) {
-        return false;
-    }
-
-    true
+    false
 }
 
 // Find the number of digits in a number faster than using to_string.len()
