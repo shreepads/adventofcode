@@ -41,4 +41,9 @@ fn main() {
         "Day 4, #2: {}",
         day4::ultimately_reachable_rolls(&String::from("resources/input/day04.txt"))
     );
+
+    println!(
+        "Day 5, #1: {}",
+        day5::fresh_ingredients(&String::from("resources/input/day05.txt"))
+    );
 }
