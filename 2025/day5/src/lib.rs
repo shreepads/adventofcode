@@ -27,6 +27,19 @@ pub fn fresh_ingredients(file_path: &String) -> u64 {
     fresh_ingredients_count
 }
 
+pub fn all_fresh_ingredients(file_path: &String) -> u64 {
+    let file_contents =
+        fs::read_to_string(file_path).expect("Something went wrong reading the file");
+
+    let mut splitter = file_contents.split("\n\n");
+
+    let ranges = load_ranges(splitter.next().unwrap());
+
+    // TODO: Collapse the ranges
+
+    ranges.iter().map(|(start, end)| end - start + 1).sum()
+}
+
 fn load_ranges(ranges_str: &str) -> Vec<(u64, u64)> {
     let mut ranges = vec![];
 
@@ -45,6 +58,12 @@ fn load_ranges(ranges_str: &str) -> Vec<(u64, u64)> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_all_fresh_ingredients() {
+        let result = all_fresh_ingredients(&String::from("../resources/test-input/day05-test.txt"));
+        assert_eq!(result, 14);
+    }
 
     #[test]
     fn test_load_ranges() {

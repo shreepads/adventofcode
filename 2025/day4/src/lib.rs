@@ -156,6 +156,7 @@ mod tests {
             ultimately_reachable_rolls(&String::from("../resources/test-input/day04-test.txt"));
         assert_eq!(result, 43);
     }
+
     #[test]
     fn test_reachable_rolls() {
         let result = reachable_rolls(&String::from("../resources/test-input/day04-test.txt"));

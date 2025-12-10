@@ -46,4 +46,9 @@ fn main() {
         "Day 5, #1: {}",
         day5::fresh_ingredients(&String::from("resources/input/day05.txt"))
     );
+
+    println!(
+        "Day 5, #2: {}",
+        day5::all_fresh_ingredients(&String::from("resources/input/day05.txt"))
+    );
 }
