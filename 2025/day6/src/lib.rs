@@ -39,11 +39,30 @@ pub fn correct_answer_total(file_path: &String) -> u64 {
     let file_contents =
         fs::read_to_string(file_path).expect("Something went wrong reading the file");
 
-    0
+    let (numbers, ops) = correctly_load_problems(file_contents);
+
+    assert_eq!(numbers.len(), ops.len());
+
+    let mut ans_total = 0;
+
+    for i in 0..numbers.len() {
+        let ans = if ops[i] == '*' {
+            numbers[i].iter().fold(1, |acc, i| acc * i)
+        } else {
+            numbers[i].iter().fold(0, |acc, i| acc + i)
+        };
+
+        ans_total += ans;
+    }
+
+    ans_total
 }
 
-fn correctly_load_problems(file_contents: String) -> Vec<String> {
-    let mut problems = vec![];
+fn correctly_load_problems(file_contents: String) -> (Vec<Vec<u64>>, Vec<char>) {
+    //let mut problems = vec![];
+
+    let mut numbers = vec![];
+    let mut ops = vec![];
 
     let mut raw_data: Vec<Vec<char>> = vec![];
 
@@ -54,6 +73,8 @@ fn correctly_load_problems(file_contents: String) -> Vec<String> {
 
     // Check all same length
     assert_eq!(raw_data[0].len(), raw_data[raw_data.len() - 1].len());
+
+    let mut nums = vec![];
 
     // Read from the end by column, insert trimmed lines
     for i in (0..raw_data[0].len()).rev() {
@@ -69,10 +90,24 @@ fn correctly_load_problems(file_contents: String) -> Vec<String> {
             continue;
         }
 
-        problems.push(line);
+        // Last number of problem ends with op code
+        if line.ends_with(&['*', '+']) {
+            let num = line.split_at(line.len() - 1).0.parse::<u64>().unwrap();
+            nums.push(num);
+            numbers.push(nums);
+
+            ops.push(line.chars().nth(line.len() - 1).unwrap());
+            nums = vec![];
+            continue;
+        }
+
+        // Just a number
+        nums.push(line.parse::<u64>().unwrap());
+
+        //problems.push(line);
     }
 
-    problems
+    (numbers, ops)
 }
 
 fn load_problems(file_contents: String) -> (Vec<Vec<u64>>, Vec<char>) {
@@ -116,8 +151,14 @@ mod tests {
         ));
         assert_eq!(
             result,
-            vec!(
-                "4", "431", "623+", "175", "581", "32*", "8", "248", "369+", "356", "24", "1*",
+            (
+                vec!(
+                    vec!(4, 431, 623),
+                    vec!(175, 581, 32),
+                    vec!(8, 248, 369),
+                    vec!(356, 24, 1),
+                ),
+                vec!('+', '*', '+', '*')
             )
         );
     }
