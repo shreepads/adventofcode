@@ -61,4 +61,9 @@ fn main() {
         "Day 6, #2: {}",
         day6::correct_answer_total(&String::from("resources/input/day06.txt"))
     );
+
+    println!(
+        "Day 7, #1: {}",
+        day7::beam_splits(&String::from("resources/input/day07.txt"))
+    );
 }
