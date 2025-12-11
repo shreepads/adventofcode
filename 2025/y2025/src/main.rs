@@ -56,4 +56,9 @@ fn main() {
         "Day 6, #1: {}",
         day6::answer_total(&String::from("resources/input/day06.txt"))
     );
+
+    println!(
+        "Day 6, #2: {}",
+        day6::correct_answer_total(&String::from("resources/input/day06.txt"))
+    );
 }
