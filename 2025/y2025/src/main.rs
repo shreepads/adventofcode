@@ -51,4 +51,9 @@ fn main() {
         "Day 5, #2: {}",
         day5::all_fresh_ingredients(&String::from("resources/input/day05.txt"))
     );
+
+    println!(
+        "Day 6, #1: {}",
+        day6::answer_total(&String::from("resources/input/day06.txt"))
+    );
 }
