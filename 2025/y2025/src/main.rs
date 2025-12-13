@@ -66,4 +66,9 @@ fn main() {
         "Day 7, #1: {}",
         day7::beam_splits(&String::from("resources/input/day07.txt"))
     );
+
+    println!(
+        "Day 7, #2: {}",
+        day7::timelines(&String::from("resources/input/day07.txt"))
+    );
 }
