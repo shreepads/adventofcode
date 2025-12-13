@@ -33,11 +33,54 @@ pub fn all_fresh_ingredients(file_path: &String) -> u64 {
 
     let mut splitter = file_contents.split("\n\n");
 
-    let ranges = load_ranges(splitter.next().unwrap());
+    let mut ranges = load_ranges(splitter.next().unwrap());
 
-    // TODO: Collapse the ranges
+    let mut collapsed_ranges: Vec<(u64, u64)> = vec![];
 
-    ranges.iter().map(|(start, end)| end - start + 1).sum()
+    // Sort ranges so ordered by start point
+    ranges.sort();
+
+    // Collapse the sorted ranges
+
+    let mut coll_range_start = 0;
+    let mut coll_range_end = 0;
+
+    for (i, range) in ranges.iter().enumerate() {
+        // If first range then set collapsed range
+        if i == 0 {
+            coll_range_start = range.0;
+            coll_range_end = range.1;
+            continue;
+        }
+
+        // Does this range lay one beyond the collapsed range
+        if coll_range_end < range.0 - 1 {
+            // Insert collapsed range and reset it to this one
+            collapsed_ranges.push((coll_range_start, coll_range_end));
+            coll_range_start = range.0;
+            coll_range_end = range.1;
+            continue;
+        }
+
+        // Does this range lay within the collapsed range
+        if coll_range_end >= range.1 {
+            // Nothing to do on this range
+            continue;
+        }
+
+        // Ranges partly overlap, reset collapsed range end
+        coll_range_end = range.1;
+
+        // If last range then insert collapsed range
+        if i == ranges.len() - 1 {
+            collapsed_ranges.push((coll_range_start, coll_range_end));
+        }
+    }
+
+    collapsed_ranges
+        .iter()
+        .map(|(start, end)| end - start + 1)
+        .sum()
 }
 
 fn load_ranges(ranges_str: &str) -> Vec<(u64, u64)> {
