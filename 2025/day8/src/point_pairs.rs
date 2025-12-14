@@ -13,7 +13,11 @@ pub struct PointPair {
 
 impl fmt::Display for PointPair {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "[{}, {}, {}]", self.point1, self.point2, self.euc_dist_sq)
+        write!(
+            f,
+            "[{}, {}, {}]",
+            self.point1, self.point2, self.euc_dist_sq
+        )
     }
 }
 

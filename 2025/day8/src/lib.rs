@@ -25,14 +25,12 @@ pub fn three_largest_circuits_mul(file_path: &String, n: usize) -> usize {
 }
 
 fn find_n_closest_pairs(points: Vec<Point>, n: usize) -> BTreeSet<PointPair> {
-
     let mut n_closest_pairs = BTreeSet::new();
 
     for (i, point1) in points.iter().enumerate() {
-        for point2 in points[i+1..].iter() {
-            
+        for point2 in points[i + 1..].iter() {
             let point_pair = PointPair::new(*point1, *point2);
-            
+
             // If less than n just insert else replace if smaller than largest
             if n_closest_pairs.len() < n {
                 n_closest_pairs.insert(point_pair);
