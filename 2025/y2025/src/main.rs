@@ -71,4 +71,9 @@ fn main() {
         "Day 7, #2: {}",
         day7::timelines(&String::from("resources/input/day07.txt"))
     );
+
+    println!(
+        "Day 8, #1: {}",
+        day8::three_largest_circuits_mul(&String::from("resources/input/day08.txt"))
+    );
 }
