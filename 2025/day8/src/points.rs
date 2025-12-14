@@ -62,7 +62,7 @@ impl Point {
     }
 
     pub fn euc_dist_sq(&self, point: Point) -> i64 {
-        ((self.x - point.x).pow(2) + (self.y - point.y).pow(2) + (self.z - point.z).pow(2)) as i64
+        ((self.x - point.x) as i64).pow(2) + ((self.y - point.y) as i64).pow(2) + ((self.z - point.z) as i64).pow(2)
     }
 }
 

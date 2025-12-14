@@ -74,6 +74,6 @@ fn main() {
 
     println!(
         "Day 8, #1: {}",
-        day8::three_largest_circuits_mul(&String::from("resources/input/day08.txt"))
+        day8::three_largest_circuits_mul(&String::from("resources/input/day08.txt"), 1000)
     );
 }
