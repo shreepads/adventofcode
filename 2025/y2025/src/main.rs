@@ -76,4 +76,9 @@ fn main() {
         "Day 8, #1: {}",
         day8::three_largest_circuits_mul(&String::from("resources/input/day08.txt"), 1000)
     );
+
+    println!(
+        "Day 8, #2: {}",
+        day8::last_pair_x_mul(&String::from("resources/input/day08.txt"))
+    );
 }

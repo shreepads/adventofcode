@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 
 use crate::points::Point;
-use std::{cmp::Ordering, fmt};
+use std::{cmp::Ordering, collections::BTreeSet, fmt};
 
 #[derive(Debug, Clone, Copy)]
 pub struct PointPair {
@@ -21,6 +21,7 @@ impl fmt::Display for PointPair {
     }
 }
 
+// Not entirely right but works
 impl PartialEq for PointPair {
     fn eq(&self, other: &Self) -> bool {
         self.euc_dist_sq == other.euc_dist_sq
@@ -53,6 +54,28 @@ impl PointPair {
 
     pub fn points(&self) -> (Point, Point) {
         (self.point1, self.point2)
+    }
+
+    pub fn find_n_closest_pairs(points: &Vec<Point>, n: usize) -> BTreeSet<PointPair> {
+        let mut n_closest_pairs = BTreeSet::new();
+
+        for (i, point1) in points.iter().enumerate() {
+            for point2 in points[i + 1..].iter() {
+                let point_pair = PointPair::new(*point1, *point2);
+
+                // If less than n just insert else replace if smaller than largest
+                if n_closest_pairs.len() < n {
+                    n_closest_pairs.insert(point_pair);
+                } else {
+                    if point_pair < *n_closest_pairs.last().unwrap() {
+                        n_closest_pairs.pop_last();
+                        n_closest_pairs.insert(point_pair);
+                    }
+                }
+            }
+        }
+
+        n_closest_pairs
     }
 }
 

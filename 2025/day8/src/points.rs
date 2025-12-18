@@ -5,9 +5,9 @@ use std::fmt;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Point {
-    x: i32,
-    y: i32,
-    z: i32,
+    pub x: i32,
+    pub y: i32,
+    pub z: i32,
 }
 
 impl fmt::Display for Point {
@@ -23,10 +23,6 @@ impl Point {
 
     pub fn from_str(point_str: &str) -> Result<Point, String> {
         let mut num_iter = point_str.split(",");
-
-        //let mut x = 0;
-        //let mut y = 0;
-        //let mut z = 0;
 
         let x = if let Some(x_str) = num_iter.next() {
             if let Ok(xx) = x_str.parse::<i32>() {
