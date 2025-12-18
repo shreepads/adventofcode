@@ -3,7 +3,7 @@
 
 use std::fmt;
 
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Point {
     x: i32,
     y: i32,
@@ -17,46 +17,46 @@ impl fmt::Display for Point {
 }
 
 impl Point {
-    pub fn new(x: i32, y: i32, z: i32) -> Point {
+    pub fn _new(x: i32, y: i32, z: i32) -> Point {
         Point { x, y, z }
     }
 
     pub fn from_str(point_str: &str) -> Result<Point, String> {
         let mut num_iter = point_str.split(",");
 
-        let mut x = 0;
-        let mut y = 0;
-        let mut z = 0;
+        //let mut x = 0;
+        //let mut y = 0;
+        //let mut z = 0;
 
-        if let Some(x_str) = num_iter.next() {
+        let x = if let Some(x_str) = num_iter.next() {
             if let Ok(xx) = x_str.parse::<i32>() {
-                x = xx;
+                xx
             } else {
                 return Err(format!("Invalid point string {}", point_str));
             }
         } else {
             return Err(format!("Invalid point string {}", point_str));
-        }
+        };
 
-        if let Some(y_str) = num_iter.next() {
+        let y = if let Some(y_str) = num_iter.next() {
             if let Ok(yy) = y_str.parse::<i32>() {
-                y = yy;
+                yy
             } else {
                 return Err(format!("Invalid point string {}", point_str));
             }
         } else {
             return Err(format!("Invalid point string {}", point_str));
-        }
+        };
 
-        if let Some(z_str) = num_iter.next() {
+        let z = if let Some(z_str) = num_iter.next() {
             if let Ok(zz) = z_str.parse::<i32>() {
-                z = zz;
+                zz
             } else {
                 return Err(format!("Invalid point string {}", point_str));
             }
         } else {
             return Err(format!("Invalid point string {}", point_str));
-        }
+        };
 
         Ok(Point { x, y, z })
     }
@@ -75,7 +75,7 @@ mod tests {
     #[test]
     fn test_point_from_str() {
         let result = Point::from_str(&String::from("86533,36374,88149"));
-        assert_eq!(result, Ok(Point::new(86533, 36374, 88149)));
+        assert_eq!(result, Ok(Point::_new(86533, 36374, 88149)));
     }
 
     #[test]
@@ -98,7 +98,7 @@ mod tests {
 
     #[test]
     fn test_point_euc_dist_sq() {
-        let result = Point::new(3, 5, 7).euc_dist_sq(Point::new(1, 2, 3));
+        let result = Point::_new(3, 5, 7).euc_dist_sq(Point::_new(1, 2, 3));
         assert_eq!(result, 29);
     }
 }

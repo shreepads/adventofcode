@@ -3,9 +3,11 @@
 
 use std::{collections::BTreeSet, fs};
 
+mod circuits;
 mod point_pairs;
 mod points;
 
+use circuits::Circuit;
 use point_pairs::PointPair;
 use points::Point;
 
@@ -15,16 +17,93 @@ pub fn three_largest_circuits_mul(file_path: &String, n: usize) -> usize {
 
     let points = load_points(file_contents);
 
-    let n_closest_pairs = find_n_closest_pairs(points, n);
+    let n_closest_pairs = find_n_closest_pairs(&points, n);
 
-    for pair in n_closest_pairs {
-        println!("{}", pair);
+    let circuits = find_circuits(&n_closest_pairs);
+
+    let mut three_mul = 1;
+
+    for (i, circuit) in circuits.iter().rev().enumerate() {
+        if i < 3 {
+            three_mul *= circuit.points.len();
+        }
+
+        if i == 2 {
+            break;
+        }
     }
 
-    0
+    three_mul
 }
 
-fn find_n_closest_pairs(points: Vec<Point>, n: usize) -> BTreeSet<PointPair> {
+fn find_circuits(closest_point_pairs: &BTreeSet<PointPair>) -> BTreeSet<Circuit> {
+    let mut circuits: BTreeSet<Circuit> = BTreeSet::new();
+
+    for (i, pair) in closest_point_pairs.iter().enumerate() {
+        let point1 = pair.points().0;
+        let point2 = pair.points().1;
+
+        // First pair of points inserted as a circuit by themselves
+        if i == 0 {
+            let new_circuit = Circuit::new(*pair);
+            circuits.insert(new_circuit);
+            continue;
+        }
+
+        // Extract circuits containing the points, note point1_circuits could contain point2
+        let point1_circuits: Vec<Circuit> = circuits
+            .extract_if(.., |x| x.points.contains(&point1))
+            .collect();
+        let point2_circuits: Vec<Circuit> = circuits
+            .extract_if(.., |x| x.points.contains(&point2))
+            .collect();
+
+        // Check the number of circuits is <2
+        assert!(point1_circuits.len() < 2);
+        assert!(point2_circuits.len() < 2);
+
+        // If both points aren't in any circuit add them as a new circuit
+        if point1_circuits.len() == 0 && point2_circuits.len() == 0 {
+            let new_circuit = Circuit::new(*pair);
+            circuits.insert(new_circuit);
+            continue;
+        }
+
+        // If both points are in a circuit each then merge
+        // These have to be different as we are extracting based on contains
+        if point1_circuits.len() == 1 && point2_circuits.len() == 1 {
+            let point1_circuit = &point1_circuits[0];
+            let point2_circuit = &point2_circuits[0];
+            let new_circuit = point1_circuit
+                .points
+                .union(&point2_circuit.points)
+                .map(|x| *x)
+                .collect();
+            circuits.insert(new_circuit);
+            continue;
+        }
+
+        // If point1 is in a circuit add point2 to it (it might already contain point2)
+        if point1_circuits.len() == 1 {
+            let mut new_circuit = point1_circuits[0].clone();
+            new_circuit.points.insert(point2);
+            circuits.insert(new_circuit);
+            continue;
+        }
+
+        // If point2 is in a circuit add point1 to it (it might already contain point1)
+        if point2_circuits.len() == 1 {
+            let mut new_circuit = point2_circuits[0].clone();
+            new_circuit.points.insert(point1);
+            circuits.insert(new_circuit);
+            continue;
+        }
+    }
+
+    circuits
+}
+
+fn find_n_closest_pairs(points: &Vec<Point>, n: usize) -> BTreeSet<PointPair> {
     let mut n_closest_pairs = BTreeSet::new();
 
     for (i, point1) in points.iter().enumerate() {

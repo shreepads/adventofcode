@@ -35,6 +35,7 @@ impl PartialOrd for PointPair {
     }
 }
 
+// Order PointPairs by euclidean distance for finding closest in BTreeSet
 impl Ord for PointPair {
     fn cmp(&self, other: &Self) -> Ordering {
         self.euc_dist_sq.cmp(&other.euc_dist_sq)
@@ -49,6 +50,10 @@ impl PointPair {
             euc_dist_sq: point1.euc_dist_sq(point2),
         }
     }
+
+    pub fn points(&self) -> (Point, Point) {
+        (self.point1, self.point2)
+    }
 }
 
 #[cfg(test)]
@@ -57,13 +62,13 @@ mod tests {
 
     #[test]
     fn test_point_pair_ordering_eq() {
-        let point1 = Point::new(1, 5, 1);
-        let point2 = Point::new(2, 2, 3);
+        let point1 = Point::_new(1, 5, 1);
+        let point2 = Point::_new(2, 2, 3);
 
         let point_pair1 = PointPair::new(point1, point2);
 
-        let point3 = Point::new(3, 3, 3);
-        let point4 = Point::new(0, 5, 2);
+        let point3 = Point::_new(3, 3, 3);
+        let point4 = Point::_new(0, 5, 2);
 
         let point_pair2 = PointPair::new(point3, point4);
 
@@ -72,13 +77,13 @@ mod tests {
 
     #[test]
     fn test_point_pair_ordering_lt() {
-        let point1 = Point::new(1, 5, 1);
-        let point2 = Point::new(2, 2, 3);
+        let point1 = Point::_new(1, 5, 1);
+        let point2 = Point::_new(2, 2, 3);
 
         let point_pair1 = PointPair::new(point1, point2);
 
-        let point3 = Point::new(3, 2, 3);
-        let point4 = Point::new(0, 5, 2);
+        let point3 = Point::_new(3, 2, 3);
+        let point4 = Point::_new(0, 5, 2);
 
         let point_pair2 = PointPair::new(point3, point4);
 
