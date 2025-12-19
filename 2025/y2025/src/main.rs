@@ -81,4 +81,14 @@ fn main() {
         "Day 8, #2: {}",
         day8::last_pair_x_mul(&String::from("resources/input/day08.txt"))
     );
+
+    println!(
+        "Day 9, #1: {}",
+        day9::largest_rectangle(&String::from("resources/input/day09.txt"))
+    );
+
+    println!(
+        "Day 9, #2: {}",
+        day9::largest_contained_rectangle(&String::from("resources/input/day09.txt"))
+    );
 }
