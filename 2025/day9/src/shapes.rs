@@ -1,11 +1,13 @@
 // Copyright (c) 2025 Shreepad Shukla
 // SPDX-License-Identifier: MIT
 
+#[derive(Debug)]
 pub struct Point {
     pub x: i32,
     pub y: i32,
 }
 
+#[derive(Debug)]
 pub struct Segment {
     pub start: Point,
     pub end: Point,
@@ -23,11 +25,11 @@ impl Segment {
     }
 }
 
-// Can ignore 'thin' rectangles here i.e. unit width or length
+// Ignore 'thin' rectangles here i.e. unit width or length
+#[derive(Debug)]
 pub struct ThickInnerRectangle {
     pub top_left: Point,
     pub bottom_right: Point,
-    pub sides: [Segment; 4],
 }
 
 impl ThickInnerRectangle {
@@ -58,24 +60,10 @@ impl ThickInnerRectangle {
         assert!(xtl < xbr);
         assert!(ytl < ybr);
 
-        let sides: [Segment; 4] = [
-            Segment::new(xtl, ytl, xbr, ytl),
-            Segment::new(xbr, ytl, xbr, ytl),
-            Segment::new(xbr, ybr, xtl, ybr),
-            Segment::new(xtl, ybr, xtl, ytl),
-        ];
-
         Some(ThickInnerRectangle {
             top_left: Point { x: xtl, y: ytl },
             bottom_right: Point { x: xbr, y: ybr },
-            sides,
         })
-    }
-
-    // The inner rectangle area is not needed
-    pub fn area(&self) -> i64 {
-        ((self.bottom_right.x - self.top_left.x + 1) as i64)
-            * ((self.bottom_right.x - self.top_left.x + 1) as i64)
     }
 
     pub fn intersects(&self, segment: &Segment) -> bool {
